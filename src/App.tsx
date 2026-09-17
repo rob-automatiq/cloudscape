@@ -12,18 +12,15 @@ function MetaUrlBar() {
   const navigate = useNavigate()
   const inputRef = useRef<HTMLInputElement>(null)
 
-  // strip leading "/" so the static "#/" prefix handles it
-  const routeWithoutSlash = (location.pathname + location.search).replace(/^\//, '')
-  const [value, setValue] = useState(routeWithoutSlash)
+  const route = location.pathname + location.search
+  const [value, setValue] = useState(route)
 
-  // keep input in sync when navigation happens externally
   useEffect(() => {
-    setValue(routeWithoutSlash)
-  }, [routeWithoutSlash])
+    setValue(route)
+  }, [route])
 
   const go = () => {
-    const path = '/' + value.replace(/^\/+/, '')
-    navigate(path)
+    navigate(value || '/')
     inputRef.current?.blur()
   }
 
@@ -62,14 +59,8 @@ function MetaUrlBar() {
         gap: 6,
         overflow: 'hidden',
       }}>
-        {/* Lock icon */}
-        <svg width="11" height="13" viewBox="0 0 11 13" fill="none" style={{ flexShrink: 0, opacity: 0.4 }}>
-          <rect x="1" y="5.5" width="9" height="7" rx="1.5" stroke="#ebebf5" strokeWidth="1.2" />
-          <path d="M3 5.5V3.5a2.5 2.5 0 0 1 5 0v2" stroke="#ebebf5" strokeWidth="1.2" strokeLinecap="round" />
-        </svg>
-
-        {/* Static "#/" prefix */}
-        <span style={{ ...MONO, color: '#ebebf54d', flexShrink: 0 }}>#/</span>
+        {/* # symbol */}
+        <span style={{ ...MONO, color: '#ebebf54d', flexShrink: 0 }}>#</span>
 
         {/* Editable path */}
         <input

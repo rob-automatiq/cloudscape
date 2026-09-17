@@ -41,6 +41,22 @@ function MetaUrlBar() {
       height: 40, background: '#1c1c1e', borderBottom: '1px solid #3a3a3c',
       display: 'flex', alignItems: 'center', padding: '0 12px', gap: 8,
     }}>
+      {/* Back button */}
+      <button
+        onClick={() => navigate(-1)}
+        title="Back"
+        style={{
+          flexShrink: 0, width: 26, height: 26, borderRadius: 6,
+          background: 'transparent', border: '1px solid #3a3a3c',
+          color: '#ebebf5aa', cursor: 'pointer', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', padding: 0,
+        }}
+      >
+        <svg width="8" height="13" viewBox="0 0 8 13" fill="none">
+          <path d="M7 1L1 6.5L7 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
+
       <div style={{
         flex: 1, height: 26, borderRadius: 6, background: '#2c2c2e',
         border: '1px solid #3a3a3c', display: 'flex', alignItems: 'center',

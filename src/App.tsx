@@ -10,33 +10,28 @@ import Box from '@cloudscape-design/components/box'
 function MetaUrlBar() {
   const location = useLocation()
   const navigate = useNavigate()
-  const [editing, setEditing] = useState(false)
-  const [draft, setDraft] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const route = location.pathname + location.search + location.hash
+  // strip leading "/" so the static "#/" prefix handles it
+  const routeWithoutSlash = (location.pathname + location.search).replace(/^\//, '')
+  const [value, setValue] = useState(routeWithoutSlash)
+
+  // keep input in sync when navigation happens externally
   useEffect(() => {
-    if (editing) inputRef.current?.select()
-  }, [editing])
+    setValue(routeWithoutSlash)
+  }, [routeWithoutSlash])
 
-  const commit = () => {
-    const trimmed = draft.trim()
-    if (trimmed) {
-      const path = trimmed.startsWith('/') ? trimmed : `/${trimmed}`
-      navigate(path)
-    }
-    setEditing(false)
-  }
-
-  const startEditing = () => {
-    setDraft(route)
-    setEditing(true)
+  const go = () => {
+    const path = '/' + value.replace(/^\/+/, '')
+    navigate(path)
+    inputRef.current?.blur()
   }
 
   const MONO: React.CSSProperties = {
     fontFamily: '"SF Mono", "Fira Code", ui-monospace, monospace',
     fontSize: 12,
     letterSpacing: 0.2,
+    lineHeight: 1,
   }
 
   return (
@@ -53,95 +48,69 @@ function MetaUrlBar() {
       alignItems: 'center',
       padding: '0 12px',
       gap: 8,
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-      userSelect: 'none',
     }}>
-      {/* URL pill */}
-      <div
-        style={{
-          flex: 1,
-          maxWidth: 600,
-          margin: '0 auto',
-          height: 26,
-          borderRadius: 6,
-          background: '#2c2c2e',
-          border: editing ? '1px solid #636366' : '1px solid #3a3a3c',
-          display: 'flex',
-          alignItems: 'center',
-          padding: '0 10px',
-          cursor: editing ? 'text' : 'pointer',
-          overflow: 'hidden',
-          gap: 6,
-        }}
-        onClick={!editing ? startEditing : undefined}
-      >
+      {/* URL pill — full width */}
+      <div style={{
+        flex: 1,
+        height: 26,
+        borderRadius: 6,
+        background: '#2c2c2e',
+        border: '1px solid #3a3a3c',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0 10px',
+        gap: 6,
+        overflow: 'hidden',
+      }}>
         {/* Lock icon */}
         <svg width="11" height="13" viewBox="0 0 11 13" fill="none" style={{ flexShrink: 0, opacity: 0.4 }}>
           <rect x="1" y="5.5" width="9" height="7" rx="1.5" stroke="#ebebf5" strokeWidth="1.2" />
           <path d="M3 5.5V3.5a2.5 2.5 0 0 1 5 0v2" stroke="#ebebf5" strokeWidth="1.2" strokeLinecap="round" />
         </svg>
 
-        {/* Static prefix — always visible, same width in both modes */}
-        <span style={{ ...MONO, color: '#ebebf54d', flexShrink: 0, whiteSpace: 'nowrap' }}>
-          claude.ai/artifact&nbsp;&nbsp;#
-        </span>
+        {/* Static "#/" prefix */}
+        <span style={{ ...MONO, color: '#ebebf54d', flexShrink: 0 }}>#/</span>
 
-        {editing ? (
-          <input
-            ref={inputRef}
-            value={draft}
-            onChange={e => setDraft(e.target.value)}
-            onBlur={commit}
-            onKeyDown={e => {
-              if (e.key === 'Enter') commit()
-              if (e.key === 'Escape') setEditing(false)
-            }}
-            style={{
-              ...MONO,
-              flex: 1,
-              minWidth: 0,
-              background: 'transparent',
-              border: 'none',
-              outline: 'none',
-              color: '#ebebf5',
-              padding: 0,
-            }}
-          />
-        ) : (
-          <span style={{
+        {/* Editable path */}
+        <input
+          ref={inputRef}
+          value={value}
+          onChange={e => setValue(e.target.value)}
+          onKeyDown={e => { if (e.key === 'Enter') go() }}
+          spellCheck={false}
+          style={{
             ...MONO,
             flex: 1,
+            minWidth: 0,
+            background: 'transparent',
+            border: 'none',
+            outline: 'none',
             color: '#ebebf5',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}>
-            {route}
-          </span>
-        )}
+            padding: 0,
+          }}
+        />
       </div>
 
-      {/* Go button */}
-      {editing && (
-        <button
-          onMouseDown={e => { e.preventDefault(); commit() }}
-          style={{
-            flexShrink: 0,
-            height: 26,
-            padding: '0 12px',
-            borderRadius: 6,
-            background: '#0a84ff',
-            border: 'none',
-            color: '#fff',
-            fontSize: 12,
-            fontWeight: 600,
-            cursor: 'pointer',
-            letterSpacing: 0.2,
-          }}
-        >
-          Go
-        </button>
-      )}
+      {/* Go button — always visible */}
+      <button
+        onClick={go}
+        style={{
+          flexShrink: 0,
+          height: 26,
+          padding: '0 12px',
+          borderRadius: 6,
+          background: '#0a84ff',
+          border: 'none',
+          color: '#fff',
+          fontSize: 12,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+          fontWeight: 600,
+          cursor: 'pointer',
+          letterSpacing: 0.2,
+        }}
+      >
+        Go
+      </button>
     </div>
   )
 }

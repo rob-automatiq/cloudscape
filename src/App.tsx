@@ -57,6 +57,22 @@ function MetaUrlBar() {
         </svg>
       </button>
 
+      {/* Forward button */}
+      <button
+        onClick={() => navigate(1)}
+        title="Forward"
+        style={{
+          flexShrink: 0, width: 26, height: 26, borderRadius: 6,
+          background: 'transparent', border: '1px solid #3a3a3c',
+          color: '#ebebf5aa', cursor: 'pointer', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', padding: 0,
+        }}
+      >
+        <svg width="8" height="13" viewBox="0 0 8 13" fill="none">
+          <path d="M1 1L7 6.5L1 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
+
       <div style={{
         flex: 1, height: 26, borderRadius: 6, background: '#2c2c2e',
         border: '1px solid #3a3a3c', display: 'flex', alignItems: 'center',

@@ -1,11 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { HashRouter, useLocation, useNavigate } from 'react-router-dom'
+import { HashRouter, useLocation, useNavigate, Routes, Route, Link, useParams } from 'react-router-dom'
 import AppLayout from '@cloudscape-design/components/app-layout'
 import ContentLayout from '@cloudscape-design/components/content-layout'
 import Header from '@cloudscape-design/components/header'
 import Container from '@cloudscape-design/components/container'
 import SpaceBetween from '@cloudscape-design/components/space-between'
 import Box from '@cloudscape-design/components/box'
+import KeyValuePairs from '@cloudscape-design/components/key-value-pairs'
+
+const TASKS: Record<number, string> = {
+  1: 'Eat lunch',
+  2: 'Mow lawn',
+  3: 'Do laundry',
+}
+
+// ── URL bar ────────────────────────────────────────────────────────────────
 
 function MetaUrlBar() {
   const location = useLocation()
@@ -15,14 +24,9 @@ function MetaUrlBar() {
   const route = location.pathname + location.search
   const [value, setValue] = useState(route)
 
-  useEffect(() => {
-    setValue(route)
-  }, [route])
+  useEffect(() => { setValue(route) }, [route])
 
-  const go = () => {
-    navigate(value || '/')
-    inputRef.current?.blur()
-  }
+  const go = () => { navigate(value || '/'); inputRef.current?.blur() }
 
   const MONO: React.CSSProperties = {
     fontFamily: '"SF Mono", "Fira Code", ui-monospace, monospace',
@@ -33,36 +37,16 @@ function MetaUrlBar() {
 
   return (
     <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      zIndex: 10000,
-      height: 40,
-      background: '#1c1c1e',
-      borderBottom: '1px solid #3a3a3c',
-      display: 'flex',
-      alignItems: 'center',
-      padding: '0 12px',
-      gap: 8,
+      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 10000,
+      height: 40, background: '#1c1c1e', borderBottom: '1px solid #3a3a3c',
+      display: 'flex', alignItems: 'center', padding: '0 12px', gap: 8,
     }}>
-      {/* URL pill — full width */}
       <div style={{
-        flex: 1,
-        height: 26,
-        borderRadius: 6,
-        background: '#2c2c2e',
-        border: '1px solid #3a3a3c',
-        display: 'flex',
-        alignItems: 'center',
-        padding: '0 10px',
-        gap: 6,
-        overflow: 'hidden',
+        flex: 1, height: 26, borderRadius: 6, background: '#2c2c2e',
+        border: '1px solid #3a3a3c', display: 'flex', alignItems: 'center',
+        padding: '0 10px', gap: 6, overflow: 'hidden',
       }}>
-        {/* # symbol */}
         <span style={{ ...MONO, color: '#ebebf54d', flexShrink: 0 }}>#</span>
-
-        {/* Editable path */}
         <input
           ref={inputRef}
           value={value}
@@ -70,46 +54,77 @@ function MetaUrlBar() {
           onKeyDown={e => { if (e.key === 'Enter') go() }}
           spellCheck={false}
           style={{
-            ...MONO,
-            flex: 1,
-            minWidth: 0,
-            background: 'transparent',
-            border: 'none',
-            outline: 'none',
-            color: '#ebebf5',
-            padding: 0,
+            ...MONO, flex: 1, minWidth: 0, background: 'transparent',
+            border: 'none', outline: 'none', color: '#ebebf5', padding: 0,
           }}
         />
       </div>
-
-      {/* Go button — always visible */}
-      <button
-        onClick={go}
-        style={{
-          flexShrink: 0,
-          height: 26,
-          padding: '0 12px',
-          borderRadius: 6,
-          background: '#0a84ff',
-          border: 'none',
-          color: '#fff',
-          fontSize: 12,
-          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-          fontWeight: 600,
-          cursor: 'pointer',
-          letterSpacing: 0.2,
-        }}
-      >
-        Go
-      </button>
+      <button onClick={go} style={{
+        flexShrink: 0, height: 26, padding: '0 12px', borderRadius: 6,
+        background: '#0a84ff', border: 'none', color: '#fff', fontSize: 12,
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        fontWeight: 600, cursor: 'pointer', letterSpacing: 0.2,
+      }}>Go</button>
     </div>
   )
 }
 
-function PageContent() {
+// ── Pages ──────────────────────────────────────────────────────────────────
+
+function HomePage() {
   const location = useLocation()
   const route = location.pathname + location.search
+  return (
+    <SpaceBetween size="l">
+      <Container header={<Header variant="h2">Current route</Header>}>
+        <Box variant="code" fontSize="heading-l">#{route}</Box>
+      </Container>
+    </SpaceBetween>
+  )
+}
 
+function TasksPage() {
+  return (
+    <Container header={<Header variant="h2">Tasks</Header>}>
+      <SpaceBetween size="xs">
+        {Object.entries(TASKS).map(([id, name]) => (
+          <Link key={id} to={`/tasks/${id}`} style={{ display: 'block', color: '#0a84ff', textDecoration: 'none', fontSize: 14 }}>
+            {id}. {name}
+          </Link>
+        ))}
+      </SpaceBetween>
+    </Container>
+  )
+}
+
+function TaskDetailPage() {
+  const { id } = useParams<{ id: string }>()
+  const name = id ? TASKS[Number(id)] : undefined
+
+  if (!name) {
+    return (
+      <Container header={<Header variant="h2">Not found</Header>}>
+        <Box color="text-status-error">No task with id {id}.</Box>
+      </Container>
+    )
+  }
+
+  return (
+    <Container header={<Header variant="h2">Task</Header>}>
+      <KeyValuePairs
+        columns={2}
+        items={[
+          { label: 'ID', value: id },
+          { label: 'Name', value: name },
+        ]}
+      />
+    </Container>
+  )
+}
+
+// ── Shell ──────────────────────────────────────────────────────────────────
+
+function PageContent() {
   return (
     <AppLayout
       navigationHide
@@ -122,17 +137,11 @@ function PageContent() {
             </Header>
           }
         >
-          <SpaceBetween size="l">
-            <Container header={<Header variant="h2">Current route</Header>}>
-              <Box variant="code" fontSize="heading-l">#{route}</Box>
-            </Container>
-            <Container header={<Header variant="h2">Getting started</Header>}>
-              <Box color="text-body-secondary">
-                Type a path in the bar above and click Go. Edit{' '}
-                <code>src/App.tsx</code> to start building.
-              </Box>
-            </Container>
-          </SpaceBetween>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/tasks" element={<TasksPage />} />
+            <Route path="/tasks/:id" element={<TaskDetailPage />} />
+          </Routes>
         </ContentLayout>
       }
     />

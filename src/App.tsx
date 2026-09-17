@@ -7,6 +7,7 @@ import Container from '@cloudscape-design/components/container'
 import SpaceBetween from '@cloudscape-design/components/space-between'
 import Box from '@cloudscape-design/components/box'
 import KeyValuePairs from '@cloudscape-design/components/key-value-pairs'
+import TopNavigation from '@cloudscape-design/components/top-navigation'
 
 const TASKS: Record<number, string> = {
   1: 'Eat lunch',
@@ -101,6 +102,30 @@ function MetaUrlBar() {
   )
 }
 
+// ── Top navigation ────────────────────────────────────────────────────────
+
+function AppTopNavigation() {
+  const navigate = useNavigate()
+  return (
+    <div style={{ position: 'fixed', top: 40, left: 0, right: 0, zIndex: 9999 }}>
+      <TopNavigation
+        identity={{ title: 'Cloudscape App', href: '#/' }}
+        utilities={[
+          {
+            type: 'button', variant: 'link', text: 'Home', href: '#/',
+            onFollow: e => { e.preventDefault(); navigate('/') },
+          },
+          {
+            type: 'button', variant: 'link', text: 'Tasks', href: '#/tasks',
+            onFollow: e => { e.preventDefault(); navigate('/tasks') },
+          },
+        ]}
+        i18nStrings={{ overflowMenuTriggerText: 'More', overflowMenuTitleText: 'More' }}
+      />
+    </div>
+  )
+}
+
 // ── Pages ──────────────────────────────────────────────────────────────────
 
 function HomePage() {
@@ -184,7 +209,8 @@ export default function App() {
   return (
     <HashRouter>
       <MetaUrlBar />
-      <div style={{ paddingTop: 40 }}>
+      <AppTopNavigation />
+      <div style={{ paddingTop: 40 + 56 }}>
         <PageContent />
       </div>
     </HashRouter>

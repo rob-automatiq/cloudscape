@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { HashRouter, useLocation, useNavigate } from 'react-router-dom'
 import AppLayout from '@cloudscape-design/components/app-layout'
 import ContentLayout from '@cloudscape-design/components/content-layout'
@@ -33,6 +33,12 @@ function MetaUrlBar() {
     setEditing(true)
   }
 
+  const MONO: React.CSSProperties = {
+    fontFamily: '"SF Mono", "Fira Code", ui-monospace, monospace',
+    fontSize: 12,
+    letterSpacing: 0.2,
+  }
+
   return (
     <div style={{
       position: 'fixed',
@@ -50,18 +56,11 @@ function MetaUrlBar() {
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
       userSelect: 'none',
     }}>
-      {/* Traffic lights placeholder */}
-      <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
-        {['#ff5f57', '#febc2e', '#28c840'].map((c, i) => (
-          <div key={i} style={{ width: 12, height: 12, borderRadius: '50%', background: c }} />
-        ))}
-      </div>
-
       {/* URL pill */}
       <div
         style={{
           flex: 1,
-          maxWidth: 560,
+          maxWidth: 600,
           margin: '0 auto',
           height: 26,
           borderRadius: 6,
@@ -72,14 +71,20 @@ function MetaUrlBar() {
           padding: '0 10px',
           cursor: editing ? 'text' : 'pointer',
           overflow: 'hidden',
+          gap: 6,
         }}
         onClick={!editing ? startEditing : undefined}
       >
         {/* Lock icon */}
-        <svg width="11" height="13" viewBox="0 0 11 13" fill="none" style={{ flexShrink: 0, marginRight: 6, opacity: 0.45 }}>
+        <svg width="11" height="13" viewBox="0 0 11 13" fill="none" style={{ flexShrink: 0, opacity: 0.4 }}>
           <rect x="1" y="5.5" width="9" height="7" rx="1.5" stroke="#ebebf5" strokeWidth="1.2" />
           <path d="M3 5.5V3.5a2.5 2.5 0 0 1 5 0v2" stroke="#ebebf5" strokeWidth="1.2" strokeLinecap="round" />
         </svg>
+
+        {/* Static prefix — always visible, same width in both modes */}
+        <span style={{ ...MONO, color: '#ebebf54d', flexShrink: 0, whiteSpace: 'nowrap' }}>
+          claude.ai/artifact&nbsp;&nbsp;#
+        </span>
 
         {editing ? (
           <input
@@ -92,36 +97,51 @@ function MetaUrlBar() {
               if (e.key === 'Escape') setEditing(false)
             }}
             style={{
+              ...MONO,
               flex: 1,
+              minWidth: 0,
               background: 'transparent',
               border: 'none',
               outline: 'none',
               color: '#ebebf5',
-              fontSize: 12,
-              fontFamily: '"SF Mono", "Fira Code", monospace',
-              letterSpacing: 0.2,
+              padding: 0,
             }}
           />
         ) : (
           <span style={{
+            ...MONO,
             flex: 1,
-            fontSize: 12,
-            color: '#ebebf599',
-            fontFamily: '"SF Mono", "Fira Code", monospace',
+            color: '#ebebf5',
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
-            letterSpacing: 0.2,
           }}>
-            <span style={{ color: '#ebebf54d' }}>claude.ai/artifact&nbsp;&nbsp;</span>
-            <span style={{ color: '#ebebf5cc' }}>#</span>
-            <span style={{ color: '#ebebf5' }}>{route}</span>
+            {route}
           </span>
         )}
       </div>
 
-      {/* Right spacer to balance traffic lights */}
-      <div style={{ width: 42, flexShrink: 0 }} />
+      {/* Go button */}
+      {editing && (
+        <button
+          onMouseDown={e => { e.preventDefault(); commit() }}
+          style={{
+            flexShrink: 0,
+            height: 26,
+            padding: '0 12px',
+            borderRadius: 6,
+            background: '#0a84ff',
+            border: 'none',
+            color: '#fff',
+            fontSize: 12,
+            fontWeight: 600,
+            cursor: 'pointer',
+            letterSpacing: 0.2,
+          }}
+        >
+          Go
+        </button>
+      )}
     </div>
   )
 }

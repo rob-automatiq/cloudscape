@@ -116,6 +116,9 @@ function MetaUrlBar() {
 }
 
 function PageContent() {
+  const location = useLocation()
+  const route = location.pathname + location.search
+
   return (
     <AppLayout
       navigationHide
@@ -129,9 +132,12 @@ function PageContent() {
           }
         >
           <SpaceBetween size="l">
+            <Container header={<Header variant="h2">Current route</Header>}>
+              <Box variant="code" fontSize="heading-l">#{route}</Box>
+            </Container>
             <Container header={<Header variant="h2">Getting started</Header>}>
               <Box color="text-body-secondary">
-                Click the URL bar above to navigate to any route. Edit{' '}
+                Type a path in the bar above and click Go. Edit{' '}
                 <code>src/App.tsx</code> to start building.
               </Box>
             </Container>

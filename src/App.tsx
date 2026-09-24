@@ -114,15 +114,54 @@ function CreateTaskModal({ visible, onDismiss, onCreate }: {
   )
 }
 
-function TasksPage({ tasks, loading, browserOnly, onCreate, onDoneChange }: {
+function DeleteTaskModal({ task, onDismiss, onDelete }: {
+  task: Task | null
+  onDismiss: () => void
+  onDelete: (id: string) => Promise<void>
+}) {
+  const [deleting, setDeleting] = useState(false)
+  const confirm = async () => {
+    if (!task || deleting) return
+    setDeleting(true)
+    try {
+      await onDelete(task.id)
+      onDismiss()
+    } finally {
+      setDeleting(false)
+    }
+  }
+
+  return (
+    <Modal
+      visible={task !== null}
+      onDismiss={onDismiss}
+      header="Delete task"
+      closeAriaLabel="Close"
+      footer={
+        <Box float="right">
+          <SpaceBetween direction="horizontal" size="xs">
+            <Button variant="link" onClick={onDismiss}>Cancel</Button>
+            <Button variant="primary" loading={deleting} onClick={confirm}>Delete</Button>
+          </SpaceBetween>
+        </Box>
+      }
+    >
+      Permanently delete <b>{task?.name}</b>? You can't undo this action.
+    </Modal>
+  )
+}
+
+function TasksPage({ tasks, loading, browserOnly, onCreate, onDoneChange, onDelete }: {
   tasks: Task[]
   loading: boolean
   browserOnly: boolean
   onCreate: (name: string) => Promise<void>
   onDoneChange: (id: string, done: boolean) => void
+  onDelete: (id: string) => Promise<void>
 }) {
   const navigate = useNavigate()
   const [creating, setCreating] = useState(false)
+  const [deleting, setDeleting] = useState<Task | null>(null)
   const createButton = <Button variant="primary" onClick={() => setCreating(true)}>Create task</Button>
 
   return (
@@ -176,9 +215,19 @@ function TasksPage({ tasks, loading, browserOnly, onCreate, onDoneChange }: {
               </Link>
             ),
           },
+          {
+            id: 'actions',
+            header: 'Actions',
+            cell: task => (
+              <Button variant="inline-link" ariaLabel={`Delete ${task.name}`} onClick={() => setDeleting(task)}>
+                Delete
+              </Button>
+            ),
+          },
         ]}
       />
       <CreateTaskModal visible={creating} onDismiss={() => setCreating(false)} onCreate={onCreate} />
+      <DeleteTaskModal task={deleting} onDismiss={() => setDeleting(null)} onDelete={onDelete} />
     </>
   )
 }
@@ -257,6 +306,14 @@ function PageContent() {
       throw e
     }
   }
+  const deleteTask = async (id: string) => {
+    try {
+      await store.current?.remove(id)
+    } catch (e) {
+      showError(saveErrorMessage(e as StoreError))
+      throw e
+    }
+  }
   const setDone = (id: string, done: boolean) => {
     store.current?.setDone(id, done).catch(e => showError(saveErrorMessage(e as StoreError)))
   }
@@ -278,7 +335,7 @@ function PageContent() {
             <Route path="/" element={<HomePage />} />
             <Route
               path="/tasks"
-              element={<TasksPage tasks={tasks} loading={loading} browserOnly={browserOnly} onCreate={createTask} onDoneChange={setDone} />}
+              element={<TasksPage tasks={tasks} loading={loading} browserOnly={browserOnly} onCreate={createTask} onDoneChange={setDone} onDelete={deleteTask} />}
             />
             <Route path="/tasks/:id" element={<TaskDetailPage tasks={tasks} loading={loading} />} />
           </Routes>

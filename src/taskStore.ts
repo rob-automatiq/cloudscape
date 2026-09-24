@@ -12,6 +12,7 @@ export interface TaskStore {
   subscribe(onTasks: (tasks: Task[]) => void, onError: (error: StoreError) => void): () => void
   create(name: string): Promise<void>
   setDone(id: string, done: boolean): Promise<void>
+  remove(id: string): Promise<void>
 }
 
 export interface StoreError {
@@ -24,6 +25,7 @@ interface DbDocSnapshot { id: string; data(): Record<string, unknown> | undefine
 interface DbDocRef {
   set(data: Record<string, unknown>): Promise<void>
   update(data: Record<string, unknown>): Promise<void>
+  delete(): Promise<void>
 }
 interface DbCollection {
   doc(id: string): DbDocRef
@@ -74,6 +76,9 @@ function artifactDbStore(db: Db): TaskStore {
     setDone(id, done) {
       return serial(id, () => tasks.doc(id).update({ done }))
     },
+    remove(id) {
+      return serial(id, () => tasks.doc(id).delete())
+    },
   }
 }
 
@@ -113,6 +118,9 @@ function browserStore(): TaskStore {
     },
     async setDone(id, done) {
       save(current.map(t => (t.id === id ? { ...t, done } : t)))
+    },
+    async remove(id) {
+      save(current.filter(t => t.id !== id))
     },
   }
 }

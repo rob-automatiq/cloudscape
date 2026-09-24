@@ -76,6 +76,8 @@ function formatDue(iso: string | null) {
   return date ? `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}` : '-'
 }
 
+const isCompleteDate = (value: string) => value === '' || /^\d{4}-\d{2}-\d{2}$/.test(value)
+
 function dueError(value: string) {
   if (!value) return undefined
   const date = parseIsoDate(value)
@@ -222,6 +224,9 @@ function TasksPage({ tasks, loading, browserOnly, onCreate, onDoneChange, onDueC
   const navigate = useNavigate()
   const [creating, setCreating] = useState(false)
   const [deleting, setDeleting] = useState<Task | null>(null)
+  // The date picker reports partial input on every keystroke. Showing an error for it would resize the
+  // row while typing, so an incomplete date only gets an error once it has been submitted.
+  const submittedPartialDue = useRef<string | null>(null)
   const createButton = <Button variant="primary" onClick={() => setCreating(true)}>Create task</Button>
 
   return (
@@ -246,7 +251,10 @@ function TasksPage({ tasks, loading, browserOnly, onCreate, onDoneChange, onDueC
           if (column.id !== 'due' || newValue === undefined) return
           const due = newValue as string
           // The table shows validation errors but doesn't block submitting; throwing keeps the editor open.
-          if (dueError(due)) throw new Error(dueError(due))
+          if (dueError(due)) {
+            if (!isCompleteDate(due)) submittedPartialDue.current = due
+            throw new Error(dueError(due))
+          }
           await onDueChange(task.id, due || null)
         }}
         ariaLabels={{
@@ -303,7 +311,11 @@ function TasksPage({ tasks, loading, browserOnly, onCreate, onDoneChange, onDueC
               ariaLabel: 'Due date',
               editIconAriaLabel: 'editable',
               errorIconAriaLabel: 'Due date error',
-              validation: (_task, value) => (value === undefined ? undefined : dueError(value as string)),
+              validation: (_task, value) => {
+                if (value === undefined) return undefined
+                const due = value as string
+                return isCompleteDate(due) || due === submittedPartialDue.current ? dueError(due) : undefined
+              },
               editingCell: (task, { currentValue, setValue }) => (
                 <DueDatePicker value={(currentValue as string | undefined) ?? task.due ?? ''} onChange={setValue} />
               ),

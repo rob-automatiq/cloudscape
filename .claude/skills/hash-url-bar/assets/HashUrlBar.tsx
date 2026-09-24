@@ -115,7 +115,7 @@ export default function HashUrlBar() {
 
         <button onClick={go} style={{
           flexShrink: 0, height: 26, padding: '0 12px', borderRadius: 6,
-          background: '#0a84ff', border: 'none', color: '#fff', fontSize: 12,
+          background: '#ffffff', border: 'none', color: '#1c1c1e', fontSize: 12,
           fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
           fontWeight: 600, cursor: 'pointer', letterSpacing: 0.2,
         }}>

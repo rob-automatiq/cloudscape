@@ -1,0 +1,68 @@
+import React, { useRef, useState } from 'react';
+import { PropertyFilter } from '@cloudscape-design/components';
+import { fetchOptions } from './async-api';
+import { i18nStrings, filteringProperties } from './properties';
+
+const AsyncPropertyFilter = () => {
+  const pageNumber = useRef();
+  const request = useRef();
+  const [query, setQuery] = useState({ tokens: [], operation: 'and' });
+  const [filteringOptions, setFilteringOptions] = useState([]);
+  const [status, setStatus] = useState('pending');
+  const fetchData = async (filteringText, filteringProperty) => {
+    try {
+      const { items, hasNext } = await fetchOptions({
+        filteringProperty,
+        filteringText,
+        pageNumber: pageNumber.current,
+      });
+      if (
+        !request.current ||
+        request.current.filteringText !== filteringText ||
+        request.current.filteringProperty !== filteringProperty
+      ) {
+        // there is another request in progress, discard the result of this one
+        return;
+      }
+      setFilteringOptions(pageNumber.current === 1 ? items : filteringOptions.concat(items));
+      setStatus(hasNext ? 'pending' : 'finished');
+    } catch (error) {
+      setStatus('error');
+    }
+  };
+
+  const handleLoadItems = ({ detail: { filteringProperty, filteringText, firstPage, samePage } }) => {
+    setStatus('loading');
+    if (firstPage) {
+      pageNumber.current = 0;
+      setFilteringOptions([]);
+    }
+    if (!samePage) {
+      pageNumber.current++;
+    }
+    request.current = {
+      filteringProperty,
+      filteringText,
+    };
+    fetchData(filteringText, filteringProperty);
+  };
+
+  return (
+    <PropertyFilter
+      query={query}
+      filteringProperties={filteringProperties}
+      filteringOptions={filteringOptions}
+      onChange={({ detail }) => setQuery(detail)}
+      filteringLoadingText="Loading suggestions"
+      filteringErrorText="Error fetching suggestions."
+      filteringRecoveryText="Retry"
+      filteringFinishedText="End of results"
+      filteringEmpty="No suggestions found"
+      filteringStatusType={status}
+      i18nStrings={i18nStrings}
+      onLoadItems={handleLoadItems}
+    />
+  );
+};
+
+export default AsyncPropertyFilter;

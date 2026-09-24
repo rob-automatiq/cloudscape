@@ -1,0 +1,79 @@
+import React from 'react';
+import { Autosuggest } from '@cloudscape-design/components';
+import { fetchSecurityGroups } from '../security-group-selects/security-groups-provider';
+
+export default class CountriesAutosuggest extends React.Component {
+  pageNumber = null;
+  filteringText = '';
+  state = {
+    value: '',
+    options: [],
+    status: 'pending',
+  };
+
+  fetchData = async () => {
+    try {
+      const { filteringText, pageNumber } = this;
+      const { items, hasNext } = await fetchSecurityGroups({
+        filteringText,
+        pageNumber,
+      });
+      if (this.filteringText !== filteringText) {
+        // there is another request in progress, discard the result of this one
+        return;
+      }
+      this.setState({
+        status: hasNext ? 'pending' : 'finished',
+        options: this.pageNumber === 1 ? items : this.state.options.concat(items),
+      });
+    } catch (error) {
+      this.setState({
+        status: 'error',
+      });
+    }
+  };
+
+  handleLoadItems = ({ detail: { filteringText, firstPage, samePage } }) => {
+    let { options } = this.state;
+    this.filteringText = filteringText;
+    if (firstPage) {
+      this.pageNumber = 0;
+      options = [];
+    }
+    if (!samePage) {
+      this.pageNumber++;
+    }
+    this.setState({
+      options,
+      status: 'loading',
+    });
+    this.fetchData();
+  };
+
+  handleChange = event => {
+    this.setState({ value: event.detail.value });
+  };
+
+  enteredTextLabel = value => `Use: "${value}"`;
+
+  render() {
+    const { status, value, options } = this.state;
+    return (
+      <Autosuggest
+        value={value}
+        placeholder="Enter a security group"
+        loadingText="Loading security groups"
+        errorText="Error fetching results."
+        recoveryText="Retry"
+        finishedText={this.filteringText ? `End of "${this.filteringText}" results` : 'End of all results'}
+        empty="No security groups found"
+        statusType={status}
+        options={options}
+        filteringType="manual"
+        enteredTextLabel={this.enteredTextLabel}
+        onChange={this.handleChange}
+        onLoadItems={this.handleLoadItems}
+      />
+    );
+  }
+}

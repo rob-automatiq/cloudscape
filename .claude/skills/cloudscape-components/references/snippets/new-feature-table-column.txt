@@ -1,0 +1,37 @@
+import React from 'react';
+
+import { Table } from '@cloudscape-design/components';
+
+interface Distribution {
+  id: string;
+  domainName: string;
+  region: string;
+}
+
+const items: Distribution[] = [
+  { id: 'D1', domainName: 'example1.cloudfront.net', region: 'us-east-1' },
+  { id: 'D2', domainName: 'example2.cloudfront.net', region: 'us-west-2' },
+  { id: 'D3', domainName: 'example3.cloudfront.net', region: 'eu-west-1' },
+];
+
+export default function NewFeatureTableColumn() {
+  return (
+    <Table
+      variant="container"
+      items={items}
+      columnDefinitions={[
+        { id: 'id', header: 'Distribution ID', cell: item => item.id },
+        { id: 'domainName', header: 'Domain name', cell: item => item.domainName },
+        {
+          id: 'region',
+          header: (
+            <>
+              Region - <em>new</em>
+            </>
+          ),
+          cell: item => item.region,
+        },
+      ]}
+    />
+  );
+}

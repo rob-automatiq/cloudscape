@@ -1,0 +1,29 @@
+import React from 'react';
+import { Box, Icon, Popover, SpaceBetween, StatusIndicator } from '@cloudscape-design/components';
+import AccessDeniedAlertContent, { PermissionContent } from './builder';
+
+export default function PopoverAccessDenied() {
+  return (
+    <Box color="text-status-error">
+      <Popover
+        size="large"
+        content={
+          <SpaceBetween size="xxs">
+            <SpaceBetween direction="horizontal" size="xs">
+              <Box color="text-status-error">
+                <Icon name="status-negative" />
+              </Box>
+              <Box fontWeight="bold">Access denied</Box>
+            </SpaceBetween>
+            <PermissionContent />
+            <SpaceBetween size="m">
+              <AccessDeniedAlertContent hasAlphabeticOrder={false} isPopover />
+            </SpaceBetween>
+          </SpaceBetween>
+        }
+      >
+        <StatusIndicator type="error">Access denied</StatusIndicator>
+      </Popover>
+    </Box>
+  );
+}

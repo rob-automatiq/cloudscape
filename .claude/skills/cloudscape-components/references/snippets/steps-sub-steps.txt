@@ -1,0 +1,142 @@
+import React from 'react';
+import TreeView from '@cloudscape-design/components/tree-view';
+import Steps from '@cloudscape-design/components/steps';
+import List from '@cloudscape-design/components/list';
+import Header from '@cloudscape-design/components/header';
+import Link from '@cloudscape-design/components/link';
+import Container from '@cloudscape-design/components/container';
+import StatusIndicator, { StatusIndicatorProps } from '@cloudscape-design/components/status-indicator';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import Divider from '@cloudscape-design/components/divider';
+
+interface Unit {
+  id: string;
+  label: string;
+  type: StatusIndicatorProps.Type;
+}
+
+interface Item {
+  id: string;
+  label?: string;
+  type?: StatusIndicatorProps.Type;
+  statusCounts?: { type: StatusIndicatorProps.Type; count: number }[];
+  embed?: React.ReactNode;
+  embedAriaLabel?: string;
+  children?: Item[];
+}
+
+export default function SubSteps() {
+  const [expandedItems, setExpandedItems] = React.useState(['2', '3']);
+
+  return (
+    <Container
+      header={
+        <Header variant="h3" info={<Link variant="info">Info</Link>}>
+          Personalized recommendation
+        </Header>
+      }
+    >
+      <TreeView<Item>
+        connectorLines="vertical"
+        items={[
+          {
+            id: '1',
+            label: 'Evaluated',
+            type: 'success',
+          },
+          {
+            id: '2',
+            label: 'Scanned 5 stack templates',
+            type: 'success',
+            statusCounts: [{ type: 'success', count: 5 }],
+            children: [
+              {
+                id: '2.embed',
+                embedAriaLabel: 'Scanned stack templates',
+                embed: (
+                  <List<Unit>
+                    ariaLabel="Scanned stack templates"
+                    disablePaddings={true}
+                    items={[
+                      { id: '2.1', label: 'vpc-baseline.yaml', type: 'success' },
+                      { id: '2.2', label: 'eks-cluster.yaml', type: 'success' },
+                      { id: '2.3', label: 'node-group.yaml', type: 'success' },
+                      { id: '2.4', label: 'alb-ingress.yaml', type: 'success' },
+                      { id: '2.5', label: 'observability.yaml', type: 'success' },
+                    ]}
+                    renderItem={unit => ({
+                      id: unit.id,
+                      content: (
+                        <StatusIndicator type={unit.type} iconAriaLabel={unit.type}>
+                          {unit.label}
+                        </StatusIndicator>
+                      ),
+                    })}
+                  />
+                ),
+              },
+            ],
+          },
+          {
+            id: '3',
+            label: 'Checking node-18 (eksclu-node-09876)',
+            type: 'in-progress',
+            statusCounts: [
+              { type: 'in-progress', count: 1 },
+              { type: 'success', count: 1 },
+            ],
+            children: [
+              {
+                id: '3.embed',
+                embedAriaLabel: 'Node health checks',
+                embed: (
+                  <Steps
+                    ariaLabel="Node health checks"
+                    steps={[
+                      { status: 'success', statusIconAriaLabel: 'Success', header: 'Kubelet version' },
+                      { status: 'loading', statusIconAriaLabel: 'Loading', header: 'Disk pressure' },
+                      { status: 'pending', statusIconAriaLabel: 'Pending', header: 'Container runtime' },
+                    ]}
+                  />
+                ),
+              },
+            ],
+          },
+          {
+            id: '4',
+            label: 'Summarize findings',
+            type: 'pending',
+          },
+        ]}
+        expandedItems={expandedItems}
+        renderItem={item =>
+          item.embed
+            ? { content: item.embed, announcementLabel: item.embedAriaLabel! }
+            : {
+                content: (
+                  <SpaceBetween direction="horizontal" size="xs" alignItems="center">
+                    <StatusIndicator type={item.type!} iconAriaLabel={item.type!}>
+                      {item.label}
+                    </StatusIndicator>
+                    {item.statusCounts && <Divider orientation="vertical" />}
+                    {item.statusCounts?.map((s, i) => (
+                      <StatusIndicator key={i} type={s.type} iconAriaLabel={s.type}>
+                        {s.count}
+                      </StatusIndicator>
+                    ))}
+                  </SpaceBetween>
+                ),
+              }
+        }
+        getItemId={item => item.id}
+        getItemChildren={item => item.children}
+        onItemToggle={({ detail }) =>
+          setExpandedItems(prev =>
+            detail.expanded ? [...prev, detail.item.id] : prev.filter(id => id !== detail.item.id)
+          )
+        }
+        ariaLabel="Personalized recommendation steps"
+      />
+    </Container>
+  );
+}

@@ -1,0 +1,16 @@
+import React from 'react';
+import { Box, LiveRegion } from '@cloudscape-design/components';
+import LoadingBar from '@cloudscape-design/chat-components/loading-bar';
+
+const GenAILoading = () => {
+  return (
+    <LiveRegion>
+      <Box margin={{ bottom: 'xs', left: 'l' }} color="text-body-secondary">
+        Generating a response
+      </Box>
+      <LoadingBar variant="gen-ai" />
+    </LiveRegion>
+  );
+};
+
+export default GenAILoading;

@@ -1,0 +1,94 @@
+import React, { useState } from 'react';
+import { LiveRegion, Toggle } from '@cloudscape-design/components';
+import Box from '@cloudscape-design/components/box';
+import ButtonGroup from '@cloudscape-design/components/button-group';
+import Container from '@cloudscape-design/components/container';
+import Header from '@cloudscape-design/components/header';
+import ItemCard from '@cloudscape-design/components/item-card';
+import Skeleton from '@cloudscape-design/components/skeleton';
+
+export default function SkeletonCard() {
+  const [loading, setLoading] = useState(true);
+
+  return (
+    <Container
+      header={
+        <Header
+          variant="h2"
+          headingTagOverride="h3"
+          actions={
+            <Toggle onChange={() => setLoading(!loading)} checked={loading}>
+              Show skeleton
+            </Toggle>
+          }
+        >
+          Demo: skeleton loading item card
+        </Header>
+      }
+    >
+      <LiveRegion>
+        {loading ? (
+          <ItemCard
+            actions={
+              <ButtonGroup
+                variant="icon"
+                items={[
+                  {
+                    type: 'icon-button',
+                    id: 'edit',
+                    iconName: 'edit',
+                    text: 'Edit',
+                    disabled: true,
+                  },
+                  {
+                    type: 'icon-button',
+                    id: 'delete',
+                    iconName: 'remove',
+                    text: 'Delete',
+                    disabled: true,
+                  },
+                ]}
+              />
+            }
+            header={<Skeleton width="30%" variant="text-heading-m" />}
+            description={<Skeleton width="40%" />}
+          >
+            <Box variant="p">
+              <Skeleton />
+              <Skeleton width="60%" />
+            </Box>
+          </ItemCard>
+        ) : (
+          <ItemCard
+            actions={
+              <ButtonGroup
+                variant="icon"
+                items={[
+                  {
+                    type: 'icon-button',
+                    id: 'edit',
+                    iconName: 'edit',
+                    text: 'Edit',
+                  },
+                  {
+                    type: 'icon-button',
+                    id: 'delete',
+                    iconName: 'remove',
+                    text: 'Delete',
+                  },
+                ]}
+              />
+            }
+            header="Item card header"
+            description="Item card description"
+          >
+            <Box variant="p">
+              This is the main content of the item card. It displays the detailed information about the item when the
+              content has finished loading and is ready for user interaction.
+            </Box>
+          </ItemCard>
+        )}
+      </LiveRegion>
+    </Container>
+  );
+}

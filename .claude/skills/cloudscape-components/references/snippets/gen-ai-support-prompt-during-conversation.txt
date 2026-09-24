@@ -1,0 +1,80 @@
+import Container from '@cloudscape-design/components/container';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import ChatBubble, { ChatBubbleProps } from '@cloudscape-design/chat-components/chat-bubble';
+import SupportPromptGroup, { type SupportPromptGroupProps } from '@cloudscape-design/chat-components/support-prompt-group';
+import { genAiAvatar, userAvatar, userName } from '../genai-common/avatars';
+import CustomGenAIChatFooter from '../gen-ai-response-regeneration/custom-gen-ai-chat-footer';
+import { useState } from 'react';
+import '../genai-common/styles.scss';
+
+export default function GenAiSupportPromptDuringConversation() {
+  const [chatHistory, setChatHistory] = useState([
+    {
+      avatar: genAiAvatar,
+      type: 'incoming',
+      ariaLabel: 'AI Assistant chat initiation message',
+      message: 'How can I help?',
+    },
+    {
+      avatar: userAvatar,
+      type: 'outgoing',
+      ariaLabel: `${userName} at 05:37:30pm`,
+      message: 'My AWS bill increased by 30% last month and I need to understand why',
+    },
+    {
+      avatar: genAiAvatar,
+      type: 'incoming',
+      ariaLabel: 'AI Assistant response',
+      message:
+        "I've analyzed your billing data and identified cost increases across multiple regions and services. To help you investigate further, I can generate a comprehensive cost report covering both EC2 and S3, or create a workflow one service at a time.",
+    },
+  ]);
+  const items: SupportPromptGroupProps.Item[] = [
+    { text: 'Create comprehensive cost report', id: 'create-comprehensive-cost-report' },
+    { text: 'Create individual cost report for my service', id: 'create-individual-cost-report-for-service' },
+  ];
+  const itemMessages: Record<string, string> = {
+    'create-comprehensive-cost-report': 'Create comprehensive cost report',
+    'create-individual-cost-report-for-service': 'Create individual cost report for my service',
+  };
+
+  return (
+    <Container footer={<CustomGenAIChatFooter actionButtonIconName="send" actionButtonAriaLabel="Send message" />}>
+      <div className="chat-container">
+        <SpaceBetween size="xs">
+          {chatHistory.map((message, index) => {
+            return (
+              <ChatBubble
+                key={index}
+                avatar={message.avatar}
+                type={message.type as ChatBubbleProps.Type}
+                ariaLabel={message.ariaLabel}
+              >
+                {message.message}
+              </ChatBubble>
+            );
+          })}
+          {chatHistory.length === 3 ? (
+            <div className="chat-bubble-indentation">
+              <SupportPromptGroup
+                ariaLabel="Suggested prompts"
+                onItemClick={({ detail }) => {
+                  setChatHistory(prevChatHistory => [
+                    ...prevChatHistory,
+                    {
+                      avatar: userAvatar,
+                      type: 'outgoing',
+                      ariaLabel: `${userName} at 05:37:30pm`,
+                      message: itemMessages[detail.id] ?? '',
+                    },
+                  ]);
+                }}
+                items={items}
+              />
+            </div>
+          ) : null}
+        </SpaceBetween>
+      </div>
+    </Container>
+  );
+}

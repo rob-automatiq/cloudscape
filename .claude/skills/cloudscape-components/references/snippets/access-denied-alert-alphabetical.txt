@@ -1,0 +1,82 @@
+/* eslint-disable react/no-unescaped-entities */
+import { Alert, Box, Button, ExpandableSection, Link, SpaceBetween } from '@cloudscape-design/components';
+import * as React from 'react';
+import './index.scss';
+
+interface AccessDeniedBuilderProps {
+  isExpandable?: boolean;
+  hasAlphabeticOrder?: boolean;
+  isInPopOver?: boolean;
+}
+
+interface AccessDeniedAlertContentProps {
+  hasAlphabeticOrder: boolean;
+  hasButton?: boolean;
+  isPopover?: boolean;
+}
+export default function AccessDeniedAlertContent({
+  hasAlphabeticOrder,
+  hasButton = true,
+  isPopover = false,
+}: AccessDeniedAlertContentProps) {
+  const startLetter = 'A';
+  const items = [
+    'User: [arn:aws:iam::123456789000:user/awsgenericuser]',
+    'Service: [AWSOrganizations]',
+    'Action: [ListAccounts]',
+    'On resource(s): [arn:aws:S3:us-east-1:09876543211234567890]',
+    'Context: [no identity-based policy allows the AWSOrganizations:ListAccounts action.]',
+  ];
+  return (
+    <div className={`access-denied-alert-wrapper ${isPopover ? 'access-denied-alert-wrapper--popover' : ''}`}>
+      <div className="access-denied-alert-wrapper__box">
+        <SpaceBetween size="xxxs">
+          {items.map((item, index) => (
+            <Box key={index} variant="code">
+              {hasAlphabeticOrder ? String.fromCharCode(startLetter.charCodeAt(0) + index) + ') ' : ''}
+              {item}
+            </Box>
+          ))}
+        </SpaceBetween>
+      </div>
+      {hasButton && (
+        <div className="access-denied-alert-wrapper__button">
+          <Button iconName="copy">Copy</Button>
+        </div>
+      )}
+    </div>
+  );
+}
+export function PermissionContent() {
+  return (
+    <div>
+      You don't have permission to [AWSOrganizations:ListAccounts]. To request access, copy the following text and send
+      it to your AWS administrator.{' '}
+      <Link external href="#">
+        Learn more about troubleshooting access denied errors.
+      </Link>
+    </div>
+  );
+}
+
+export function AccessDeniedBuilder({ hasAlphabeticOrder, isExpandable }: AccessDeniedBuilderProps) {
+  return function Component() {
+    return (
+      <Alert statusIconAriaLabel="Error" type="error" {...(!isExpandable ? { header: 'Access denied' } : null)}>
+        {isExpandable ? (
+          <ExpandableSection variant="navigation" defaultExpanded headerText="Access denied">
+            <SpaceBetween size="s">
+              <PermissionContent />
+              <AccessDeniedAlertContent hasAlphabeticOrder={!!hasAlphabeticOrder} />
+            </SpaceBetween>
+          </ExpandableSection>
+        ) : (
+          <SpaceBetween size="s">
+            <PermissionContent />
+            <AccessDeniedAlertContent hasAlphabeticOrder={!!hasAlphabeticOrder} />
+          </SpaceBetween>
+        )}
+      </Alert>
+    );
+  };
+}

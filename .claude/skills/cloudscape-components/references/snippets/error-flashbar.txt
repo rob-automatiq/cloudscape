@@ -1,0 +1,24 @@
+import { Button, Flashbar } from '@cloudscape-design/components';
+import React, { useId } from 'react';
+
+const Snippet = () => {
+  const id = useId();
+  return (
+    <Flashbar
+      items={[
+        {
+          statusIconAriaLabel: 'Error',
+          type: 'error',
+          header: 'Failed to delete instance id-4890f83e',
+          action: <Button>View instance</Button>,
+          dismissible: true,
+          dismissLabel: 'Close',
+          id: id,
+          content: 'This instance is still running. Stop the instance and try deleting again.',
+        },
+      ]}
+    />
+  );
+};
+
+export default Snippet;

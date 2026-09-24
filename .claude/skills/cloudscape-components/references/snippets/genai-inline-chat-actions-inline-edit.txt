@@ -1,0 +1,107 @@
+import React, { useState } from 'react';
+import Box from '@cloudscape-design/components/box';
+import Button from '@cloudscape-design/components/button';
+import Container from '@cloudscape-design/components/container';
+import Header from '@cloudscape-design/components/header';
+import Input from '@cloudscape-design/components/input';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import StatusIndicator from '@cloudscape-design/components/status-indicator';
+import ChatBubble from '@cloudscape-design/chat-components/chat-bubble';
+import { genAiAvatar, genAiName, userAvatar, userName } from '../genai-common/avatars';
+import CustomGenAIChatFooter from '../gen-ai-response-regeneration/custom-gen-ai-chat-footer';
+import '../genai-common/styles.scss';
+import './styles.scss';
+
+export default function GenAiInlineChatActionsInlineEdit() {
+  const [prompt, setPrompt] = useState('');
+  const [projectName, setProjectName] = useState('FreelancerHub');
+  const [editValue, setEditValue] = useState('FreelancerHub');
+  const [editing, setEditing] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleEdit = () => {
+    setEditValue(projectName);
+    setEditing(true);
+    setError('');
+  };
+
+  const handleConfirm = () => {
+    if (!editValue.trim()) {
+      setError('Project name is required.');
+      return;
+    }
+    setProjectName(editValue);
+    setEditing(false);
+    setError('');
+  };
+
+  const handleCancel = () => {
+    setEditing(false);
+    setError('');
+  };
+
+  return (
+    <Container
+      header={<Header variant="h3">Generative AI assistant</Header>}
+      footer={
+        <CustomGenAIChatFooter
+          actionButtonIconName="send"
+          actionButtonAriaLabel="Send message"
+          message={prompt}
+          onSendMessage={setPrompt}
+        />
+      }
+    >
+      <div role="region" aria-label="Chat" className="chat-region">
+        <SpaceBetween size="xs">
+          <ChatBubble type="outgoing" ariaLabel={`${userName} at 10:00am`} avatar={userAvatar}>
+            I want to build a landing page for my SaaS product. It needs a waitlist signup form and Stripe payment
+            integration for early access.
+          </ChatBubble>
+
+          <ChatBubble type="incoming" ariaLabel={`${genAiName} at 10:00am`} avatar={genAiAvatar}>
+            <SpaceBetween size="s">
+              <Box variant="p">
+                I&apos;ve created an environment for you so we have a place to track everything, code, infrastructure,
+                and deployments.
+              </Box>
+
+              {!editing ? (
+                <div className="inline-edit-row">
+                  <StatusIndicator type="success">Project {projectName}</StatusIndicator>
+                  <Button iconName="edit" variant="inline-icon" ariaLabel="Edit project name" onClick={handleEdit} />
+                </div>
+              ) : (
+                <SpaceBetween size="xxs">
+                  <div className="inline-edit-row">
+                    <StatusIndicator type="success">Project</StatusIndicator>
+                    <div className="inline-edit-content">
+                      <Input
+                        value={editValue}
+                        onChange={({ detail }) => {
+                          setEditValue(detail.value);
+                          setError('');
+                        }}
+                        ariaLabel="Project name"
+                        invalid={!!error}
+                      />
+                    </div>
+                    <Button iconName="check" variant="inline-icon" ariaLabel="Confirm" onClick={handleConfirm} />
+                    <Button iconName="close" variant="inline-icon" ariaLabel="Cancel" onClick={handleCancel} />
+                  </div>
+                  {error && (
+                    <Box color="text-status-error" fontSize="body-s">
+                      {error}
+                    </Box>
+                  )}
+                </SpaceBetween>
+              )}
+
+              <Box variant="p">Now a few quick questions so I can set up the right backend for you:</Box>
+            </SpaceBetween>
+          </ChatBubble>
+        </SpaceBetween>
+      </div>
+    </Container>
+  );
+}

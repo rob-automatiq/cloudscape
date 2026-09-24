@@ -1,0 +1,108 @@
+import React from 'react';
+import { formatReadOnlyRegion, Region } from './common';
+import { Header, StatusIndicator, Table, TableProps } from '@cloudscape-design/components';
+import { useCollection } from '@cloudscape-design/collection-hooks';
+
+interface ResourceDefinition {
+  id: string;
+  regionCode: Region['code'];
+  state: 'Healthy' | 'Inactive';
+  lastModified: Date;
+}
+
+const tableItems: ResourceDefinition[] = [
+  {
+    id: 'O4DMYB22IWEYROBVN',
+    regionCode: 'us-west-1',
+    state: 'Healthy',
+    lastModified: new Date(2019, 3, 28, 4, 16),
+  },
+  {
+    id: 'S4JE6P56MI4XBCMD6',
+    regionCode: 'us-east-1',
+    state: 'Healthy',
+    lastModified: new Date(2022, 5, 5, 15, 32),
+  },
+  {
+    id: 'LF2QRGQR73UA8I4HO',
+    regionCode: 'us-east-2',
+    state: 'Inactive',
+    lastModified: new Date(2020, 9, 16, 18, 59),
+  },
+  {
+    id: '8WYHUA2A03V71YIYR',
+    regionCode: 'eu-central-1',
+    state: 'Healthy',
+    lastModified: new Date(2020, 1, 6, 15, 31),
+  },
+  {
+    id: 'DLBTSDMY30151I1B3',
+    regionCode: 'eu-west-1',
+    lastModified: new Date(2020, 10, 25, 21, 51),
+    state: 'Healthy',
+  },
+];
+
+const columnDefinitions = [
+  {
+    id: 'id',
+    header: 'Resource ID',
+    cell: (item: ResourceDefinition) => item.id,
+    isRowHeader: true,
+    width: 185,
+  },
+  {
+    id: 'state',
+    cell: (item: ResourceDefinition) => (
+      <StatusIndicator type={item.state.toLocaleLowerCase() === 'inactive' ? 'stopped' : 'success'}>
+        {item.state}
+      </StatusIndicator>
+    ),
+    header: 'Status',
+    minWidth: 110,
+    width: 110,
+  },
+  {
+    id: 'region',
+    header: 'Region',
+    cell: (item: ResourceDefinition) => formatReadOnlyRegion(item.regionCode),
+    minWidth: 210,
+    width: 285,
+  },
+  {
+    id: 'date',
+    header: 'Last modified',
+    cell: (item: ResourceDefinition) => formatDate(item.lastModified),
+    ariaLabel: ({ sorted, descending }: TableProps.LabelData) =>
+      `Last modified, ${sorted ? `sorted ${descending ? 'descending' : 'ascending'}` : 'not sorted'}.`,
+    sortingComparator: (a: ResourceDefinition, b: ResourceDefinition) =>
+      a.lastModified.valueOf() - b.lastModified.valueOf(),
+  },
+];
+
+function formatDate(date: Date) {
+  const dateFormatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'long' });
+  const timeFormatter = new Intl.DateTimeFormat('en-US', { timeStyle: 'short', hour12: false });
+  return `${dateFormatter.format(date)}, ${timeFormatter.format(date)}`;
+}
+
+const RegionTable = () => {
+  const { items, collectionProps } = useCollection(tableItems, {
+    sorting: { defaultState: { sortingColumn: columnDefinitions[3], isDescending: true } },
+  });
+  return (
+    <Table
+      header={
+        <Header headingTagOverride="h3" counter={`(${tableItems.length})`}>
+          Resources
+        </Header>
+      }
+      columnDefinitions={columnDefinitions}
+      items={items}
+      resizableColumns={true}
+      {...collectionProps}
+    ></Table>
+  );
+};
+
+export default RegionTable;

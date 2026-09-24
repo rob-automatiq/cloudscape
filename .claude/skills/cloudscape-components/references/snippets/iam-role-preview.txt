@@ -1,0 +1,63 @@
+import React from 'react';
+import { Container, Link, SpaceBetween, Box, RadioGroup, Select, Header } from '@cloudscape-design/components';
+
+const radioItems = [
+  {
+    value: 'new',
+    label: 'Create and use a new service role',
+  },
+  {
+    value: 'existing',
+    label: 'Use an existing service role',
+  },
+];
+
+const selectOptions = [
+  {
+    label: 'Admin',
+    value: '1',
+  },
+  {
+    label: 'AmazonAppStreamServiceAccess',
+    value: '2',
+  },
+  {
+    label: 'AmazonEC2RoleForLaunchWizard',
+    value: '3',
+  },
+  {
+    label: 'AmazonForecast-ExecutionRole',
+    value: '4',
+  },
+];
+
+const IAMRolePreview = () => {
+  const [value, setValue] = React.useState('existing');
+  const [selectedOption, setSelectedOption] = React.useState(null);
+  return (
+    <Container header={<Header headingTagOverride="h3">Service access</Header>}>
+      <SpaceBetween size="s" direction="vertical">
+        <Box>
+          This job requires permissions to write to S3 and publish to SNS on your behalf.{' '}
+          <Link external externalIconAriaLabel="Opens in a new tab">
+            Learn more.
+          </Link>
+        </Box>
+        <Link>View permission details.</Link>
+        <RadioGroup onChange={({ detail }) => setValue(detail.value)} value={value} items={radioItems} />
+        {value === 'existing' && (
+          <Select
+            selectedOption={selectedOption}
+            onChange={({ detail }) => setSelectedOption(detail.selectedOption)}
+            options={selectOptions}
+            placeholder="Choose an option"
+            selectedAriaLabel="Selected"
+            filteringType="auto"
+          />
+        )}
+      </SpaceBetween>
+    </Container>
+  );
+};
+
+export default IAMRolePreview;

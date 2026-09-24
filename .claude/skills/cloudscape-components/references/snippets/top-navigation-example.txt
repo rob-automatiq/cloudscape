@@ -1,0 +1,19 @@
+import React from 'react';
+import AppLayout from '@cloudscape-design/components/app-layout';
+import TopNavigation from '@cloudscape-design/components/top-navigation';
+
+const i18nStrings = {
+  overflowMenuTriggerText: 'More',
+  overflowMenuTitleText: 'All',
+};
+
+export default function TopNavigationExample() {
+  return (
+    <body>
+      <div id="h" style={{ position: 'sticky', top: 0, zIndex: 1002 }}>
+        <TopNavigation identity={{ href: '#' }} i18nStrings={i18nStrings} />
+      </div>
+      <AppLayout content="Your main content" headerSelector="#h" />
+    </body>
+  );
+}

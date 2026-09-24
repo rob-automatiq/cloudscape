@@ -1,0 +1,18 @@
+import * as React from 'react';
+import { SpaceBetween, Toggle } from '@cloudscape-design/components';
+
+export default function RTLToggle() {
+  return (
+    <div>
+      <div dir="ltr">
+        <SpaceBetween alignItems="start" direction="vertical" size="m">
+          <Toggle checked>I&apos;m an LTR toggle</Toggle>
+
+          <div dir="rtl">
+            <Toggle checked>I&apos;m an RTL toggle</Toggle>
+          </div>
+        </SpaceBetween>
+      </div>
+    </div>
+  );
+}

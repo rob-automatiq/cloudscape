@@ -1,6 +1,12 @@
 # Cloudscape component catalog
 
-Use this to pick a component when the request describes what it should do rather than naming it. Each entry's API reference is at `components/<folder>.md`, and the import is `@cloudscape-design/components/<folder>`.
+Use this to pick a component when the request describes what it should do rather than naming it. Each component's folder is `components/<folder>/`, which contains:
+
+- `guidelines.md`: the cloudscape.design page (when to use, dos and don'ts, features, states, writing and accessibility guidelines, testing APIs).
+- `examples.md`: the page's named playground examples, when it has any.
+- `api.md`: the exact props for the installed package version. Components that live in other packages have the site's `api.json` instead.
+
+For the entries below, the import is `@cloudscape-design/components/<folder>`. The last section lists components from other packages.
 
 ## Page layout and structure
 | Folder | Use it for |
@@ -108,6 +114,7 @@ Use this to pick a component when the request describes what it should do rather
 | `modal` | Dialog that blocks the page (confirmations, short forms). `footer` usually holds right-aligned buttons. |
 | `popover` | Click-triggered small overlay with extra info or actions. |
 | `tooltip` | Hover/focus hint anchored to an element. |
+| `dropdown` | Low-level overlay anchored to a trigger, for custom menus or panels when no higher-level component fits. You manage keyboard handling and `open` state yourself. |
 | `help-panel` | Content for the `app-layout` tools (help) panel. |
 
 ## Charts
@@ -117,7 +124,9 @@ Use this to pick a component when the request describes what it should do rather
 | `bar-chart` | Comparing categories (vertical/horizontal, stacked/grouped). |
 | `area-chart` | Cumulative totals over time. |
 | `mixed-line-bar-chart` | Bars and lines on shared axes. |
-| `pie-chart` | Part-to-whole (pie or donut). |
+| `pie-chart-legacy` | Part-to-whole (pie or donut): the `PieChart` in this package (`@cloudscape-design/components/pie-chart`). Its site page is "pie-chart-legacy". |
+
+For chart selection and data-visualization guidance, read `components/charts-legacy/guidelines.md` (the charts in this package), `components/charts/guidelines.md` (the newer Highcharts-based package), and `patterns/general/data-vis.md`.
 
 ## Guided experiences
 | Folder | Use it for |
@@ -133,3 +142,16 @@ Use this to pick a component when the request describes what it should do rather
 |---|---|
 | `icon-provider` | Override built-in icons for a subtree. |
 | `navigable-group` | Arrow-key navigation across a group of focusable children. |
+
+## From other Cloudscape packages
+These need their own npm package. Check that the project has it installed, or tell the user it's needed.
+
+| Folder | Package | Use it for |
+|---|---|---|
+| `charts`, `cartesian-chart`, `pie-chart` | `@cloudscape-design/chart-components` | Newer charts built on Highcharts, a commercial library with its own license. `charts/guidelines.md` covers licensing, and `get-started/dev-guides/charts-migration.md` covers moving from the legacy charts. |
+| `board-components`, `board`, `board-item`, `items-palette` | `@cloudscape-design/board-components` | Configurable dashboards: users add, move, and resize items. |
+| `genai-components`, `chat-bubble`, `avatar`, `loading-bar`, `support-prompt-group` | `@cloudscape-design/chat-components` | Generative-AI chat interfaces. Pair with the `gen-ai/` patterns. |
+| `code-view` | `@cloudscape-design/code-view` | Read-only syntax-highlighted code. |
+| `dialog` | `@cloudscape-design/components` (newer than the installed version) | Documented on the site but not in the installed package. Upgrade the package to use it, or say it isn't available yet. |
+
+Overview pages without a single component: `collection-select-filter` (select filters for collections), `file-uploading-components` (how the file components fit together), `hands-on-tutorials` (tutorial panel + annotation context).

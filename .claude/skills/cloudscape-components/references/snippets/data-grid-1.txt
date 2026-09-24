@@ -1,0 +1,103 @@
+import React from 'react';
+import { Table, ColumnGroupDef, ColumnDef, Row, FilteringType } from '@amzn/aws-fintech-table';
+import { data } from './data-1';
+import './index.scss';
+
+interface MedalFact {
+  group: string;
+  year?: string;
+  country?: string;
+  sport?: string;
+  medalCountTotal: number;
+  medalCountGold: number;
+  medalCountSilver: number;
+  medalCountBronze: number;
+  subRows?: MedalFact[];
+}
+
+const allFeaturesColumns: (ColumnGroupDef<MedalFact> | ColumnDef<MedalFact>)[] = [
+  {
+    columnId: 'group',
+    columnSizing: {
+      resizable: true,
+      width: 200,
+    },
+    filtering: {
+      filteringType: FilteringType.MULTISELECT,
+    },
+    valueAccessorFn: (row: Row<MedalFact>) => row.data.group,
+  },
+  {
+    columnId: 'year',
+    columnSizing: {
+      resizable: true,
+      width: 150,
+    },
+    valueAccessorFn: (row: Row<MedalFact>) => row.data.year ?? '',
+  },
+  {
+    columnId: 'country',
+    columnSizing: {
+      resizable: true,
+      width: 150,
+    },
+    valueAccessorFn: (row: Row<MedalFact>) => row.data.country ?? '',
+  },
+  {
+    columnId: 'sport',
+    columnSizing: {
+      resizable: true,
+      width: 150,
+    },
+    valueAccessorFn: (row: Row<MedalFact>) => row.data.sport ?? '',
+  },
+  {
+    columnGroupExpansion: {
+      expanded: true,
+    },
+    columnGroupId: 'medals',
+    columns: [
+      {
+        columnId: 'total',
+        columnSizing: {
+          resizable: true,
+          width: 150,
+        },
+        valueAccessorFn: (row: Row<MedalFact>) => row.data.medalCountTotal,
+      },
+      {
+        columnId: 'gold',
+        columnSizing: {
+          resizable: true,
+          width: 80,
+        },
+        valueAccessorFn: (row: Row<MedalFact>) => row.data.medalCountGold,
+      },
+      {
+        columnId: 'silver',
+        columnSizing: {
+          resizable: true,
+          width: 80,
+        },
+        valueAccessorFn: (row: Row<MedalFact>) => row.data.medalCountSilver,
+      },
+      {
+        columnId: 'bronze',
+        columnSizing: {
+          resizable: true,
+          width: 80,
+        },
+        valueAccessorFn: (row: Row<MedalFact>) => row.data.medalCountBronze,
+      },
+    ],
+  },
+];
+
+export default function Demo() {
+  // DataGrid does not test for SSR.
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  return <Table<MedalFact> columns={allFeaturesColumns} data={data} rowExpansion={{ columnId: 'group' }} />;
+}

@@ -1,0 +1,40 @@
+import React from 'react';
+import DesignTokensQuery, { DesignToken } from '@/context/custom-snippets/queries/design-tokens';
+import TokensTable from '@/context/custom-snippets/components/tokens-table';
+
+const Snippet = () => {
+  const tokenNames = [
+    'color-charts-palette-categorical-1',
+    'color-charts-palette-categorical-32',
+    'color-charts-palette-categorical-3',
+    'color-charts-palette-categorical-34',
+    'color-charts-palette-categorical-5',
+    'color-charts-palette-categorical-36',
+    'color-charts-palette-categorical-17',
+    'color-charts-palette-categorical-38',
+  ];
+  return (
+    <DesignTokensQuery>
+      {data => {
+        const tokens = tokenNames.map(name => data.find(token => token.name === name)).filter(Boolean) as DesignToken[];
+        if (tokens.length) {
+          return (
+            <TokensTable
+              tokens={tokens.map((token, index) => ({
+                ...token,
+                order: index + 1,
+              }))}
+              title="Recommended colors for charts with error bars"
+              columns={['light-display', 'dark-display', 'name', 'description', 'themeable']}
+              disableFiltering={true}
+            />
+          );
+        } else {
+          return null;
+        }
+      }}
+    </DesignTokensQuery>
+  );
+};
+
+export default Snippet;

@@ -1,0 +1,6 @@
+import React from 'react';
+import { Button } from '@cloudscape-design/components';
+
+const ButtonDisabled = () => <Button disabled={true}>Button</Button>;
+
+export default ButtonDisabled;

@@ -1,0 +1,25 @@
+import React from 'react';
+import Steps from '@cloudscape-design/components/steps';
+import Header from '@cloudscape-design/components/header';
+import Link from '@cloudscape-design/components/link';
+import Container from '@cloudscape-design/components/container';
+
+export default function Loading() {
+  return (
+    <Container
+      header={
+        <Header variant="h3" info={<Link variant="info">Info</Link>}>
+          Personalized recommendation
+        </Header>
+      }
+    >
+      <Steps
+        steps={[
+          { status: 'success', statusIconAriaLabel: 'Success', header: 'Evaluated' },
+          { status: 'success', statusIconAriaLabel: 'Success', header: 'Checked 5 nodes' },
+          { status: 'loading', statusIconAriaLabel: 'Loading', header: 'Checking EKS clusters' },
+        ]}
+      />
+    </Container>
+  );
+}

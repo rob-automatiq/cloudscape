@@ -1,0 +1,94 @@
+/* eslint-disable react/no-unescaped-entities */
+import React, { ReactNode } from 'react';
+import { Box, Table, TableProps } from '@cloudscape-design/components';
+import { LinkComponentContext } from '@/awsui-website-components/contexts';
+import ColorDisplay from '@/awsui-website-components/components/color-display';
+
+interface Resource {
+  name: ReactNode;
+  value: string;
+  usage: ReactNode;
+}
+
+const columns: TableProps<Resource>['columnDefinitions'] = [
+  {
+    id: 'preview',
+    header: 'Preview',
+    cell: item => <ColorDisplay value={item.value} />,
+    width: 100,
+  },
+  {
+    id: 'name',
+    header: 'Name',
+    cell: item => item.name,
+    isRowHeader: true,
+    width: 130,
+  },
+  {
+    id: 'value',
+    header: 'HEX',
+    cell: item => item.value,
+    width: 120,
+  },
+  {
+    id: 'usage',
+    header: 'Usage',
+    cell: item => item.usage,
+  },
+];
+
+export default function GenAIResourcesTable() {
+  const Link = React.useContext(LinkComponentContext);
+  const resources: Resource[] = [
+    {
+      name: 'Night',
+      value: '#341478',
+      usage: 'Use to style UI elements that pertain to generative AI, such as action triggers, inputs, and outputs.',
+    },
+    {
+      name: 'Dusk',
+      value: '#7638FA',
+      usage: 'Use to style UI elements that pertain to generative AI, such as action triggers, inputs, and outputs.',
+    },
+    {
+      name: 'Cyan',
+      value: '#3E8DFF',
+      usage: 'Use to build gradients in combination with other colors of the set.',
+    },
+    {
+      name: 'Light Cyan',
+      value: '#BBF8FF',
+      usage: 'Use to build gradients in combination with other colors of the set.',
+    },
+    {
+      name: 'Squid Ink',
+      value: '#232F3E',
+      usage: (
+        <>
+          Not specific to generative AI. Use as specified in the{' '}
+          <Link to="/foundation/visual-foundation/colors/">system's color palette</Link>.
+        </>
+      ),
+    },
+    {
+      name: 'White',
+      value: '#FFFFFF',
+      usage: (
+        <>
+          Not specific to generative AI. Use as specified in the{' '}
+          <Link to="/foundation/visual-foundation/colors/">system's color palette</Link>.
+        </>
+      ),
+    },
+  ];
+  return (
+    <Table<Resource>
+      header={<Box variant="h4">Color set</Box>}
+      wrapLines={true}
+      resizableColumns={true}
+      contentDensity="compact"
+      items={resources}
+      columnDefinitions={columns}
+    />
+  );
+}

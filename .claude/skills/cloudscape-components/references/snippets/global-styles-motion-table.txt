@@ -1,0 +1,120 @@
+import React from 'react';
+import { Table, Box } from '@cloudscape-design/components';
+import { LinkComponentContext } from '@/awsui-website-components/contexts';
+import CodeBlock from '@/awsui-website-components/components/code-block';
+
+const columns = [
+  { header: 'Name', cell: item => item.name, isRowHeader: true, width: 130, minWidth: 110 },
+  {
+    header: 'Type',
+    minWidth: 140,
+    width: 200,
+    cell: item => <CodeBlock code={item.type} />,
+  },
+  { header: 'Description', minWidth: 120, width: 120, cell: item => item.description },
+  { header: 'Accepted values', width: 150, minWidth: 130, cell: item => item.acceptedValues },
+  { header: 'Default', cell: item => item.default },
+];
+
+export function VisualModesTable() {
+  const Link = React.useContext(LinkComponentContext);
+  const visualModeItems = [
+    {
+      name: 'applyMode',
+      type: '(mode: Mode) => void',
+      description: (
+        <span>
+          Sets the color <Link to="/foundation/visual-foundation/visual-modes">mode</Link>.
+        </span>
+      ),
+      acceptedValues: <CodeBlock code="Mode.Light, Mode.Dark" />,
+      default: <CodeBlock code="Mode.Light" />,
+    },
+    {
+      name: 'applyDensity',
+      type: '(density: Density) => void',
+      description: (
+        <span>
+          Sets the <Link to="/foundation/visual-foundation/content-density/">content density</Link>.
+        </span>
+      ),
+      acceptedValues: <CodeBlock code="Density.Comfortable, Density.Compact" />,
+      default: <CodeBlock code="Density.Comfortable" />,
+    },
+    {
+      name: 'Density',
+      type: 'enum',
+      description: 'Definition for content densities.',
+      acceptedValues: <CodeBlock code="Comfortable, Compact" />,
+      default: <CodeBlock code="Comfortable" />,
+    },
+    {
+      name: 'Mode',
+      type: 'enum',
+      description: 'Definition for color modes.',
+      acceptedValues: <CodeBlock code="Light, Dark" />,
+      default: <CodeBlock code="Light" />,
+    },
+  ];
+  return (
+    <Box>
+      <Table columnDefinitions={columns} items={visualModeItems} wrapLines={true} resizableColumns={true} />
+    </Box>
+  );
+}
+
+export function MotionTable() {
+  const Link = React.useContext(LinkComponentContext);
+  const motionItems = [
+    {
+      name: 'disableMotion',
+      type: '(isDisabled: boolean) => void',
+      description: (
+        <span>
+          Turns off <Link to="/foundation/visual-foundation/motion/">motion effects</Link>.
+        </span>
+      ),
+      acceptedValues: '-',
+      default: 'false',
+    },
+  ];
+  return (
+    <Box margin={{ top: 'l' }}>
+      <Table columnDefinitions={columns} items={motionItems} wrapLines={true} resizableColumns={true} />
+    </Box>
+  );
+}
+
+export function DarkModeTable() {
+  return (
+    <Box margin={{ top: 'l' }}>
+      <Table
+        wrapLines={true}
+        columnDefinitions={[
+          {
+            id: 'className',
+            header: 'Class',
+            width: 250,
+            cell: item => <CodeBlock code={item.class} language="css" />,
+          },
+          {
+            id: 'description',
+            header: 'Description',
+            cell: item => item.description,
+          },
+        ]}
+        items={[
+          {
+            class: 'awsui-util-show-in-dark-mode',
+            description: 'Makes the content visible in the dark mode.',
+          },
+          {
+            class: 'awsui-util-hide-in-dark-mode',
+            description: 'Makes the content hidden in the dark mode.',
+          },
+        ]}
+        resizableColumns={true}
+      />
+    </Box>
+  );
+}

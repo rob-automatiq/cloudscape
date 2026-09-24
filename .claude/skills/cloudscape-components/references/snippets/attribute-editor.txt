@@ -1,0 +1,87 @@
+/* eslint-disable react/display-name */
+import React, { useState, useCallback, useMemo } from 'react';
+import { AttributeEditor, Input, Link } from '@cloudscape-design/components';
+
+const i18nStrings = {
+  addButtonText: 'Add new item',
+  removeButtonText: 'Remove',
+  empty: 'No tags associated to the resource',
+};
+const tagLimit = 50;
+
+const Control = React.memo(({ value, index, placeholder, setItems, prop }) => {
+  return (
+    <Input
+      value={value}
+      placeholder={placeholder}
+      onChange={({ detail }) => {
+        setItems(items => {
+          const updatedItems = [...items];
+          updatedItems[index] = {
+            ...updatedItems[index],
+            [prop]: detail.value,
+          };
+          return updatedItems;
+        });
+      }}
+    />
+  );
+});
+
+export default function AttributeEditorExample() {
+  const [items, setItems] = useState([
+    { key: 'key-1', value: 'value-1' },
+    { key: 'key-2', value: 'value-2' },
+  ]);
+
+  const definition = useMemo(
+    () => [
+      {
+        label: 'Key label',
+        info: <Link variant="info">Info</Link>,
+        control: ({ key = '' }, itemIndex) => (
+          <Control prop="key" value={key} index={itemIndex} placeholder="Enter key" setItems={setItems} />
+        ),
+        errorText: item => (item.key && item.key.match(/^AWS/i) ? 'Key cannot start with "AWS"' : null),
+      },
+      {
+        label: 'Value label',
+        info: <Link variant="info">Info</Link>,
+        control: ({ value = '' }, itemIndex) => (
+          <Control prop="value" value={value} index={itemIndex} placeholder="Enter value" setItems={setItems} />
+        ),
+        errorText: item =>
+          item.value && item.value.length > 10 ? (
+            <span>
+              Value {item.value} is longer than 10 characters, <Link variant="info">Info</Link>
+            </span>
+          ) : null,
+      },
+    ],
+    []
+  );
+
+  const onAddButtonClick = useCallback(() => {
+    setItems(items => [...items, {}]);
+  }, []);
+
+  const onRemoveButtonClick = useCallback(({ detail: { itemIndex } }) => {
+    setItems(items => {
+      const newItems = items.slice();
+      newItems.splice(itemIndex, 1);
+      return newItems;
+    });
+  }, []);
+
+  const additionalInfo = useMemo(() => `You can add ${tagLimit - items.length} more tags.`, [items.length]);
+  return (
+    <AttributeEditor
+      {...i18nStrings}
+      additionalInfo={additionalInfo}
+      items={items}
+      definition={definition}
+      onAddButtonClick={onAddButtonClick}
+      onRemoveButtonClick={onRemoveButtonClick}
+    />
+  );
+}

@@ -1,0 +1,23 @@
+import React from 'react';
+import { FormField, Input, Container, Header } from '@cloudscape-design/components';
+import { useState } from 'react';
+
+const Snippet = () => {
+  const [value, setValue] = useState('');
+  return (
+    <Container header={<Header variant="h2">Resource settings</Header>}>
+      <FormField
+        i18nStrings={{
+          errorIconAriaLabel: 'Error',
+        }}
+        constraintText={`Resource name must be 3 to 28 characters. Valid characters are a-z, A-Z, 0-9, and hyphens (-). Character count: ${value.length}/28.`}
+        errorText="Resource name is required."
+        label="Resource name"
+      >
+        <Input value={value} onChange={e => setValue(e.detail.value)} />
+      </FormField>
+    </Container>
+  );
+};
+
+export default Snippet;

@@ -1,0 +1,17 @@
+import React from 'react';
+import { Header, Table } from '@cloudscape-design/components';
+import { typographyColumnDefinitions } from '../config/typography-config';
+
+export default function TypographyTable(typographyType: any) {
+  // eslint-disable-next-line react/display-name
+  return () => {
+    return (
+      <Table
+        columnDefinitions={typographyColumnDefinitions}
+        items={typographyType.items}
+        wrapLines={true}
+        header={<Header headingTagOverride="h3">{typographyType.title}</Header>}
+      />
+    );
+  };
+}

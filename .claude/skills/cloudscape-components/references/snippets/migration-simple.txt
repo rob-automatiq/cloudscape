@@ -1,0 +1,31 @@
+import React, { useId } from 'react';
+import { Flashbar, Link } from '@cloudscape-design/components';
+
+const Snippet = () => {
+  const id = useId();
+
+  return (
+    <Flashbar
+      items={[
+        {
+          type: 'info',
+          dismissible: true,
+          onDismiss: () => {},
+          header: 'Introducing the new CloudFront console experience',
+          content: (
+            <>
+              We’ve redesigned the CloudFront console to make it easier to use.{' '}
+              <Link href="#" color="inverted">
+                Let us know what you think
+              </Link>
+              .
+            </>
+          ),
+          id,
+        },
+      ]}
+    />
+  );
+};
+
+export default Snippet;

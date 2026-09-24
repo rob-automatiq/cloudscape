@@ -1,0 +1,92 @@
+import Container from '@cloudscape-design/components/container';
+import Box from '@cloudscape-design/components/box';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import SupportPromptGroup, { type SupportPromptGroupProps } from '@cloudscape-design/chat-components/support-prompt-group';
+import CustomGenAIChatFooter from '../gen-ai-response-regeneration/custom-gen-ai-chat-footer';
+import './styles.scss';
+import { useState } from 'react';
+
+export default function GenAiSupportPromptGetStarted() {
+  const [message, setMessage] = useState('');
+  const items: SupportPromptGroupProps.Item[] = [
+    {
+      text: (
+        <SpaceBetween direction="vertical" size="xxxs">
+          <span>Explain my cost trends</span>
+          <Box fontSize="body-s" color="text-body-secondary">
+            Visualizes spending over time
+          </Box>
+        </SpaceBetween>
+      ),
+      iconName: 'edit',
+      iconPosition: 'right',
+      id: 'explain-cost-trends',
+    },
+    {
+      text: (
+        <SpaceBetween direction="vertical" size="xxxs">
+          <span>Analyze my EC2 instance performance</span>
+          <Box fontSize="body-s" color="text-body-secondary">
+            Reviews compute metrics and optimization
+          </Box>
+        </SpaceBetween>
+      ),
+      iconName: 'edit',
+      iconPosition: 'right',
+      id: 'analyze-ec2-instance-performance',
+    },
+    {
+      text: (
+        <SpaceBetween direction="vertical" size="xxxs">
+          <span>Generate a cost optimization report</span>
+          <Box fontSize="body-s" color="text-body-secondary">
+            Actionable recommendations to reduce spending
+          </Box>
+        </SpaceBetween>
+      ),
+      iconName: 'edit',
+      iconPosition: 'right',
+      id: 'generate-cost-optimization-report',
+    },
+  ];
+  const itemMessages: Record<string, string> = {
+    'explain-cost-trends':
+      'Analyze my AWS cost trends over the past <time_period>. Break down spending by <breakdown_dimension>, identify any significant increases or decreases, and highlight the top <number> cost drivers.',
+    'analyze-ec2-instance-performance':
+      'Analyze the performance of my EC2 instances in <region> over the past <time_period>. Review CPU utilization, memory usage, and network throughput, identify any underutilized or over-provisioned instances, and recommend <number> optimization actions.',
+    'generate-cost-optimization-report':
+      'Generate a cost optimization report for my AWS account covering the past <time_period>. Identify unused or underutilized resources, highlight potential savings by <savings_category>, and provide the top <number> actionable recommendations to reduce spending.',
+  };
+  return (
+    <Container
+      footer={
+        <CustomGenAIChatFooter
+          message={message}
+          onSendMessage={setMessage}
+          actionButtonIconName="send"
+          actionButtonAriaLabel="Send message"
+        />
+      }
+    >
+      <div className="welcome-container">
+        <img src="/robot.svg" alt="AI Assistant" width={99} height={87} />
+        <SpaceBetween size="xxxs">
+          <Box variant="h1" textAlign="center">
+            Welcome to the AI assistant
+          </Box>
+          <Box variant="p" color="text-body-secondary" textAlign="center">
+            Choose a prompt below or type your own in the prompt input to begin a conversation.
+          </Box>
+        </SpaceBetween>
+        <SupportPromptGroup
+          ariaLabel="Suggested prompts"
+          alignment="horizontal"
+          onItemClick={({ detail }) => {
+            setMessage(itemMessages[detail.id] ?? '');
+          }}
+          items={items}
+        />
+      </div>
+    </Container>
+  );
+}

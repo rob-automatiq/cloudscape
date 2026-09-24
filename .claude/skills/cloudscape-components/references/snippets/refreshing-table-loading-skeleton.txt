@@ -1,0 +1,47 @@
+import React from 'react';
+import { Table, Button, Header, SpaceBetween } from '@cloudscape-design/components';
+
+const Snippet = () => (
+  <Table
+    loading={true}
+    loadingText="Loading items"
+    skeleton={{ totalRows: 6 }}
+    columnDefinitions={[
+      {
+        id: 'variable',
+        header: 'Variable name',
+        cell: item => item.name,
+        isRowHeader: true,
+      },
+      {
+        id: 'value',
+        header: 'Current value',
+        cell: item => item.alt,
+      },
+      {
+        id: 'description',
+        header: 'Description',
+        cell: item => item.description,
+      },
+    ]}
+    items={[]}
+    header={
+      <Header
+        headingTagOverride="h3"
+        actions={
+          <SpaceBetween direction="horizontal" size="xs" alignItems="center">
+            <Button iconName="refresh" ariaLabel="Refresh" />
+            <Button>Edit</Button>
+            <Button>Delete</Button>
+            <Button variant="primary">Create</Button>
+          </SpaceBetween>
+        }
+      >
+        Items
+      </Header>
+    }
+    resizableColumns={true}
+  />
+);
+
+export default Snippet;

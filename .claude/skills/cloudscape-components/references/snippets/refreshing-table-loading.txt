@@ -1,0 +1,6 @@
+import React from 'react';
+import Table from './table-location';
+
+const Snippet = () => <Table loading={true} />;
+
+export default Snippet;

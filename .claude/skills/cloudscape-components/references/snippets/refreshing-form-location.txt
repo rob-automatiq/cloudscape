@@ -1,0 +1,21 @@
+import React from 'react';
+import { FormField, Select, Button } from '@cloudscape-design/components';
+
+const Snippet = () => (
+  <FormField secondaryControl={<Button iconName="refresh" ariaLabel="Refresh" />}>
+    <Select
+      options={[
+        {
+          id: '1',
+          label: 'sg-5545409',
+        },
+        {
+          id: '2',
+          label: 'sg-5409400',
+        },
+      ]}
+    />
+  </FormField>
+);
+
+export default Snippet;

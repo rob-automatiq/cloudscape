@@ -1,0 +1,205 @@
+import React from 'react';
+import { Box, Table } from '@cloudscape-design/components';
+import { LinkComponentContext } from '@/awsui-website-components/contexts';
+import './spacing.scss';
+
+export default function Spacing() {
+  const Link = React.useContext(LinkComponentContext);
+
+  const formatExamples = examples => {
+    if (examples.length === 1) {
+      return <p>{examplesMap[examples[0]]}</p>;
+    }
+    return (
+      <ul>
+        {examples.map((exampleId, index) => (
+          <li key={index}>{examplesMap[exampleId]}</li>
+        ))}
+      </ul>
+    );
+  };
+  const spacingDefinitions = [
+    {
+      id: 'unit',
+      header: 'Spacing unit',
+      cell: item => item.unit,
+      isRowHeader: true,
+      minWidth: 110,
+      width: 110,
+    },
+    {
+      id: 'size',
+      header: 'Size (px)',
+      cell: item => `${item.size}`,
+      minWidth: 100,
+      width: 100,
+    },
+    {
+      id: 'preview',
+      header: 'Preview',
+      cell: item => (
+        <Box margin={{ vertical: 'xl' }}>
+          <span
+            className="website-spacing-preview"
+            style={{ width: `${item.size}px`, height: `${item.size}px` }}
+          ></span>
+        </Box>
+      ),
+      minWidth: 100,
+      width: 100,
+    },
+    {
+      id: 'examples',
+      header: 'Examples',
+      cell: item => formatExamples(item.examples),
+    },
+  ];
+
+  const examplesMap = {
+    verticalSpaceKeyValuePairs: (
+      <>
+        Vertical space between key label and value in <Link to="/components/key-value-pairs/">key/value pairs</Link>
+      </>
+    ),
+    verticalSpaceHeaderDescription: (
+      <>
+        Vertical space between a container <Link to="/components/header/">header</Link> and its description
+      </>
+    ),
+    verticalSpaceWithinFormFields: (
+      <>
+        Vertical space between <Link to="/components/form-field/">form field</Link> label and control
+      </>
+    ),
+    horizontalSpaceActionStripe: (
+      <>
+        Horizontal space between <Link to="/components/button/">buttons</Link> in an action stripe
+      </>
+    ),
+    horizontalSpaceTokens: (
+      <>
+        Horizontal space between <Link to="/components/token-group/">tokens</Link> in a{' '}
+        <Link to="/components/property-filter/">property filter</Link>
+      </>
+    ),
+    horizontalSpaceCheckbox: (
+      <>
+        Horizontal space between <Link to="/components/checkbox/">checkbox</Link>/
+        <Link to="/components/radio-group/">radio button</Link> and their respective labels
+      </>
+    ),
+    verticalPaddingPopover: (
+      <>
+        Vertical padding inside a <Link to="/components/popover/">popover</Link>
+      </>
+    ),
+    horizontalPaddingPopover: (
+      <>
+        Horizontal padding inside a <Link to="/components/popover/">popover</Link>
+      </>
+    ),
+    verticalSpaceWizardSteps: (
+      <>
+        Vertical space between steps of a <Link to="/components/wizard/">wizard</Link>
+      </>
+    ),
+    verticalSpacePageHeaderContent: (
+      <>
+        Vertical space between a page <Link to="/components/header/">header</Link> and{' '}
+        <Link to="/components/content-layout/">content</Link>
+      </>
+    ),
+    gridGutterWidth: (
+      <>
+        <Link to="/components/grid/">Grid</Link> gutter width (fixed)
+      </>
+    ),
+    horizontalPaddingContainer: (
+      <>
+        Horizontal padding inside a <Link to="/components/container/">container</Link>
+      </>
+    ),
+    verticalSpaceCards: (
+      <>
+        Vertical space inside individual <Link to="/components/cards/">cards</Link>
+      </>
+    ),
+    verticalSpaceFormFields: (
+      <>
+        Vertical space between <Link to="/components/form-field/">form fields</Link>
+      </>
+    ),
+    verticalSpaceTutorialPanel: (
+      <>
+        Vertical space between tasks in a <Link to="/components/tutorial-panel/">tutorial panel</Link>
+      </>
+    ),
+    horizontalPaddingNavigationHelpPanel: (
+      <>
+        Horizontal padding for <Link to="/components/side-navigation/">side navigation</Link> and{' '}
+        <Link to="/components/help-panel/">help panel</Link> content
+      </>
+    ),
+    horizontalPaddingAppLayoutSplitPanel: (
+      <>
+        Horizontal padding for <Link to="/components/app-layout/">app layout</Link> and{' '}
+        <Link to="/components/split-panel/">split panel</Link> content on large screens
+      </>
+    ),
+    leftIndentationSelectGroups: (
+      <>
+        Left indentation of grouped options in a <Link to="/components/select/">select</Link>
+      </>
+    ),
+  };
+
+  const spacingItems = [
+    {
+      unit: 'xxx-small',
+      size: '2',
+      examples: ['verticalSpaceHeaderDescription'],
+    },
+    {
+      unit: 'xx-small',
+      size: '4',
+      examples: ['verticalSpaceWithinFormFields'],
+    },
+    {
+      unit: 'x-small',
+      size: '8',
+      examples: ['horizontalSpaceActionStripe', 'horizontalSpaceTokens', 'horizontalSpaceCheckbox'],
+    },
+    {
+      unit: 'small',
+      size: '12',
+      examples: ['verticalPaddingPopover'],
+    },
+    {
+      unit: 'medium',
+      size: '16',
+      examples: ['horizontalPaddingPopover', 'verticalSpaceCards', 'verticalSpacePageHeaderContent'],
+    },
+    {
+      unit: 'large',
+      size: '20',
+      examples: ['gridGutterWidth', 'horizontalPaddingContainer', 'verticalSpaceFormFields'],
+    },
+    {
+      unit: 'x-large',
+      size: '24',
+      examples: ['verticalSpaceTutorialPanel'],
+    },
+    {
+      unit: 'xx-large',
+      size: '32',
+      examples: ['leftIndentationSelectGroups'],
+    },
+    {
+      unit: 'xxx-large',
+      size: '40',
+      examples: ['horizontalPaddingAppLayoutSplitPanel'],
+    },
+  ];
+
+  return <Table columnDefinitions={spacingDefinitions} items={spacingItems} wrapLines={true} resizableColumns={true} />;
+}

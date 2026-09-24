@@ -1,0 +1,83 @@
+import React, { useState } from 'react';
+
+import Divider from '@cloudscape-design/components/divider';
+import Drawer from '@cloudscape-design/components/drawer';
+import Select, { SelectProps } from '@cloudscape-design/components/select';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import Steps from '@cloudscape-design/components/steps';
+
+interface EventLogEntry {
+  timestamp: string;
+  text: string;
+}
+
+interface EventLogGroup {
+  label: string;
+  entries: EventLogEntry[];
+}
+
+const eventLogGroups: EventLogGroup[] = [
+  {
+    label: 'Yesterday',
+    entries: [
+      { timestamp: '2:34:01 PM', text: 'Initializing workspace environment' },
+      { timestamp: '2:35:08 PM', text: 'Creating src directory structure' },
+      { timestamp: '2:35:40 PM', text: 'Installing npm dependencies' },
+      { timestamp: '2:37:42 PM', text: 'Dependency installation complete' },
+      { timestamp: '2:39:51 PM', text: 'Writing unit test for TodoList' },
+    ],
+  },
+  {
+    label: 'Today',
+    entries: [
+      { timestamp: '9:12:04 AM', text: 'Running ESLint on source files' },
+      { timestamp: '9:12:12 AM', text: 'Lint check passed' },
+      { timestamp: '9:12:18 AM', text: 'Compiling TypeScript to JavaScript' },
+      { timestamp: '9:15:49 AM', text: 'Rebuilding project' },
+      { timestamp: '9:16:04 AM', text: 'Build completed successfully' },
+    ],
+  },
+];
+
+const filterOptions: SelectProps.Options = [
+  { value: 'all', label: 'All events' },
+  { value: 'Yesterday', label: 'Yesterday' },
+  { value: 'Today', label: 'Today' },
+];
+
+export default function EventLog() {
+  const [selectedFilter, setSelectedFilter] = useState<SelectProps.Option>(filterOptions[0] as SelectProps.Option);
+
+  const visibleGroups =
+    selectedFilter.value === 'all'
+      ? eventLogGroups
+      : eventLogGroups.filter(group => group.label === selectedFilter.value);
+
+  return (
+    <Drawer header="Event log">
+      <SpaceBetween size="s">
+        <Select
+          selectedOption={selectedFilter}
+          onChange={({ detail }) => setSelectedFilter(detail.selectedOption)}
+          options={filterOptions}
+          inlineLabelText="Filter"
+        />
+
+        {visibleGroups.map(group => (
+          <SpaceBetween key={group.label} size="s">
+            <Divider>{group.label} </Divider>
+            <Steps
+              ariaLabel={`${group.label} events`}
+              steps={group.entries.map(entry => ({
+                status: 'log',
+                statusIconAriaLabel: 'Log',
+                annotation: entry.timestamp,
+                header: entry.text,
+              }))}
+            />
+          </SpaceBetween>
+        ))}
+      </SpaceBetween>
+    </Drawer>
+  );
+}

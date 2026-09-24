@@ -1,0 +1,17 @@
+import React from 'react';
+import { RadioGroup } from '@cloudscape-design/components';
+
+const RadioGroupReadonly = () => (
+  <RadioGroup
+    items={[
+      { label: 'First choice', value: '1', description: 'This is the first option' },
+      { label: 'Second choice', value: '2', description: 'This is the second option' },
+      { label: 'Third choice', value: '3', description: 'This is the third option' },
+    ]}
+    value="1"
+    onChange={() => null}
+    readOnly={true}
+  />
+);
+
+export default RadioGroupReadonly;

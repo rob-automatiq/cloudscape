@@ -1,0 +1,8 @@
+import React from 'react';
+import { Button } from '@cloudscape-design/components';
+
+const Icons = () => {
+  return <Button iconName="edit-gen-ai">Normal button</Button>;
+};
+
+export default Icons;

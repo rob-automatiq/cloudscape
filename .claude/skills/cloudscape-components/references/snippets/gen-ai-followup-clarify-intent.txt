@@ -1,0 +1,92 @@
+import React from 'react';
+import Box from '@cloudscape-design/components/box';
+import ChatBubble from '@cloudscape-design/chat-components/chat-bubble';
+import Container from '@cloudscape-design/components/container';
+import Header from '@cloudscape-design/components/header';
+import PromptInput from '@cloudscape-design/components/prompt-input';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import TextContent from '@cloudscape-design/components/text-content';
+import ExpandableSources, { Sources } from '../genai-common/sources';
+import { genAiAvatar, userAvatar, userName } from '../genai-common/avatars';
+import chatBubbleActions from '../genai-common/chat-bubble-actions';
+import CitationPopover from '../genai-common/citation-popover';
+
+const sources: Sources = [
+  {
+    href: 'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-reserved-instances.html',
+    description: 'Reserved Instances for Amazon EC2 overview',
+  },
+  {
+    href: 'https://docs.aws.amazon.com/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html',
+    description: 'What is Amazon EC2 Auto Scaling?',
+  },
+];
+
+export default function GenAiFollowUpClarifyIntent() {
+  return (
+    <Container
+      header={<Header variant="h3">Generative AI assistant</Header>}
+      footer={<PromptInput value="" actionButtonAriaLabel="Send message" actionButtonIconName="send" />}
+    >
+      <SpaceBetween size="xs">
+        <ChatBubble avatar={userAvatar} type="outgoing" ariaLabel={`${userName} at 05:37:30pm`}>
+          I need to optimize EC2 costs across multiple regions.
+        </ChatBubble>
+        <ChatBubble
+          avatar={genAiAvatar}
+          type="incoming"
+          ariaLabel="Generative AI assistant at 05:37:40pm"
+          actions={chatBubbleActions}
+        >
+          <TextContent>
+            <p>
+              Optimizing EC2 costs across multiple regions is an important task for managing cloud expenses. Here are
+              strategies you can implement to optimize your EC2 costs:
+            </p>
+            <ol>
+              <li>
+                Use Reserved Instances (RIs) <CitationPopover count={1} href={sources[0].href} />
+                <ul>
+                  <li>Purchase RIs for predictable, long-term workloads</li>
+                  <li>Take advantage of regional benefit and size flexibility</li>
+                  <li>Consider Savings Plans for more flexibility across instance types and regions</li>
+                </ul>
+              </li>
+              <li>
+                Implement Auto Scaling <CitationPopover count={2} href={sources[1].href} />
+                <ul>
+                  <li>Set up Auto Scaling groups to automatically adjust capacity based on demand</li>
+                  <li>Use target tracking scaling policies to maintain optimal performance at the lowest cost</li>
+                </ul>
+              </li>
+              <li>...</li>
+            </ol>
+          </TextContent>
+          <Box padding={{ top: 'xs' }}>
+            <ExpandableSources sources={sources} />
+          </Box>
+        </ChatBubble>
+        <ChatBubble
+          avatar={genAiAvatar}
+          type="incoming"
+          ariaLabel="Generative AI assistant at 05:37:50pm"
+          actions={chatBubbleActions}
+        >
+          <TextContent>
+            <p>To provide targeted recommendations to optimize your EC2 costs, could you tell me:</p>
+            <ol>
+              <li>
+                What&apos;s your main goal? (Like Reduce costs for development environments, optimize production
+                workload spending)
+              </li>
+              <li>
+                Any specific constraints we should know about? (Must maintain high availability, need to keep certain
+                instances running 24/7)
+              </li>
+            </ol>
+          </TextContent>
+        </ChatBubble>
+      </SpaceBetween>
+    </Container>
+  );
+}

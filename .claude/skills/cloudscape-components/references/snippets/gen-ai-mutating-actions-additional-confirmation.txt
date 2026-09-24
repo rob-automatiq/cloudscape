@@ -1,0 +1,126 @@
+import React, { useState } from 'react';
+import Box from '@cloudscape-design/components/box';
+import Button from '@cloudscape-design/components/button';
+import ChatBubble from '@cloudscape-design/chat-components/chat-bubble';
+import Container from '@cloudscape-design/components/container';
+import Form from '@cloudscape-design/components/form';
+import FormField from '@cloudscape-design/components/form-field';
+import Header from '@cloudscape-design/components/header';
+import Input from '@cloudscape-design/components/input';
+import Link from '@cloudscape-design/components/link';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import StatusIndicator, { StatusIndicatorProps } from '@cloudscape-design/components/status-indicator';
+import TextContent from '@cloudscape-design/components/text-content';
+import TreeView from '@cloudscape-design/components/tree-view';
+import Dialog from '../gen-ai-feedback/dialog';
+import { userAvatar, userName, genAiAvatar } from '../genai-common/avatars';
+import '../genai-common/styles.scss';
+import './styles.scss';
+
+interface Step {
+  id: string;
+  status: StatusIndicatorProps.Type;
+  label: string;
+  children?: Step[];
+}
+
+const steps: Step[] = [
+  { id: 'inspect-s3-buckets', status: 'success', label: 'Inspected S3 buckets' },
+  { id: 'analyze-s3-bucket', status: 'success', label: 'Analyzed specific bucket' },
+  {
+    id: 'delete-bucket-contents',
+    status: 'pending',
+    label: 'Deleting bucket contents',
+    children: [
+      {
+        id: 'delete-bucket-contents-human-consent',
+        status: 'pending',
+        label: 'Authorization required from user to delete objects in bucket',
+      },
+    ],
+  },
+];
+
+export default function GenAiMutatingActionsAdditionalConfirmation() {
+  const [expandedSteps, setExpandedSteps] = useState(['delete-bucket-contents']);
+  return (
+    <Container header={<Header variant="h3">Generative AI assistant</Header>}>
+      <SpaceBetween size="xs">
+        <ChatBubble avatar={userAvatar} type="outgoing" ariaLabel={`${userName} at 05:37:30pm`}>
+          I want to delete ‘aws_us_west2-678d13-pipe’ S3 bucket
+        </ChatBubble>
+        <ChatBubble avatar={genAiAvatar} type="incoming" ariaLabel="Generative AI assistant at 05:37:40pm">
+          <SpaceBetween size="xs">
+            <div>
+              I&apos;ll help you delete the specified S3 bucket. S3 buckets must be empty before deletion, so I&apos;ll
+              first delete the objects in the bucket if any and then delete the bucket itself.
+            </div>
+            <TreeView<Step>
+              items={steps}
+              getItemId={item => item.id}
+              getItemChildren={item => item.children}
+              renderItem={item => ({
+                content: <StatusIndicator type={item.status}>{item.label}</StatusIndicator>,
+              })}
+              expandedItems={expandedSteps}
+              onItemToggle={({ detail }) =>
+                setExpandedSteps(
+                  detail.expanded ? [...expandedSteps, detail.id] : expandedSteps.filter(id => id !== detail.id)
+                )
+              }
+            />
+          </SpaceBetween>
+        </ChatBubble>
+        <div className="chat-bubble-indentation">
+          <Dialog
+            ariaLabel="Human consent dialog"
+            footer={
+              <>
+                <Button>Delete objects</Button>
+                <Button variant="link">Cancel</Button>
+              </>
+            }
+          >
+            <Form header={<Box variant="h4">Your authorization is needed to delete objects in the S3 bucket</Box>}>
+              <SpaceBetween size="m">
+                <Box variant="p">
+                  To avoid unexpected results, review the details below and provide additional written consent. This
+                  action is permanent and cannot be undone.
+                </Box>
+                <div>
+                  <Box variant="p">
+                    <Box variant="span" fontWeight="bold">
+                      Bucket:
+                    </Box>{' '}
+                    <Link href="#">aws_us_west2-678d13-pipe</Link>
+                  </Box>
+                  <Box variant="p" tagOverride="div">
+                    <Box variant="span" fontWeight="bold">
+                      Objects:
+                    </Box>
+                    <TextContent>
+                      <ul>
+                        <li>app/builds/v2.1.0/backend.zip</li>
+                        <li>app/config/prod/application.yaml</li>
+                        <li>app/assets/images/logo-v3.png</li>
+                      </ul>
+                    </TextContent>
+                  </Box>
+                  <Box variant="p">
+                    <Box variant="span" fontWeight="bold">
+                      Action:
+                    </Box>{' '}
+                    Delete objects
+                  </Box>
+                </div>
+                <FormField label='To confirm this action, type "Delete objects"'>
+                  <Input value="Delete objects" />
+                </FormField>
+              </SpaceBetween>
+            </Form>
+          </Dialog>
+        </div>
+      </SpaceBetween>
+    </Container>
+  );
+}

@@ -4,7 +4,7 @@
 //
 // Usage (from a project that has @cloudscape-design/components and typescript installed):
 //   node <skill>/scripts/generate-references.mjs [outDir]
-// outDir defaults to <skill>/references/components.
+// outDir defaults to <skill>/references/components; each component gets <outDir>/<folder>/api.md.
 
 import { createRequire } from 'node:module'
 import fs from 'node:fs'
@@ -19,7 +19,11 @@ const pkg = JSON.parse(fs.readFileSync(path.join(pkgDir, 'package.json'), 'utf8'
 const skillDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const outDir = path.resolve(process.argv[2] ?? path.join(skillDir, 'references', 'components'))
 
-const NOT_COMPONENTS = new Set(['internal', 'test-utils', 'i18n', 'theming', 'contexts', 'interfaces', 'plugins', 'types', 'dropdown'])
+const NOT_COMPONENTS = new Set(['internal', 'test-utils', 'i18n', 'theming', 'contexts', 'interfaces', 'plugins', 'types'])
+// cloudscape.design documents the new @cloudscape-design/chart-components PieChart under
+// "pie-chart"; the one in this package is the site's "pie-chart-legacy".
+const SITE_FOLDER = { 'pie-chart': 'pie-chart-legacy' }
+
 const pascal = dir => dir.split('-').map(s => s[0].toUpperCase() + s.slice(1)).join('')
 
 const publicDirs = Object.keys(pkg.exports ?? {})
@@ -42,6 +46,12 @@ function typeText(sym) {
   if (decl && decl.type) return decl.type.getText().replace(/\s+/g, ' ')
   return checker.typeToString(checker.getTypeOfSymbol(sym))
 }
+
+// JSDoc links point at cloudscape.design paths; send them to the sibling files in this skill.
+const localizeLinks = text => text
+  .replace(/\]\(\/components\/([a-z0-9-]+)\/?(?:\?tabId=(\w+))?(#[^)]*)?\)/g,
+    (_, name, tab, hash = '') => `](../${name}/${tab === 'api' ? 'api.md' : 'guidelines.md'}${hash})`)
+  .replace(/\]\(\//g, '](https://cloudscape.design/')
 
 const indent = (text, pad) => text.split('\n').map((l, i) => (i === 0 ? l : pad + l)).join('\n')
 
@@ -100,7 +110,7 @@ function render(dir) {
     ...(namespaceDecls.length
       ? ['## Types', '', `Supporting types from \`${propsSym.name}\` (verbatim):`, '', '```ts', ...namespaceDecls.map(d => d.getText()), '```', '']
       : []),
-  ].join('\n')
+  ].join('\n').replace(/\]\([^)]*\)/g, m => localizeLinks(m))
 }
 
 fs.mkdirSync(outDir, { recursive: true })
@@ -108,7 +118,9 @@ const written = []
 for (const dir of publicDirs) {
   const md = render(dir)
   if (!md) { console.warn(`skip ${dir}: no Props interface found`); continue }
-  fs.writeFileSync(path.join(outDir, `${dir}.md`), md)
+  const folder = SITE_FOLDER[dir] ?? dir
+  fs.mkdirSync(path.join(outDir, folder), { recursive: true })
+  fs.writeFileSync(path.join(outDir, folder, 'api.md'), md)
   written.push(dir)
 }
 console.log(`wrote ${written.length} references for @cloudscape-design/components@${pkg.version} to ${outDir}`)

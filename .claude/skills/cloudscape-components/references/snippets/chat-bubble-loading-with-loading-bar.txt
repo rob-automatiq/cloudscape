@@ -1,0 +1,57 @@
+import React from 'react';
+import ChatBubble from '@cloudscape-design/chat-components/chat-bubble';
+import Avatar from '@cloudscape-design/chat-components/avatar';
+import Container from '@cloudscape-design/components/container';
+import Header from '@cloudscape-design/components/header';
+import Box from '@cloudscape-design/components/box';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+
+export default function LoadingWithLoadingBar() {
+  return (
+    <Container header={<Header variant="h3">Generative AI assistant</Header>}>
+      <SpaceBetween size="xs">
+        <ChatBubble
+          type="outgoing"
+          ariaLabel="Jane Doe at 05:32:20pm"
+          avatar={<Avatar initials="JD" tooltipText="Jane Doe" ariaLabel="Jane Doe" />}
+        >
+          Show me all my EC2 instances in us-east-1.
+        </ChatBubble>
+
+        <ChatBubble
+          type="incoming"
+          ariaLabel="Generative AI assistant at 05:32:25pm"
+          avatar={
+            <Avatar
+              tooltipText="Generative AI assistant"
+              ariaLabel="Generative AI assistant"
+              loading={true}
+              iconName="gen-ai"
+              color="gen-ai"
+            />
+          }
+        >
+          You have 12 instances in Amazon Elastic Compute Cloud. Here are the details about all resources in us-east-1:
+        </ChatBubble>
+
+        <ChatBubble
+          type="incoming"
+          ariaLabel="Generative AI assistant at 05:32:27pm"
+          showLoadingBar={true}
+          hideAvatar={true}
+          avatar={
+            <Avatar
+              tooltipText="Generative AI assistant"
+              ariaLabel="Generative AI assistant"
+              loading={true}
+              iconName="gen-ai"
+              color="gen-ai"
+            />
+          }
+        >
+          <Box color="text-status-inactive">Loading list of EC2 instances</Box>
+        </ChatBubble>
+      </SpaceBetween>
+    </Container>
+  );
+}

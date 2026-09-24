@@ -1,0 +1,66 @@
+import React from 'react';
+import {
+  Box,
+  Button,
+  ColumnLayout,
+  Container,
+  Header,
+  Link,
+  Popover,
+  ProgressBar,
+  SpaceBetween,
+  StatusIndicator,
+} from '@cloudscape-design/components';
+import './custom.scss';
+
+const ValueWithLabel = ({ label, children }) => (
+  <div>
+    <Box variant="awsui-key-label">{label}</Box>
+    <div>{children}</div>
+  </div>
+);
+
+export default function Preview() {
+  return (
+    <Container header={<Header headingTagOverride="h3">Header</Header>}>
+      <ColumnLayout columns={3} variant="text-grid">
+        <SpaceBetween size="l">
+          <ValueWithLabel label="Distribution ID">E1WG1ZNPRXT0D4</ValueWithLabel>
+          <ValueWithLabel label="Domain name">example.com</ValueWithLabel>
+          <ValueWithLabel label="ARN">
+            <div className="custom-wrapping">
+              <Box margin={{ right: 'xxs' }} display="inline-block">
+                <Popover
+                  size="small"
+                  position="top"
+                  dismissButton={false}
+                  triggerType="custom"
+                  content={<StatusIndicator type="success">ARN copied</StatusIndicator>}
+                >
+                  <Button variant="inline-icon" iconName="copy" ariaLabel="Copy ARN" />
+                </Popover>
+              </Box>
+              arn:aws:cloudfront::111122223333:distribution/E1WG1ZNPRXT0D4
+            </div>
+          </ValueWithLabel>
+        </SpaceBetween>
+        <SpaceBetween size="l">
+          <ValueWithLabel label="Status">
+            <StatusIndicator>Available</StatusIndicator>
+          </ValueWithLabel>
+          <ValueWithLabel label="Price class">Use only US, Canada, Europe, and Asia</ValueWithLabel>
+          <ValueWithLabel label="CNAMEs">
+            <Link href="https://example.com/" external={true} variant="primary">
+              Value with external link
+            </Link>
+          </ValueWithLabel>
+        </SpaceBetween>
+        <SpaceBetween size="l">
+          <ProgressBar variant="key-value" label="SSL Certificate" value={37} description="Update in progress" />
+          <ValueWithLabel label="Custom SSL client support">-</ValueWithLabel>
+          <ValueWithLabel label="Logging">Off</ValueWithLabel>
+        </SpaceBetween>
+      </ColumnLayout>
+    </Container>
+  );
+}

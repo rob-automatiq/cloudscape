@@ -1,0 +1,37 @@
+/* eslint-disable react/no-unescaped-entities */
+import React, { useState } from 'react';
+import { Box, Button, Alert, SpaceBetween, Modal } from '@cloudscape-design/components';
+
+const UnsavedChangesExample = () => {
+  const [visible, setVisible] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setVisible(true)}>Open modal</Button>
+      {visible && (
+        <Modal
+          onDismiss={() => setVisible(false)}
+          visible={visible}
+          header="Leave page"
+          closeAriaLabel="Close modal"
+          footer={
+            <Box float="right">
+              <SpaceBetween direction="horizontal" size="xs">
+                <Button variant="link" onClick={() => setVisible(false)}>
+                  Cancel
+                </Button>
+                <Button variant="primary">Leave</Button>
+              </SpaceBetween>
+            </Box>
+          }
+        >
+          <Alert type="warning">
+            Are you sure that you want to leave the current page? The changes that you made won't be saved.
+          </Alert>
+        </Modal>
+      )}
+    </>
+  );
+};
+
+export default UnsavedChangesExample;

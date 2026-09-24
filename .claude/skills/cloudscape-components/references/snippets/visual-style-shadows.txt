@@ -1,0 +1,6 @@
+import React from 'react';
+import VRSnippet from './visual-refresh';
+
+export default function Shadows() {
+  return <VRSnippet />;
+}

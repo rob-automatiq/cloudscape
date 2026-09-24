@@ -1,0 +1,54 @@
+import React, { useState } from 'react';
+import { LiveRegion, Toggle } from '@cloudscape-design/components';
+import Box from '@cloudscape-design/components/box';
+import Container from '@cloudscape-design/components/container';
+import Header from '@cloudscape-design/components/header';
+import Skeleton from '@cloudscape-design/components/skeleton';
+
+export default function SkeletonParagraph() {
+  const [loading, setLoading] = useState(true);
+
+  return (
+    <Container
+      header={
+        <Header
+          variant="h2"
+          headingTagOverride="h3"
+          actions={
+            <Toggle onChange={() => setLoading(!loading)} checked={loading}>
+              Show skeleton
+            </Toggle>
+          }
+        >
+          Demo: skeleton loading text content
+        </Header>
+      }
+    >
+      <LiveRegion>
+        {loading ? (
+          <>
+            <Box variant="h3" tagOverride="div" padding={{ bottom: 'xs' }}>
+              <Skeleton width="40%" />
+            </Box>
+            <Box variant="p">
+              <Skeleton />
+              <Skeleton />
+              <Skeleton width="60%" />
+            </Box>
+            <LiveRegion hidden>Loading text content</LiveRegion>
+          </>
+        ) : (
+          <>
+            <Header variant="h3">Article heading</Header>
+            <Box variant="p">
+              This is a paragraph of loaded content. It demonstrates what the content looks like when it has finished
+              loading and is ready for the user to read. This is the second sentence with additional information about
+              the topic being discussed in this section. This is the third sentence that concludes the content section
+              with final thoughts and summary information.
+            </Box>
+          </>
+        )}
+      </LiveRegion>
+    </Container>
+  );
+}

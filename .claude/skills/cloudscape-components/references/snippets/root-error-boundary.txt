@@ -1,0 +1,17 @@
+import { Button, ErrorBoundary } from '@cloudscape-design/components';
+import React, { useState } from 'react';
+
+// Note: this snippet is created for Console error boundaries community library that uses
+// Cloudscape error boundaries under the hood. It is sufficient to use Cloudscape's implementation
+// for the snippet instead of pulling the community version.
+
+const Snippet = () => {
+  const [error, setError] = useState(false);
+  return (
+    <ErrorBoundary onError={({ error: e }) => console.log(e)}>
+      {!error ? <Button onClick={() => setError(true)}>Simulate error</Button> : <>{{}}</>}
+    </ErrorBoundary>
+  );
+};
+
+export default Snippet;

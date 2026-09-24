@@ -1,0 +1,148 @@
+import React from 'react';
+import { LinkComponentContext } from '@/awsui-website-components/contexts';
+import { Input, Button, Alert, ExpandableSection, ColumnLayout, Table, SpaceBetween } from '@cloudscape-design/components';
+
+import { generalDefinitions, AdditionalDetails, VisualElement } from './internal/common';
+
+import './borders.scss';
+
+export default function Borders() {
+  const Link = React.useContext(LinkComponentContext);
+
+  const borderItemsVisualRefresh = [
+    {
+      class: 'website-visual-refresh-layout-container-display',
+      role: 'Border for layout elements.',
+      examples: (
+        <p>
+          <Link to="/components/container/">Containers</Link>, <Link to="/components/cards/">cards</Link>, panels and
+          horizontal and vertical dividers.
+        </p>
+      ),
+    },
+    {
+      class: 'website-visual-refresh-button-display',
+      role: 'Border for interactive elements.',
+      examples: (
+        <p>
+          <Link to="/components/button/">Buttons</Link> and <Link to="/components/tiles/">tiles</Link>.
+        </p>
+      ),
+    },
+    {
+      class: 'website-visual-refresh-form-border-display',
+      role: 'Default border for form elements.',
+      examples: (
+        <p>
+          Form elements such as <Link to="/components/input/">input</Link>, <Link to="/components/select/">select</Link>
+          , <Link to="/components/textarea/">textarea</Link> and{' '}
+          <Link to="/components/property-filter/">property filter</Link>.
+        </p>
+      ),
+    },
+    {
+      class: 'website-visual-refresh-popover-display',
+      role: 'Border for elements of greater visual prominence that are transient or provide context specific information.',
+      examples: (
+        <p>
+          <Link to="/components/popover/">Popovers</Link>, <Link to="/components/alert/">alerts</Link> and{' '}
+          <Link to="/components/annotation-context/">annotation popovers</Link>.
+        </p>
+      ),
+    },
+    {
+      class: 'website-visual-refresh-horizontal-divider-1px-display',
+      role: 'Default 1px dividers.',
+      examples: (
+        <ul>
+          <li>
+            Vertical column divider <Link to="/components/key-value-pairs/">Key/value pair</Link>.
+          </li>
+          <li>
+            Footer horizontal dividers in <Link to="/components/container/">container</Link>,{' '}
+            <Link to="/components/modal/">modal</Link>, and <Link to="/components/app-layout/">app layout</Link> panels.
+          </li>
+          <li>
+            Header horizontal dividers in <Link to="/components/app-layout/">app layout</Link> navigation and tools
+            panels.
+          </li>
+          <li>
+            Default <Link to="/components/expandable-section/">expandable section</Link> horizontal separator.
+          </li>
+          <li>
+            <Link to="/components/tabs/">Tabs</Link> headers and <Link to="/components/table/">table</Link> columns
+            vertical dividers.
+          </li>
+        </ul>
+      ),
+    },
+    {
+      class: 'website-visual-refresh-horizontal-divider-2px-display',
+      role: 'Border for interactive elements.',
+      examples: (
+        <p>
+          <Link to="/components/table/">Table</Link> columns vertical dividers.
+        </p>
+      ),
+    },
+  ];
+
+  return (
+    <>
+      <ColumnLayout columns={2}>
+        <VisualElement
+          label="Border radius"
+          description="Small elements that are used inside other elements have a border radius."
+          otherExamples="Other examples not shown: autosuggest, button dropdown, checkbox, multiselect, select, textarea, and, tiles."
+        >
+          <SpaceBetween size="m">
+            <SpaceBetween size="m" direction="horizontal">
+              <Input value="Input" />
+              <Button>Button</Button>
+            </SpaceBetween>
+            <Alert statusIconAriaLabel="Info">Alert</Alert>
+          </SpaceBetween>
+        </VisualElement>
+
+        <VisualElement
+          label="Dividers"
+          description="Dividers are used sparingly, but consistently."
+          otherExamples="Other examples not shown: app layout, container, modal header/footers, dropdown items, side navigation, and tabs."
+        >
+          <SpaceBetween size="l">
+            <ExpandableSection header="Expandable section" defaultExpanded={true} />
+            <ColumnLayout columns={3} borders="all">
+              <div>Column layout 1</div>
+              <div>Column layout 2</div>
+              <div>Column layout 3</div>
+            </ColumnLayout>
+            <Table
+              items={[
+                {
+                  name: 'Row 1',
+                },
+                {
+                  name: 'Row 2',
+                },
+              ]}
+              columnDefinitions={[
+                {
+                  id: '1',
+                  header: 'Table column 1',
+                  cell: item => item.name,
+                  isRowHeader: true,
+                },
+                {
+                  id: '2',
+                  header: 'Table column 2',
+                  cell: item => item.name,
+                },
+              ]}
+            />
+          </SpaceBetween>
+        </VisualElement>
+      </ColumnLayout>
+      <AdditionalDetails columnDefinitions={generalDefinitions} items={borderItemsVisualRefresh} />
+    </>
+  );
+}

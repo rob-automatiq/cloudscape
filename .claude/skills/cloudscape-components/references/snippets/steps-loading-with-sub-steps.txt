@@ -1,0 +1,93 @@
+import React from 'react';
+import Header from '@cloudscape-design/components/header';
+import Link from '@cloudscape-design/components/link';
+import Container from '@cloudscape-design/components/container';
+import TreeView from '@cloudscape-design/components/tree-view';
+import StatusIndicator, { StatusIndicatorProps } from '@cloudscape-design/components/status-indicator';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+
+interface Item {
+  id: string;
+  label: string;
+  type: StatusIndicatorProps.Type;
+  hasActions?: boolean;
+  statusCounts?: { type: StatusIndicatorProps.Type; count: number }[];
+  children?: Item[];
+}
+
+export default function LoadingWithSubSteps() {
+  const [expandedItems, setExpandedItems] = React.useState(['2']);
+  return (
+    <Container
+      header={
+        <Header variant="h3" info={<Link variant="info">Info</Link>}>
+          Personalized recommendation
+        </Header>
+      }
+    >
+      <TreeView<Item>
+        connectorLines="vertical"
+        items={[
+          {
+            id: '1',
+            label: 'Evaluated',
+            type: 'success',
+            hasActions: true,
+          },
+          {
+            id: '2',
+            label: 'Checking node 3 of 3',
+            type: 'in-progress',
+            hasActions: true,
+            statusCounts: [
+              { type: 'in-progress', count: 1 },
+              { type: 'success', count: 2 },
+            ],
+
+            children: [
+              {
+                id: '2.1',
+                label: 'node-17 (eksclu-node-12345)',
+                type: 'success',
+              },
+              {
+                id: '2.2',
+                label: 'node-18 (eksclu-node-09876)',
+                type: 'success',
+              },
+              {
+                id: '2.3',
+                label: 'node-19 (eksclu-node-ab123)',
+                type: 'loading',
+              },
+            ],
+          },
+        ]}
+        expandedItems={expandedItems}
+        renderItem={item => ({
+          content: (
+            <SpaceBetween direction="horizontal" size="xs" alignItems="center">
+              <StatusIndicator type={item.type} iconAriaLabel={item.type}>
+                {item.label}
+              </StatusIndicator>
+              {item.statusCounts && <span>|</span>}
+              {item.statusCounts?.map((s, i) => (
+                <StatusIndicator key={i} type={s.type} iconAriaLabel={s.type}>
+                  {`${s.count}`}
+                </StatusIndicator>
+              ))}
+            </SpaceBetween>
+          ),
+        })}
+        getItemId={item => item.id}
+        getItemChildren={item => item.children}
+        onItemToggle={({ detail }) =>
+          setExpandedItems(prev =>
+            detail.expanded ? [...prev, detail.item.id] : prev.filter(id => id !== detail.item.id)
+          )
+        }
+        ariaLabel="Personalized recommendation steps"
+      />
+    </Container>
+  );
+}

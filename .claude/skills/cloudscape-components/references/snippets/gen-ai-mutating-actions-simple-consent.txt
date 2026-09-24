@@ -1,0 +1,78 @@
+import React from 'react';
+import Box from '@cloudscape-design/components/box';
+import Button from '@cloudscape-design/components/button';
+import ChatBubble from '@cloudscape-design/chat-components/chat-bubble';
+import Container from '@cloudscape-design/components/container';
+import Form from '@cloudscape-design/components/form';
+import Header from '@cloudscape-design/components/header';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import Steps from '@cloudscape-design/components/steps';
+import Dialog from '../gen-ai-feedback/dialog';
+import { genAiAvatar } from '../genai-common/avatars';
+import './styles.scss';
+import '../genai-common/styles.scss';
+
+export default function GenAiMutatingActionsSimpleConsent() {
+  return (
+    <Container header={<Header variant="h3">Generative AI assistant</Header>}>
+      <SpaceBetween size="xs">
+        <ChatBubble avatar={genAiAvatar} type="incoming" ariaLabel="Generative AI assistant at 05:37:30pm">
+          <Steps
+            steps={[
+              { status: 'success', header: 'Analyzed Billing application' },
+              { status: 'success', header: 'Checked EC2 instances' },
+              { status: 'pending', header: 'Authorization required from user to add cost allocation tags' },
+            ]}
+          />
+        </ChatBubble>
+        <div className="chat-bubble-indentation">
+          <Dialog
+            ariaLabel="Human consent dialog"
+            footer={
+              <>
+                <Button>Add tags</Button>
+                <Button variant="link">Cancel</Button>
+              </>
+            }
+          >
+            <Form header={<Box variant="h4">Add cost allocation tags</Box>}>
+              <SpaceBetween size="m">
+                <Box variant="p">
+                  I notice your EC2 instance i-1234abcd doesn&apos;t have proper cost allocation tags. Adding these tags
+                  would make it easier to track Atlas project costs. This can be easily reversed.
+                </Box>
+                <div>
+                  <Box variant="p">
+                    <Box variant="span" fontWeight="bold">
+                      EC2 instance:
+                    </Box>{' '}
+                    i-1234abcd
+                  </Box>
+                  <Box variant="p">
+                    <Box variant="span" fontWeight="bold">
+                      Project:
+                    </Box>{' '}
+                    Atlas
+                  </Box>
+                  <Box variant="p">
+                    <Box variant="span" fontWeight="bold">
+                      Environment:
+                    </Box>{' '}
+                    Development
+                  </Box>
+                  <Box variant="p">
+                    <Box variant="span" fontWeight="bold">
+                      Action:
+                    </Box>{' '}
+                    Add cost allocation tags
+                  </Box>
+                </div>
+                <Box variant="p">Would you like me to add the tags?</Box>
+              </SpaceBetween>
+            </Form>
+          </Dialog>
+        </div>
+      </SpaceBetween>
+    </Container>
+  );
+}

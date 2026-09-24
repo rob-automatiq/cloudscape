@@ -1,0 +1,55 @@
+import React, { useState, useRef } from 'react';
+import { flushSync } from 'react-dom';
+import { Box, Button, ExpandableSection, Form, FormField, SpaceBetween, Textarea } from '@cloudscape-design/components';
+import UserFeedbackSentiment from './sentiment';
+
+export default function ExpandableFeedback() {
+  const [feedbackSent, setFeedbackSent] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const feedbackSuccessRef = useRef();
+
+  return (
+    <SpaceBetween size="s">
+      <UserFeedbackSentiment onChange={() => setExpanded(true)} />
+      <ExpandableSection
+        headerText="Tell us more"
+        expanded={expanded}
+        onChange={({ detail }) => setExpanded(detail.expanded)}
+      >
+        {!feedbackSent && (
+          <Form
+            actions={
+              <Button
+                onClick={() => {
+                  flushSync(() => setFeedbackSent(true));
+                  feedbackSuccessRef.current.focus();
+                }}
+              >
+                Send
+              </Button>
+            }
+          >
+            <FormField
+              label={
+                <span>
+                  Additional notes - <i>optional</i>
+                </span>
+              }
+              constraintText="Do not disclose any personal, commercially sensitive, or confidential information."
+            >
+              <Textarea />
+            </FormField>
+          </Form>
+        )}
+
+        {feedbackSent && (
+          <div ref={feedbackSuccessRef} tabIndex={-1}>
+            <Box variant="span">
+              We appreciate your feedback. This will help us improve our products and services in the future.
+            </Box>
+          </div>
+        )}
+      </ExpandableSection>
+    </SpaceBetween>
+  );
+}

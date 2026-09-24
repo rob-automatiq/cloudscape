@@ -1,0 +1,24 @@
+import React, { useState } from 'react';
+import FormField from '@cloudscape-design/components/form-field';
+import Select, { SelectProps } from '@cloudscape-design/components/select';
+import { accounts, getAccountNameDisplay } from './data';
+
+const options: SelectProps.Option[] = accounts.map(account => ({
+  label: getAccountNameDisplay(account),
+  description: account.description,
+}));
+
+export default function AccountInSelect() {
+  const [selectedOption, setSelectedOption] = useState<SelectProps.Option>(options[0]);
+
+  return (
+    <FormField label="Account">
+      <Select
+        options={options}
+        selectedOption={selectedOption}
+        onChange={event => setSelectedOption(event.detail.selectedOption)}
+        selectedAriaLabel="Selected"
+      />
+    </FormField>
+  );
+}

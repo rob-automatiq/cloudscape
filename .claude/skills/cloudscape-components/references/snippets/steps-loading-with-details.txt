@@ -1,0 +1,31 @@
+import React from 'react';
+import Steps from '@cloudscape-design/components/steps';
+import Header from '@cloudscape-design/components/header';
+import Link from '@cloudscape-design/components/link';
+import Container from '@cloudscape-design/components/container';
+import Box from '@cloudscape-design/components/box';
+
+export default function LoadingWithDetails() {
+  return (
+    <Container
+      header={
+        <Header variant="h3" info={<Link variant="info">Info</Link>}>
+          Personalized recommendation
+        </Header>
+      }
+    >
+      <Steps
+        steps={[
+          { status: 'success', statusIconAriaLabel: 'Success', header: 'Evaluated' },
+          { status: 'success', statusIconAriaLabel: 'Success', header: 'Checked 5 nodes' },
+          {
+            status: 'loading',
+            statusIconAriaLabel: 'Loading',
+            header: 'Checking EKS clusters',
+            details: <Box variant="small">This step may take up to 15 seconds to complete.</Box>,
+          },
+        ]}
+      />
+    </Container>
+  );
+}

@@ -1,0 +1,76 @@
+import React from 'react';
+import Box from '@cloudscape-design/components/box';
+import Container from '@cloudscape-design/components/container';
+import ExpandableSection from '@cloudscape-design/components/expandable-section';
+import Header from '@cloudscape-design/components/header';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import Avatar from '@cloudscape-design/chat-components/avatar';
+import ChatBubble from '@cloudscape-design/chat-components/chat-bubble';
+import { genAiAvatarAriaLabel, genAiName, userAvatar, userName } from '../genai-common/avatars';
+import CustomGenAIChatFooter from '../gen-ai-response-regeneration/custom-gen-ai-chat-footer';
+
+export default function ThinkingHighStakesAuditable() {
+  return (
+    <Container
+      header={<Header variant="h3">Generative AI assistant</Header>}
+      footer={<CustomGenAIChatFooter actionButtonIconName="send" actionButtonAriaLabel="Send message" />}
+    >
+      <div role="region" aria-label="Chat" style={{ minHeight: 280 }}>
+        <SpaceBetween size="xs">
+          <ChatBubble type="outgoing" ariaLabel={`${userName} at 10:00am`} avatar={userAvatar}>
+            Review this IAM policy and tell me if it follows least privilege principles.
+          </ChatBubble>
+
+          <ChatBubble
+            type="incoming"
+            ariaLabel={`${genAiName} at 10:00am`}
+            avatar={
+              <Avatar
+                ariaLabel={genAiAvatarAriaLabel}
+                color="gen-ai"
+                iconName="gen-ai"
+                tooltipText={genAiName}
+                loading={true}
+              />
+            }
+          >
+            <ExpandableSection
+              variant="inline"
+              defaultExpanded
+              headerText={
+                <Box fontSize="body-m" fontWeight="normal">
+                  Thought for 14s
+                </Box>
+              }
+            >
+              <Box color="text-body-secondary" fontSize="body-s">
+                Reviewing the policy for least privilege compliance. Checking each permission block. Found s3:* on all
+                resources, this is overly broad. Found iam:* which grants full identity and access management control,
+                this is a significant security risk. Found ec2:* scoped to a specific instance but the action is still
+                too broad. Cross-referenced against AWS least privilege best practices. Identifying replacement actions
+                for each violation.
+              </Box>
+            </ExpandableSection>
+          </ChatBubble>
+
+          <ChatBubble
+            type="incoming"
+            ariaLabel={`${genAiName} at 10:00am`}
+            avatar={
+              <Avatar
+                ariaLabel={genAiAvatarAriaLabel}
+                color="gen-ai"
+                iconName="gen-ai"
+                tooltipText={genAiName}
+                loading={true}
+              />
+            }
+            hideAvatar
+          >
+            <Box color="text-status-inactive">Generating a response...</Box>
+          </ChatBubble>
+        </SpaceBetween>
+      </div>
+    </Container>
+  );
+}

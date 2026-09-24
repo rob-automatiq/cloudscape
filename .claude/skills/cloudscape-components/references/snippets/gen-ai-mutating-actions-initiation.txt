@@ -1,0 +1,29 @@
+import React from 'react';
+import Button from '@cloudscape-design/components/button';
+import ChatBubble from '@cloudscape-design/chat-components/chat-bubble';
+import Container from '@cloudscape-design/components/container';
+import Header from '@cloudscape-design/components/header';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import { userAvatar, userName, genAiAvatar } from '../genai-common/avatars';
+import '../genai-common/styles.scss';
+import './styles.scss';
+
+export default function GenAiMutatingActionsInitiation() {
+  return (
+    <Container header={<Header variant="h3">Generative AI assistant</Header>}>
+      <SpaceBetween size="xs">
+        <ChatBubble avatar={userAvatar} type="outgoing" ariaLabel={`${userName} at 05:37:30pm`}>
+          I want to delete ‘aws_us_west2-678d13-pipe’ S3 bucket
+        </ChatBubble>
+        <ChatBubble avatar={genAiAvatar} type="incoming" ariaLabel="Generative AI assistant at 05:37:40pm">
+          I&apos;ll help you delete the specified S3 bucket. S3 buckets must be empty before deletion, so I&apos;ll
+          first delete the objects in the bucket if any, and then delete the bucket itself. Do you want me to proceed
+          with deletion?
+        </ChatBubble>
+        <div className="chat-bubble-indentation">
+          <Button>Delete bucket</Button>
+        </div>
+      </SpaceBetween>
+    </Container>
+  );
+}

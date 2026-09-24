@@ -1,0 +1,17 @@
+import React from 'react';
+import KeyValuePairs from '@cloudscape-design/components/key-value-pairs';
+import { formatReadOnlyRegion } from './common';
+
+const RegionKeyValuePair = () => {
+  return (
+    <KeyValuePairs
+      items={[
+        {
+          label: 'Region',
+          value: formatReadOnlyRegion('us-west-2'),
+        },
+      ]}
+    />
+  );
+};
+export default RegionKeyValuePair;

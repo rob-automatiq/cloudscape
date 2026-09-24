@@ -1,0 +1,8 @@
+import React from 'react';
+import { Flashbar, FlashbarProps } from '@cloudscape-design/components';
+
+export default function FlashbarBuilder(props: FlashbarProps) {
+  return function Component() {
+    return <Flashbar {...props} />;
+  };
+}

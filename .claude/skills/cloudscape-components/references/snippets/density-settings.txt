@@ -1,0 +1,39 @@
+/* eslint-disable @next/next/no-img-element */
+import React, { useState } from 'react';
+import { FormField, Tiles } from '@cloudscape-design/components';
+import { comfortableImage, compactImage } from './common';
+import './index.scss';
+
+export const comfortableModeImage = comfortableImage;
+
+export const compactModeImage = compactImage;
+
+interface DensitySettingsBuilder {
+  description: string;
+}
+export default function DensitySettingsBuilder({ description }: DensitySettingsBuilder) {
+  return function Component() {
+    const [value, setValue] = useState<string>('item1');
+    return (
+      <FormField description={description} label="Content density">
+        <Tiles
+          value={value}
+          onChange={e => setValue(e.detail.value)}
+          columns={4}
+          items={[
+            {
+              label: 'Comfortable',
+              image: comfortableImage,
+              value: 'item1',
+            },
+            {
+              label: 'Compact',
+              image: compactImage,
+              value: 'item2',
+            },
+          ]}
+        />
+      </FormField>
+    );
+  };
+}

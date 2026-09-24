@@ -1,0 +1,54 @@
+import React, { useState } from 'react';
+import Box from '@cloudscape-design/components/box';
+import FormField from '@cloudscape-design/components/form-field';
+import Select, { SelectProps } from '@cloudscape-design/components/select';
+import Checkbox from '@cloudscape-design/components/checkbox';
+
+import { languages } from './languages';
+
+export default function CheckboxProgressiveDisclosureExample() {
+  const [autoLanguageOverride, setAutoLanguageOverride] = useState<boolean>(false);
+  const [language, setLanguage] = useState<SelectProps.Option>(languages[0]);
+
+  /**
+   * This code works because the Box component with the id of "language-settings" is not a child
+   * of a SpaceBetween component. If it was like this:
+   *
+   * <Box margin={{ top: 's' }}>
+   *   <SpaceBetween direction="vertical">
+   *     <FormField ... />
+   *     <Box id="language-settings" display={autoLanguageOverride ? 'block' : 'none'} margin={{ top: 'xs' }}>
+   *       <FormField  ... />
+   *     </Box>
+   *   </SpaceBetween>
+   * </Box>
+   *
+   * the internal styling of SpaceBetween using the row-gap CSS property can have unintended spacing issues.
+   * To avoid this, we recommend progressively disclosing the item via conditional rendering.
+   */
+  return (
+    <Box margin={{ top: 's' }}>
+      <FormField
+        label="Language settings"
+        description="This service automatically identifies the language in your media. You can also select a specific language."
+      >
+        <Checkbox
+          checked={autoLanguageOverride}
+          onChange={({ detail: { checked } }) => setAutoLanguageOverride(checked)}
+        >
+          Choose another language (non-default)
+        </Checkbox>
+      </FormField>
+      <Box id="language-settings" display={autoLanguageOverride ? 'block' : 'none'} margin={{ top: 'xs' }}>
+        <FormField label="Language" description="Select the language you want to use.">
+          <Select
+            ariaRequired={!autoLanguageOverride}
+            selectedOption={language}
+            onChange={event => setLanguage(event.detail.selectedOption)}
+            options={languages}
+          />
+        </FormField>
+      </Box>
+    </Box>
+  );
+}

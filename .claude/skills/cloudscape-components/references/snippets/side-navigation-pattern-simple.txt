@@ -1,0 +1,84 @@
+import React, { useState } from 'react';
+import Icon from '@cloudscape-design/components/icon';
+import { SideNavigationProps } from '@cloudscape-design/components/side-navigation';
+
+import renderSideNavConfigs from './util-layout';
+
+const navItems: SideNavigationProps.Item[] = [
+  {
+    type: 'link',
+    text: 'Dashboard',
+    href: '#/page1',
+    icon: (
+      <Icon
+        svg={
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="3 3 18 18">
+            <path
+              stroke="currentColor"
+              d="M4 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5ZM14 5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V5ZM4 16a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3ZM14 13a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-6Z"
+            />
+          </svg>
+        }
+      />
+    ),
+  },
+  {
+    type: 'link',
+    text: 'Storage',
+    href: '#/page2',
+    icon: (
+      <Icon
+        svg={
+          <svg viewBox="0 0 16 16" height="16" width="16">
+            <path
+              className="filled no-stroke"
+              fill="currentColor"
+              fillRule="evenodd"
+              d="M3.3.79C4.54.29 6.2 0 8 0s3.46.29 4.7.79a5 5 0 0 1 1.57.94c.41.39.73.9.73 1.52v9.5a2 2 0 0 1-.73 1.52 5 5 0 0 1-1.57.94c-1.24.5-2.9.79-4.7.79s-3.46-.29-4.7-.79a5 5 0 0 1-1.57-.94A2 2 0 0 1 1 12.75v-9.5c0-.62.32-1.13.73-1.52A5 5 0 0 1 3.3.8m-.8 4.54V8c0 .07.03.22.26.43q.33.33 1.1.64c1.02.41 2.49.68 4.14.68s3.12-.27 4.14-.68q.77-.31 1.1-.64c.23-.21.26-.36.26-.43V5.33a6 6 0 0 1-.8.38c-1.24.5-2.9.79-4.7.79s-3.46-.29-4.7-.79a6 6 0 0 1-.8-.38m11-2.08c0 .07-.03.22-.26.43q-.33.33-1.1.64C11.12 4.73 9.65 5 8 5s-3.12-.27-4.14-.68q-.77-.31-1.1-.64c-.23-.21-.26-.36-.26-.43s.03-.22.26-.43q.33-.33 1.1-.64C4.88 1.77 6.35 1.5 8 1.5s3.12.27 4.14.68q.77.31 1.1.64c.23.21.26.36.26.43m0 6.83a6 6 0 0 1-.8.38c-1.24.5-2.9.79-4.7.79s-3.46-.29-4.7-.79a6 6 0 0 1-.8-.38v2.67c0 .07.03.22.26.43q.33.33 1.1.64c1.02.41 2.49.68 4.14.68s3.12-.27 4.14-.68q.77-.31 1.1-.64c.23-.21.26-.36.26-.43z"
+              clipRule="evenodd"
+            ></path>
+          </svg>
+        }
+      />
+    ),
+  },
+  {
+    type: 'link',
+    text: 'Metrics',
+    href: '#/page3',
+    icon: (
+      <Icon
+        svg={
+          <svg viewBox="0 0 16 16" height="16" width="16">
+            <path
+              className="filled no-stroke"
+              fill="currentColor"
+              fillRule="evenodd"
+              d="M1 1v11.75C1 13.99 2 15 3.25 15H15v-1.5H3.25a.75.75 0 0 1-.75-.75V1zm13.3 5.01.51-.54-1.1-1.03-.5.55-3.23 3.43-2.27-2.27a1 1 0 0 0-1.42 0L4.22 8.22l-.53.53 1.06 1.06.53-.53L7 7.56l2.29 2.29a1 1 0 0 0 1.43-.03z"
+              clipRule="evenodd"
+            ></path>
+          </svg>
+        }
+      />
+    ),
+  },
+  { type: 'divider' },
+  {
+    type: 'link',
+    text: 'Notifications',
+    href: '#/notifications',
+    icon: <Icon name="notification" />,
+  },
+  {
+    type: 'link',
+    text: 'Support',
+    href: 'https://example.com',
+    external: true,
+    icon: <Icon name="support" />,
+  },
+];
+
+export default function SideNavigationSimple() {
+  const [activeHref, setActiveHref] = useState('#/page1');
+  return renderSideNavConfigs(navItems, activeHref, setActiveHref, { href: '#/', text: 'Simple' });
+}

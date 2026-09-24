@@ -1,0 +1,59 @@
+import React, { useState, useRef } from 'react';
+import { flushSync } from 'react-dom';
+import { Box, Button, Form, FormField, Header, SpaceBetween, Textarea } from '@cloudscape-design/components';
+import UserFeedbackSentiment from './sentiment';
+import { Sentiment } from './types';
+
+function Contextual() {
+  const successRef = useRef<HTMLDivElement | null>(null);
+  const [sentiment, setSentiment] = useState<Sentiment>();
+  const [additionalNotes, setAdditionalNotes] = useState('');
+  const [feedbackSent, setFeedbackSent] = useState(false);
+
+  return (
+    <SpaceBetween size="s">
+      <UserFeedbackSentiment onChange={(sentiment: Sentiment) => setSentiment(sentiment)} />
+
+      {sentiment && (
+        <div>
+          <Header variant="h3">Tell us more</Header>
+          {!feedbackSent && (
+            <Form
+              actions={
+                <Button
+                  onClick={() => {
+                    flushSync(() => setFeedbackSent(true));
+                    successRef.current?.focus();
+                  }}
+                >
+                  Send
+                </Button>
+              }
+            >
+              <FormField
+                label={
+                  <span>
+                    Additional notes - <i>optional</i>
+                  </span>
+                }
+                constraintText="Do not disclose any personal, commercially sensitive, or confidential information."
+              >
+                <Textarea value={additionalNotes} onChange={({ detail }) => setAdditionalNotes(detail.value)} />
+              </FormField>
+            </Form>
+          )}
+
+          {feedbackSent && (
+            <div ref={successRef} tabIndex={-1}>
+              <Box variant="span">
+                We appreciate your feedback. This will help us improve our products and services in the future.
+              </Box>
+            </div>
+          )}
+        </div>
+      )}
+    </SpaceBetween>
+  );
+}
+
+export default Contextual;

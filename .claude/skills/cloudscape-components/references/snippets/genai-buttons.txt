@@ -1,0 +1,17 @@
+import React from 'react';
+import { Button, SpaceBetween } from '@cloudscape-design/components';
+
+const Buttons = () => {
+  return (
+    <SpaceBetween direction="horizontal" size="xs">
+      <Button iconAlign="left" iconName="gen-ai">
+        Normal button
+      </Button>
+      <Button variant="primary" iconAlign="left" iconName="gen-ai">
+        Primary button
+      </Button>
+    </SpaceBetween>
+  );
+};
+
+export default Buttons;

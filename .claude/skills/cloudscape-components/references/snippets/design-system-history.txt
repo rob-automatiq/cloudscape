@@ -1,0 +1,56 @@
+import React, { useContext } from 'react';
+import olYeller from './ol_yeller.png';
+import uxdg from './uxdg.png';
+import columbia2016 from './columbia2016.png';
+import polaris2017 from './polaris2017.png';
+import polaris2022 from './polaris2022.png';
+import './styles.scss';
+import { ImageComponentContext } from '@/awsui-website-components/contexts';
+
+const images = [
+  {
+    src: olYeller,
+    name: "Ol' Yeller",
+    dates: '2008 - 2012',
+  },
+  {
+    src: uxdg,
+    name: 'UXDG/Plutonium',
+    dates: '2012 - 2014',
+  },
+  {
+    src: columbia2016,
+    name: 'Columbia',
+    dates: '2016',
+  },
+  {
+    src: polaris2017,
+    name: 'Cloudscape',
+    dates: '2017 - 2021',
+  },
+  {
+    src: polaris2022,
+    name: 'Cloudscape Visual Refresh',
+    dates: '2022 - ',
+  },
+];
+
+export default function DesignSystemHistory() {
+  const Image = useContext(ImageComponentContext);
+
+  return (
+    <div className="design-system-history">
+      {images.map(image => (
+        <figure key={image.name}>
+          <Image
+            src={image.src}
+            alt={`AWS Management Console with the ${image.name} (${image.dates}) design language`}
+          />
+          <figcaption>
+            {image.name} ({image.dates})
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  );
+}

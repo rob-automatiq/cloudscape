@@ -1,0 +1,316 @@
+{
+  "name": "avatar",
+  "componentName": "Avatar",
+  "displayName": "Avatar",
+  "regions": [
+    {
+      "name": "iconSvg",
+      "description": "Specifies the SVG of a custom icon.\nUse this property if the icon you want isn't available.",
+      "isDefault": false,
+      "displayName": "iconSvg"
+    }
+  ],
+  "functions": [],
+  "properties": [
+    {
+      "name": "ariaLabel",
+      "type": "string",
+      "optional": false,
+      "description": "Text to describe the avatar for assistive technology.\nWhen more than one avatar is used, provide a unique label for each.\nFor example, \"Avatar of John Doe\" or \"Avatar of generative AI assistant\".\n\nIf `tooltipText` is used make sure to include it in the `ariaLabel`.",
+      "formattedType": "string"
+    },
+    {
+      "name": "color",
+      "type": "string",
+      "inlineType": {
+        "name": "AvatarProps.Color",
+        "type": "union",
+        "values": [
+          "default",
+          "gen-ai"
+        ]
+      },
+      "optional": true,
+      "description": "Determines the color of the avatar.\nUse `gen-ai` for AI assistants and `default` otherwise.",
+      "defaultValue": "\"default\"",
+      "formattedType": "string"
+    },
+    {
+      "name": "iconName",
+      "type": "string",
+      "inlineType": {
+        "name": "IconProps.Name",
+        "type": "union",
+        "values": [
+          "add-plus",
+          "anchor-link",
+          "angle-down",
+          "angle-left",
+          "angle-left-double",
+          "angle-right",
+          "angle-right-double",
+          "angle-up",
+          "announcement",
+          "arrow-down",
+          "arrow-left",
+          "arrow-right",
+          "arrow-up",
+          "at-symbol",
+          "audio-full",
+          "audio-half",
+          "audio-off",
+          "backward-10-seconds",
+          "bug",
+          "calendar",
+          "call",
+          "caret-down",
+          "caret-down-filled",
+          "caret-left-filled",
+          "caret-right-filled",
+          "caret-up",
+          "caret-up-filled",
+          "check",
+          "close",
+          "closed-caption",
+          "closed-caption-unavailable",
+          "command-prompt",
+          "contact",
+          "convert-code",
+          "copy",
+          "delete-marker",
+          "dot",
+          "download",
+          "drag-indicator",
+          "edit",
+          "edit-gen-ai",
+          "ellipsis",
+          "envelope",
+          "exit-full-screen",
+          "expand",
+          "external",
+          "face-happy",
+          "face-happy-filled",
+          "face-neutral",
+          "face-neutral-filled",
+          "face-sad",
+          "face-sad-filled",
+          "file",
+          "file-open",
+          "filter",
+          "flag",
+          "folder",
+          "folder-open",
+          "forward-10-seconds",
+          "full-screen",
+          "gen-ai",
+          "globe",
+          "grid-view",
+          "group",
+          "group-active",
+          "heart",
+          "heart-filled",
+          "history",
+          "insert-row",
+          "internal-link",
+          "key",
+          "keyboard",
+          "light-dark",
+          "list-view",
+          "location-pin",
+          "lock-private",
+          "map",
+          "menu",
+          "microphone",
+          "microphone-off",
+          "mini-player",
+          "multiscreen",
+          "notification",
+          "pause",
+          "play",
+          "redo",
+          "refresh",
+          "remove",
+          "resize-area",
+          "script",
+          "search",
+          "search-gen-ai",
+          "security",
+          "send",
+          "settings",
+          "share",
+          "shrink",
+          "side-bar",
+          "sign-out",
+          "slash",
+          "slash-divider",
+          "star",
+          "star-filled",
+          "star-half",
+          "status-in-progress",
+          "status-info",
+          "status-negative",
+          "status-not-started",
+          "status-pending",
+          "status-positive",
+          "status-stopped",
+          "status-warning",
+          "stop-circle",
+          "subtract-minus",
+          "suggestions",
+          "suggestions-gen-ai",
+          "support",
+          "thumbs-down",
+          "thumbs-down-filled",
+          "thumbs-up",
+          "thumbs-up-filled",
+          "ticket",
+          "transcript",
+          "treeview-collapse",
+          "treeview-expand",
+          "undo",
+          "unlocked",
+          "upload",
+          "upload-download",
+          "user-profile",
+          "user-profile-active",
+          "video-camera-off",
+          "video-camera-on",
+          "video-camera-unavailable",
+          "video-off",
+          "video-on",
+          "video-unavailable",
+          "view-full",
+          "view-horizontal",
+          "view-vertical",
+          "zoom-in",
+          "zoom-out",
+          "zoom-to-fit"
+        ]
+      },
+      "optional": true,
+      "description": "Specifies the icon to be displayed as Avatar.\nUse `gen-ai` icon for AI assistants. By default `user-profile` icon is used.\n\nIf you set both `iconName` and `initials`, `initials` will take precedence.",
+      "defaultValue": "\"user-profile\"",
+      "formattedType": "string"
+    },
+    {
+      "name": "imgUrl",
+      "type": "string",
+      "optional": true,
+      "description": "Specifies the URL of a custom image. If you set both `iconUrl` and `imgUrl`, `imgUrl` will take precedence.",
+      "formattedType": "string"
+    },
+    {
+      "name": "initials",
+      "type": "string",
+      "optional": true,
+      "description": "The text content shown directly in the avatar's body.\nCan be 1 or 2 symbols long, every subsequent symbol is ignored.\nUse it to define initials that uniquely identify the avatar's owner.",
+      "formattedType": "string"
+    },
+    {
+      "name": "loading",
+      "type": "boolean",
+      "optional": true,
+      "description": "When set to true, a loading indicator is shown in avatar.",
+      "formattedType": "boolean"
+    },
+    {
+      "name": "style",
+      "type": "AvatarProps.Style",
+      "inlineType": {
+        "name": "AvatarProps.Style",
+        "type": "object",
+        "properties": [
+          {
+            "name": "root",
+            "optional": true,
+            "type": "{ background?: string | undefined; borderColor?: string | undefined; borderRadius?: string | undefined; borderWidth?: string | undefined; boxShadow?: string | undefined; color?: string | undefined; focusRing?: { ...; } | undefined; }",
+            "inlineType": {
+              "name": "object",
+              "type": "object",
+              "properties": [
+                {
+                  "name": "background",
+                  "optional": true,
+                  "type": "string"
+                },
+                {
+                  "name": "borderColor",
+                  "optional": true,
+                  "type": "string"
+                },
+                {
+                  "name": "borderRadius",
+                  "optional": true,
+                  "type": "string"
+                },
+                {
+                  "name": "borderWidth",
+                  "optional": true,
+                  "type": "string"
+                },
+                {
+                  "name": "boxShadow",
+                  "optional": true,
+                  "type": "string"
+                },
+                {
+                  "name": "color",
+                  "optional": true,
+                  "type": "string"
+                },
+                {
+                  "name": "focusRing",
+                  "optional": true,
+                  "type": "{ borderColor?: string | undefined; borderRadius?: string | undefined; borderWidth?: string | undefined; }",
+                  "inlineType": {
+                    "name": "object",
+                    "type": "object",
+                    "properties": [
+                      {
+                        "name": "borderColor",
+                        "optional": true,
+                        "type": "string"
+                      },
+                      {
+                        "name": "borderRadius",
+                        "optional": true,
+                        "type": "string"
+                      },
+                      {
+                        "name": "borderWidth",
+                        "optional": true,
+                        "type": "string"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "optional": true,
+      "description": "An object containing CSS properties to customize the avatar's visual appearance.\nRefer to the [style](/components/avatar/?tabId=style) tab for more details.",
+      "systemTags": [
+        "core"
+      ],
+      "formattedType": "Object"
+    },
+    {
+      "name": "tooltipText",
+      "type": "string",
+      "optional": true,
+      "description": "The text content shown in the avatar's tooltip.\n\nWhen you use this property, make sure to include it in the `ariaLabel`.",
+      "formattedType": "string"
+    },
+    {
+      "name": "width",
+      "type": "number",
+      "optional": true,
+      "description": "Defines the width and height of the avatar.\nThis value corresponds to the `width` CSS-property and will center and crop images using `object-fit: cover`.\nThe default and minimum width value is 28px.",
+      "formattedType": "number"
+    }
+  ],
+  "events": [],
+  "path": "/components/avatar"
+}

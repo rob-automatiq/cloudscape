@@ -1,0 +1,10 @@
+import React from 'react';
+import { FormField, Select, Button } from '@cloudscape-design/components';
+
+const Snippet = () => (
+  <FormField label="Security group" secondaryControl={<Button iconName="refresh" ariaLabel="Refresh" />}>
+    <Select options={[]} statusType="loading" loadingText="Loading security groups" />
+  </FormField>
+);
+
+export default Snippet;

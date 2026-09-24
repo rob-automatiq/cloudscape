@@ -1,0 +1,26 @@
+import React, { useState } from 'react';
+
+import { Container, FormField, Header, Input, SpaceBetween } from '@cloudscape-design/components';
+
+export default function NewFeatureFormField() {
+  const [bucketValue, setBucketValue] = useState('');
+  const [regionValue, setRegionValue] = useState('');
+  return (
+    <Container header={<Header variant="h2">Distribution content delivery</Header>}>
+      <SpaceBetween size="m">
+        <FormField label="Bucket">
+          <Input value={bucketValue} onChange={event => setBucketValue(event.detail.value)} />
+        </FormField>
+        <FormField
+          label={
+            <>
+              Region - <em>new</em>
+            </>
+          }
+        >
+          <Input value={regionValue} onChange={event => setRegionValue(event.detail.value)} />
+        </FormField>
+      </SpaceBetween>
+    </Container>
+  );
+}

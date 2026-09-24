@@ -1,0 +1,31 @@
+import React from 'react';
+import dynamic from 'next/dynamic';
+import StatusIndicator from '@cloudscape-design/components/status-indicator';
+import type { CloudEditorLanguageServers } from '@amzn/cloud-editor';
+import { createWorkerConnection } from '@amzn/cloud-editor/lib/lsp/utils';
+import json from '@amzn/cloud-editor/lib/languages/json';
+import { containerDefinition } from './ecs-container-definition';
+
+const CloudEditor = dynamic(() => import('@amzn/cloud-editor').then(mod => mod.CloudEditor), {
+  ssr: false,
+  loading: () => (
+    <div style={{ height: 620 }}>
+      <StatusIndicator type="loading">Loading CloudEditor</StatusIndicator>
+    </div>
+  ),
+});
+
+const jsonLanguageServers: CloudEditorLanguageServers = [
+  {
+    id: 'json-lsp',
+    connect: async () => {
+      return createWorkerConnection(new Worker(new URL('./json-worker.ts', import.meta.url)));
+    },
+  },
+];
+
+export default function CloudEditorDemo() {
+  return (
+    <CloudEditor content={containerDefinition} language={json} languageServers={jsonLanguageServers} locale="en-US" />
+  );
+}

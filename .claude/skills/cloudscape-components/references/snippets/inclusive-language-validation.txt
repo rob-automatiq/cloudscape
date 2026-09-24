@@ -1,0 +1,108 @@
+import React, { useState, useEffect } from 'react';
+import { Alert, Container, Header, Button, Form, Link, FormField, SpaceBetween, Input } from '@cloudscape-design/components';
+import validateInclusiveTerms from '@amzn/inclusive-tech-language-rules-js-wrapper';
+
+const InclusiveLanguageValidationDemo = () => {
+  const [value, setValue] = useState('Blacklist');
+  const [hasError, setHasError] = useState(false);
+
+  // `isFormSubmitted` is used to display the Alert only if the form got submitted.
+  // For more info, check the validation pattern guidelines.
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+  const defaultErrorDetails = { title: '', description: '' };
+  const [errorDetails, setErrorDetails] = useState(defaultErrorDetails);
+
+  const validateForm = e => {
+    setIsFormSubmitted(true);
+    validateString(value);
+    e.preventDefault();
+  };
+
+  // For the content of the error message see the guideline from Inclusive Tech (https://w.amazon.com/bin/view/InclusiveTech/DeterrentUX)
+  const generateErrorMessage = violations => {
+    const terms = [];
+    const alternatives = [];
+    const isSingular = violations.length === 1;
+    violations.forEach(violation => {
+      terms.push(`“${violation.phrasing}“`);
+      alternatives.push(...violation.alternative_terms.map(term => `“${term}“`));
+    });
+
+    const title = `The ${isSingular ? 'term' : 'terms'} ${
+      isSingular ? terms.join('') : terms.join(', ').replace(/, ([^,]*)$/, ' and $1')
+    } does not follow Amazon’s acceptable language guidelines.`;
+    const description = `Replace ${isSingular ? 'it' : 'them'} with a more inclusive ${
+      isSingular ? 'alternative' : 'alternatives'
+    } like ${alternatives.join(', ')} or another inclusive alternative to be able to proceed.`;
+
+    return {
+      title,
+      description,
+    };
+  };
+
+  const validateString = value => {
+    const violations = validateInclusiveTerms(value);
+    if (violations.length > 0) {
+      setHasError(true);
+      setErrorDetails(generateErrorMessage(violations));
+    } else {
+      setHasError(false);
+      setErrorDetails(defaultErrorDetails);
+    }
+  };
+
+  const onInputChange = ({ detail }) => {
+    setValue(detail.value);
+    // Perform the onChange validation after the form got submitted.
+    if (isFormSubmitted) {
+      validateString(detail.value);
+    }
+  };
+
+  // To show the validation on load for this demo, we mock the form is already submitted.
+  useEffect(() => {
+    setIsFormSubmitted(true);
+    validateString(value);
+  }, []);
+
+  return (
+    <Container header={<Header headingTagOverride="h3">Demo</Header>}>
+      <form onSubmit={validateForm}>
+        <Form
+          actions={
+            <SpaceBetween direction="horizontal" size="xs">
+              <Button variant="link">Cancel</Button>
+              <Button variant="primary">Submit</Button>
+            </SpaceBetween>
+          }
+        >
+          <FormField
+            label="Name"
+            description={'Specify a unique name for the group.'}
+            constraintText={
+              isFormSubmitted &&
+              hasError && (
+                <Alert type="warning" header={errorDetails.title}>
+                  {errorDetails.description} Learn more about{' '}
+                  <Link
+                    href={'https://amazondei.na.lego.a2z.com/all-learning-and-support/inclusive-terminology'}
+                    external={true}
+                    externalIconAriaLabel="Opens in a new tab"
+                  >
+                    inclusive language at Amazon
+                  </Link>
+                  .
+                </Alert>
+              )
+            }
+          >
+            <Input value={value} onChange={onInputChange} invalid={isFormSubmitted && hasError} />
+          </FormField>
+        </Form>
+      </form>
+    </Container>
+  );
+};
+
+export default InclusiveLanguageValidationDemo;

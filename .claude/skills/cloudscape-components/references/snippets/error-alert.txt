@@ -1,0 +1,17 @@
+import React from 'react';
+import { Alert, Button } from '@cloudscape-design/components';
+
+const Snippet = () => {
+  return (
+    <Alert
+      type="error"
+      statusIconAriaLabel="Error"
+      action={<Button>Select region</Button>}
+      header="Your resource could not be created"
+    >
+      Review the documentation to learn about potential compatibility issues with specific database versions.
+    </Alert>
+  );
+};
+
+export default Snippet;

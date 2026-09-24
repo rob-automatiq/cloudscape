@@ -1,0 +1,90 @@
+import React from 'react';
+import Box from '@cloudscape-design/components/box';
+import Button from '@cloudscape-design/components/button';
+import ChatBubble from '@cloudscape-design/chat-components/chat-bubble';
+import Container from '@cloudscape-design/components/container';
+import ExpandableSection from '@cloudscape-design/components/expandable-section';
+import Header from '@cloudscape-design/components/header';
+import Link from '@cloudscape-design/components/link';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import TextContent from '@cloudscape-design/components/text-content';
+import Steps from '@cloudscape-design/components/steps';
+import { userAvatar, userName, genAiAvatar } from '../genai-common/avatars';
+import chatBubbleActions from '../genai-common/chat-bubble-actions';
+import './styles.scss';
+
+export default function GenAiFollowUpClarifyIntent() {
+  return (
+    <Container header={<Header variant="h3">Generative AI assistant</Header>}>
+      <SpaceBetween size="xs">
+        <ChatBubble avatar={userAvatar} type="outgoing" ariaLabel={`${userName} at 05:37:30pm`}>
+          I want to delete ‘aws_us_west2-678d13-pipe’ S3 bucket
+        </ChatBubble>
+        <ChatBubble avatar={genAiAvatar} type="incoming" ariaLabel={`${userName} at 05:37:40pm`}>
+          <ExpandableSection headerText="Objects not deleted [2/3]" defaultExpanded={true}>
+            <Steps
+              steps={[
+                { status: 'success', header: 'Inspected S3 buckets' },
+                { status: 'success', header: 'Analyzed specified bucket' },
+                {
+                  status: 'error',
+                  header: (
+                    <>
+                      <Box margin={{ right: 'xs' }} display="inline">
+                        User declined consent to delete objects.
+                      </Box>
+                      <Button variant="inline-link">Retry</Button>
+                    </>
+                  ),
+                },
+              ]}
+            />
+          </ExpandableSection>
+        </ChatBubble>
+        <ChatBubble
+          avatar={genAiAvatar}
+          type="incoming"
+          ariaLabel={`${userName} at 05:37:50pm`}
+          actions={chatBubbleActions}
+        >
+          <TextContent>
+            <p>
+              You can delete the objects in ‘<Link href="#">aws_us_west2-678d13-pipe</Link>’ S3 bucket manually by
+              yourself:
+            </p>
+            <ol>
+              <li>
+                <b>AWS Console Method:</b>
+              </li>
+              <li>
+                Go to S3 in the AWS Console
+                <ol className="lower-latin">
+                  <li>Select your bucket</li>
+                  <li>Check the boxes next to objects you want to delete</li>
+                  <li>Click &quot;Delete&quot; button</li>
+                  <li>Type &quot;permanently delete&quot; in the confirmation box</li>
+                  <li>Click &quot;Delete objects&quot;</li>
+                </ol>
+              </li>
+              <li>
+                <b>To Empty Entire Bucket:</b>
+                <ol className="lower-latin">
+                  <li>Go to bucket &quot;Properties&quot;</li>
+                  <li>Find &quot;Empty bucket&quot; option</li>
+                  <li>Follow confirmation steps</li>
+                </ol>
+              </li>
+              <li>
+                <b>AWS CLI Quick Method:</b> aws s3 rm s3://your-bucket-name/your-object-key
+              </li>
+              <li>
+                <b>Delete Multiple Objects with CLI:</b> aws s3 rm s3://your-bucket-name --recursive
+              </li>
+            </ol>
+            <p>Remember that object deletion is permanent unless you have versioning enabled on your bucket.</p>
+          </TextContent>
+        </ChatBubble>
+      </SpaceBetween>
+    </Container>
+  );
+}

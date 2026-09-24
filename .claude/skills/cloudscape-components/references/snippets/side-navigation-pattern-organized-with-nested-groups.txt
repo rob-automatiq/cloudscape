@@ -1,0 +1,77 @@
+import { useState } from 'react';
+import { SideNavigationProps } from '@cloudscape-design/components/side-navigation';
+
+import renderSideNavConfigs from './util-layout';
+
+const navItems: SideNavigationProps.Item[] = [
+  {
+    type: 'link',
+    text: 'Dashboard',
+    href: '#/page1',
+  },
+  {
+    type: 'link',
+    text: 'Distributions',
+    href: '#/page2',
+  },
+  { type: 'divider' },
+  {
+    type: 'section-group',
+    title: 'Reports and analytics',
+    items: [
+      {
+        type: 'link',
+        text: 'Cache statistics',
+        href: '#/page3',
+      },
+      {
+        type: 'link',
+        text: 'Monitoring and alarms',
+        href: '#/page4',
+      },
+      {
+        type: 'link',
+        text: 'Popular objects',
+        href: '#/page5',
+      },
+      {
+        type: 'section',
+        text: 'Security',
+        items: [
+          {
+            type: 'link',
+            text: 'Origin access identity',
+            href: '#/page6',
+          },
+          {
+            type: 'link',
+            text: 'Public key',
+            href: '#/page7',
+          },
+          {
+            type: 'link',
+            text: 'Field-level encryption',
+            href: '#/page8',
+          },
+        ],
+      },
+    ],
+  },
+  { type: 'divider' },
+  {
+    type: 'link',
+    text: 'Settings',
+    href: '#/page9',
+  },
+];
+
+export default function SideNavigationOrganizedWithNestedGroups() {
+  const [activeHref, setActiveHref] = useState('#/page5');
+  return renderSideNavConfigs(
+    navItems,
+    activeHref,
+    setActiveHref,
+    { href: '#/', text: 'Service' },
+    { hideCollapsible: true }
+  );
+}

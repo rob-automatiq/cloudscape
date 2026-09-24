@@ -1,0 +1,99 @@
+import React, { useRef, useState } from 'react';
+import Box from '@cloudscape-design/components/box';
+import ButtonGroup from '@cloudscape-design/components/button-group';
+import Container from '@cloudscape-design/components/container';
+import FileTokenGroup from '@cloudscape-design/components/file-token-group';
+import Header from '@cloudscape-design/components/header';
+import PromptInput from '@cloudscape-design/components/prompt-input';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import ChatBubble from '@cloudscape-design/chat-components/chat-bubble';
+import { genAiAvatar, genAiName, userAvatar, userName } from '../genai-common/avatars';
+
+export default function ContextEnrichmentLocalFiles() {
+  const [prompt, setPrompt] = useState(
+    "I'm working on a deployment pipeline and need help configuring it. Use these files as context for this project."
+  );
+  const [files, setFiles] = useState<File[]>([
+    new File(['x'.repeat(2457)], 'buildspec.yaml', { type: 'application/x-yaml' }),
+  ]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleDismiss = (index: number) => {
+    setFiles(files.filter((_, i) => i !== index));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files);
+      setFiles(prev => [...prev, ...newFiles]);
+    }
+    e.target.value = '';
+  };
+
+  return (
+    <Container
+      header={<Header variant="h3">Generative AI assistant</Header>}
+      footer={
+        <>
+          <input type="file" ref={fileInputRef} onChange={handleFileChange} multiple style={{ display: 'none' }} />
+          <PromptInput
+            value={prompt}
+            onChange={({ detail }) => setPrompt(detail.value)}
+            actionButtonIconName="send"
+            actionButtonAriaLabel="Send message"
+            placeholder="Ask a question"
+            disableSecondaryActionsPaddings
+            secondaryActions={
+              <Box padding={{ left: 'xxs', top: 'xs' }}>
+                <ButtonGroup
+                  ariaLabel="Additional chat input actions"
+                  items={[
+                    { type: 'icon-button', id: 'upload-files', iconName: 'upload', text: 'Upload files' },
+                    { type: 'icon-button', id: 'add-reference', iconName: 'at-symbol', text: 'Add reference' },
+                  ]}
+                  onItemClick={({ detail }) => {
+                    if (detail.id === 'upload-files') {
+                      fileInputRef.current?.click();
+                    }
+                  }}
+                  variant="icon"
+                />
+              </Box>
+            }
+            secondaryContent={
+              files.length > 0 ? (
+                <FileTokenGroup
+                  items={files.map(file => ({ file, loading: false }))}
+                  onDismiss={({ detail }) => handleDismiss(detail.fileIndex)}
+                  showFileSize
+                  showFileThumbnail
+                  i18nStrings={{
+                    removeFileAriaLabel: (_index, fileName) => `Remove file ${fileName}`,
+                    formatFileSize: sizeInBytes => `${(sizeInBytes / 1024).toFixed(1)} KB`,
+                  }}
+                  alignment="horizontal"
+                />
+              ) : undefined
+            }
+          />
+        </>
+      }
+    >
+      <div role="region" aria-label="Chat" style={{ minHeight: 280 }}>
+        <SpaceBetween size="xs">
+          <ChatBubble type="incoming" ariaLabel={`${genAiName} at 2:45pm`} avatar={genAiAvatar}>
+            What can I help you with?
+          </ChatBubble>
+
+          <ChatBubble type="outgoing" ariaLabel={`${userName} at 3:00pm`} avatar={userAvatar}>
+            I need help setting up a deployment pipeline for my project.
+          </ChatBubble>
+
+          <ChatBubble type="incoming" ariaLabel={`${genAiName} at 3:00pm`} avatar={genAiAvatar}>
+            I can help with that! Do you have any configuration files you can share for context?
+          </ChatBubble>
+        </SpaceBetween>
+      </div>
+    </Container>
+  );
+}

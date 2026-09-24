@@ -1,0 +1,16 @@
+import React from 'react';
+import { Box, Link } from '@cloudscape-design/components';
+
+export default function TimestampRelative() {
+  return (
+    <>
+      <p>
+        <Box variant="awsui-key-label">Creation date</Box>5 hours ago by <Link href="#">plrs</Link>
+      </p>
+      <br />
+      <p>
+        <Box variant="awsui-key-label">Scan completed</Box>6 days ago
+      </p>
+    </>
+  );
+}

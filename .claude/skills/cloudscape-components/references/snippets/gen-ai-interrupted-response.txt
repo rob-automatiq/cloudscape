@@ -1,0 +1,28 @@
+import Container from '@cloudscape-design/components/container';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import ChatBubble from '@cloudscape-design/chat-components/chat-bubble';
+import { genAiLoadingAvatar, userAvatar, userName } from '../genai-common/avatars';
+import CustomGenAIChatFooter from './custom-gen-ai-chat-footer';
+
+export default function GenAiInterruptedResponse() {
+  return (
+    <Container
+      footer={<CustomGenAIChatFooter actionButtonIconName={'stop-circle'} actionButtonAriaLabel={'Stop generation'} />}
+    >
+      <SpaceBetween size="xs">
+        <ChatBubble avatar={userAvatar} type="outgoing" ariaLabel={`${userName} at 05:37:30pm`}>
+          What are the benefits of automation?
+        </ChatBubble>
+        <ChatBubble
+          avatar={genAiLoadingAvatar}
+          type="incoming"
+          ariaLabel="AI Assistant response in progress"
+          showLoadingBar
+        >
+          Automation is a complex technological process that involves sophisticated algorithmic implementations across
+          multiple system architectures. The fundamental computational principles underlying automation include...
+        </ChatBubble>
+      </SpaceBetween>
+    </Container>
+  );
+}

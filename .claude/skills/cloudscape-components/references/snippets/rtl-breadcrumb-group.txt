@@ -1,0 +1,30 @@
+import * as React from 'react';
+import { BreadcrumbGroup, SpaceBetween } from '@cloudscape-design/components';
+
+export default function RTLBreadcrumbGroup() {
+  return (
+    <SpaceBetween alignItems="start" direction="vertical" size="m">
+      <div dir="ltr">
+        <BreadcrumbGroup
+          ariaLabel="LTR Breadcrumb group"
+          items={[
+            { text: 'LTR Breadcrumb group', href: '#' },
+            { text: 'Page 1', href: '#' },
+            { text: 'Page 2', href: '#' },
+          ]}
+        />
+      </div>
+
+      <div dir="rtl">
+        <BreadcrumbGroup
+          ariaLabel="RTL Breadcrumb group"
+          items={[
+            { text: 'RTL Breadcrumb group', href: '#' },
+            { text: 'Page 1', href: '#' },
+            { text: 'Page 2', href: '#' },
+          ]}
+        />
+      </div>
+    </SpaceBetween>
+  );
+}

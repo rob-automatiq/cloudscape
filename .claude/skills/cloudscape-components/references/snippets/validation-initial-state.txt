@@ -1,0 +1,5 @@
+import React from 'react';
+import Form from './common-form';
+
+const Snippet = () => <Form />;
+export default Snippet;

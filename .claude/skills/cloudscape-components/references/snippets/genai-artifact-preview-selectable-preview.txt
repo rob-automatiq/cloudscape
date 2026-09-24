@@ -1,0 +1,143 @@
+import React, { useState } from 'react';
+import ChatBubble from '@cloudscape-design/chat-components/chat-bubble';
+import ActionCard from '@cloudscape-design/components/action-card';
+import Box from '@cloudscape-design/components/box';
+import Button from '@cloudscape-design/components/button';
+import Header from '@cloudscape-design/components/header';
+import Icon from '@cloudscape-design/components/icon';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import TextContent from '@cloudscape-design/components/text-content';
+import { genAiAvatar, genAiName, userAvatar, userName } from '../genai-common/avatars';
+import CustomGenAIChatFooter from '../gen-ai-response-regeneration/custom-gen-ai-chat-footer';
+import '../genai-common/styles.scss';
+import './selectable-preview.scss';
+
+export default function GenAiArtifactPreviewSelectablePreview() {
+  const [artifactOpen, setArtifactOpen] = useState(false);
+
+  return (
+    <div className="selectable-preview">
+      <div className="chat-panel">
+        <div className="chat-header">
+          <Header variant="h3">Generative AI assistant</Header>
+        </div>
+
+        <div className="chat-content" role="region" aria-label="Chat">
+          <SpaceBetween size="xs">
+            <ChatBubble type="outgoing" ariaLabel={`${userName} at 05:37:30pm`} avatar={userAvatar}>
+              Write an architecture overview for our multi-region deployment strategy
+            </ChatBubble>
+
+            <ChatBubble type="incoming" ariaLabel={`${genAiName} at 05:37:35pm`} avatar={genAiAvatar}>
+              I&apos;ve drafted an architecture overview covering multi-region topology, data replication, failover
+              strategy, and observability for your deployment.
+            </ChatBubble>
+
+            <div className="chat-bubble-indentation fit-content">
+              <ActionCard
+                variant="embedded"
+                header={
+                  <Box fontSize="heading-xs" fontWeight="bold">
+                    multi-region-architecture.md
+                  </Box>
+                }
+                description="18.7 KB"
+                icon={<Icon name="arrow-right" />}
+                onClick={() => setArtifactOpen(true)}
+                ariaLabel="Open multi-region architecture preview"
+              />
+            </div>
+          </SpaceBetween>
+        </div>
+
+        <div className="chat-footer">
+          <CustomGenAIChatFooter actionButtonIconName="send" actionButtonAriaLabel="Send message" />
+        </div>
+      </div>
+
+      <div
+        className={`artifact-panel${artifactOpen ? ' artifact-panel-open' : ''}`}
+        aria-hidden={!artifactOpen}
+        inert={!artifactOpen ? true : undefined}
+      >
+        <Box padding="l">
+          <SpaceBetween size="m">
+            <Header
+              variant="h3"
+              actions={
+                <SpaceBetween direction="horizontal" size="xxs">
+                  <Button iconName="share" variant="icon" ariaLabel="Share document" />
+                  <Button iconName="download" variant="icon" ariaLabel="Download document" />
+                  <Button
+                    iconName="close"
+                    variant="icon"
+                    ariaLabel="Close artifact"
+                    onClick={() => setArtifactOpen(false)}
+                  />
+                </SpaceBetween>
+              }
+            >
+              multi-region-architecture.md
+            </Header>
+            <TextContent>
+              <h4>Multi-Region Architecture Overview</h4>
+              <p>
+                This document describes the architecture for deploying the application across multiple AWS Regions to
+                improve availability, reduce latency, and meet data residency requirements.
+              </p>
+              <h4>Regional topology</h4>
+              <p>
+                The primary Region is us-east-1, with active-active deployments in eu-west-1 and ap-southeast-1. Each
+                Region runs an independent stack consisting of an Application Load Balancer, Amazon ECS services on
+                Fargate, and a Regional Amazon DynamoDB table with global tables enabled.
+              </p>
+              <h4>Traffic routing</h4>
+              <p>
+                Amazon Route 53 latency-based routing directs users to the nearest healthy Region. Health checks monitor
+                the ALB endpoint in each Region with a 10-second interval and 3-failure threshold before failover. DNS
+                TTL is set to 60 seconds to allow rapid rerouting during incidents.
+              </p>
+              <h4>Data replication</h4>
+              <ol>
+                <li>
+                  <strong>DynamoDB global tables</strong> — Provides multi-Region, multi-active replication with
+                  eventual consistency. Conflict resolution uses last-writer-wins based on item timestamps.
+                </li>
+                <li>
+                  <strong>Amazon S3 cross-Region replication</strong> — Static assets and user uploads replicate from
+                  the primary bucket to Regional buckets with replication time control (RTC) for predictable 15-minute
+                  SLA.
+                </li>
+                <li>
+                  <strong>Amazon ElastiCache Global Datastore</strong> — Session data replicates across Regions with
+                  sub-second lag, enabling seamless failover without session loss.
+                </li>
+              </ol>
+              <h4>Failover strategy</h4>
+              <p>
+                Automated failover is handled at the DNS layer through Route 53 health checks. If a Region becomes
+                unhealthy, traffic shifts to the next-lowest-latency Region within 60–90 seconds. Manual failover is
+                available through a runbook that updates Route 53 routing policies and disables the affected
+                Region&apos;s ECS services.
+              </p>
+              <h4>Observability</h4>
+              <p>
+                Each Region publishes metrics to a centralized Amazon CloudWatch dashboard in us-east-1 using
+                cross-account observability. Key metrics include request latency (p50, p99), error rates, DynamoDB
+                replication lag, and ECS task health. CloudWatch alarms trigger SNS notifications and automatically
+                create incident tickets when thresholds are breached.
+              </p>
+              <h4>Cost considerations</h4>
+              <p>
+                Multi-Region deployment increases infrastructure costs by approximately 2.4x compared to a single
+                Region. The primary cost drivers are cross-Region data transfer, DynamoDB global table write capacity,
+                and redundant compute in each Region. Reserved capacity and Savings Plans are applied across all Regions
+                to reduce baseline costs by 30–40%.
+              </p>
+            </TextContent>
+          </SpaceBetween>
+        </Box>
+      </div>
+    </div>
+  );
+}

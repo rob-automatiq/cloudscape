@@ -1,0 +1,38 @@
+import React from 'react';
+import { AppLayoutToolbar, Container, ContentLayout, Header, Link, SplitPanel } from '@cloudscape-design/components';
+import { I18nProvider } from '@cloudscape-design/components/i18n';
+import messages from '@cloudscape-design/components/i18n/messages/all.en';
+
+const LOCALE = 'en';
+
+export default function SplitPanelPreview() {
+  return (
+    <I18nProvider locale={LOCALE} messages={[messages]}>
+      <AppLayoutToolbar
+        toolsOpen={false}
+        navigationOpen={false}
+        splitPanelOpen={true}
+        splitPanel={<SplitPanel header="Split panel header">Split panel content</SplitPanel>}
+        content={
+          <ContentLayout
+            header={
+              <Header variant="h1" info={<Link variant="info">Info</Link>}>
+                Page header
+              </Header>
+            }
+          >
+            <Container
+              header={
+                <Header variant="h2" description="Container description">
+                  Container header
+                </Header>
+              }
+            >
+              <div className="contentPlaceholder" />
+            </Container>
+          </ContentLayout>
+        }
+      />
+    </I18nProvider>
+  );
+}

@@ -1,0 +1,25 @@
+import Container from '@cloudscape-design/components/container';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import ChatBubble from '@cloudscape-design/chat-components/chat-bubble';
+import { genAiAvatar, userAvatar, userName } from '../genai-common/avatars';
+import chatBubbleActions from './chat-action';
+import CustomGenAIChatFooter from './custom-gen-ai-chat-footer';
+
+export default function GenAiCompletedResponse() {
+  return (
+    <Container footer={<CustomGenAIChatFooter actionButtonIconName={'send'} actionButtonAriaLabel={'Send message'} />}>
+      <SpaceBetween size="xs">
+        <ChatBubble avatar={userAvatar} type="outgoing" ariaLabel={`${userName} at 05:37:30pm`}>
+          How do I plan a software release schedule?
+        </ChatBubble>
+        <ChatBubble avatar={genAiAvatar} type="incoming" ariaLabel="AI Assistant response" actions={chatBubbleActions}>
+          Release planning necessitates implementing cascading milestone dependencies, configuring automated workflow
+          orchestration patterns, and establishing synchronized deployment windows with cross-team change management
+          protocols. Each release cycle must incorporate parallel development streams with granular feature flagging
+          mechanisms. Version control branching strategies should align with continuous integration pipelines while
+          maintaining separate staging environments for quality assurance validation procedures.
+        </ChatBubble>
+      </SpaceBetween>
+    </Container>
+  );
+}

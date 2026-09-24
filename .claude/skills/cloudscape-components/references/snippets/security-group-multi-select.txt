@@ -1,0 +1,93 @@
+import React from 'react';
+import { Multiselect } from '@cloudscape-design/components';
+import { fetchSecurityGroups } from './security-groups-provider';
+
+const i18nStrings = {
+  tokenLimitShowFewer: 'Show fewer chosen options',
+  tokenLimitShowMore: 'Show more chosen options',
+};
+
+const deselectAriaLabel = option => {
+  const label = option?.value || option?.label;
+  return label ? `Deselect ${label}` : 'no label';
+};
+
+export default class SecurityGroupsMultiSelect extends React.Component {
+  pageNumber = null;
+  filteringText = '';
+  state = {
+    selectedOptions: undefined,
+    options: [],
+    status: 'pending',
+  };
+
+  fetchData = async () => {
+    try {
+      const { filteringText, pageNumber } = this;
+      const { items, hasNext } = await fetchSecurityGroups({
+        filteringText,
+        pageNumber,
+      });
+      if (this.filteringText !== filteringText) {
+        // there is another request in progress, discard the result of this one
+        return;
+      }
+      this.setState({
+        status: hasNext ? 'pending' : 'finished',
+        options: this.pageNumber === 1 ? items : this.state.options.concat(items),
+      });
+    } catch (error) {
+      this.setState({
+        status: 'error',
+      });
+    }
+  };
+
+  handleLoadItems = ({ detail: { filteringText, firstPage, samePage } }) => {
+    let { options } = this.state;
+    this.filteringText = filteringText;
+    if (firstPage) {
+      this.pageNumber = 0;
+      options = [];
+    }
+    if (!samePage) {
+      this.pageNumber++;
+    }
+    this.setState({
+      options,
+      status: 'loading',
+    });
+    this.fetchData();
+  };
+
+  handleChange = event => {
+    this.setState({
+      selectedOptions: event.detail.selectedOptions,
+    });
+  };
+
+  render() {
+    const { status, options, selectedOptions } = this.state;
+    return (
+      <Multiselect
+        filteringType="manual"
+        filteringPlaceholder="Find security group"
+        filteringAriaLabel="Filtering aria label"
+        statusType={status}
+        placeholder="Choose a security group"
+        loadingText="Loading security groups"
+        errorText="Error fetching results."
+        recoveryText="Retry"
+        finishedText={this.filteringText ? `End of "${this.filteringText}" results` : 'End of all results'}
+        empty="No security groups found"
+        options={options}
+        selectedOptions={selectedOptions}
+        onChange={this.handleChange}
+        onLoadItems={this.handleLoadItems}
+        tokenLimit={3}
+        deselectAriaLabel={deselectAriaLabel}
+        i18nStrings={i18nStrings}
+      />
+    );
+  }
+}

@@ -1,0 +1,122 @@
+import React, { useRef, useState } from 'react';
+import ChatBubble from '@cloudscape-design/chat-components/chat-bubble';
+import Avatar from '@cloudscape-design/chat-components/avatar';
+import ButtonGroup, { ButtonGroupProps } from '@cloudscape-design/components/button-group';
+import Container from '@cloudscape-design/components/container';
+import Header from '@cloudscape-design/components/header';
+import StatusIndicator from '@cloudscape-design/components/status-indicator';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import FeedbackDialog from './feedback-dialog';
+
+export default function GenAIFeedback() {
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showFeedbackDialog, setShowFeedbackDialog] = useState(true);
+  const buttonGroupRef = useRef<ButtonGroupProps.Ref>(null);
+
+  const dismissFeedbackDialog = () => {
+    setShowFeedbackDialog(false);
+    buttonGroupRef.current?.focus('not-helpful');
+  };
+
+  const content =
+    'Amazon S3 provides a simple web service interface that you can use to store and retrieve any amount of data, at any time, from anywhere. Using this service, you can easily build applications that make use of cloud native storage. Since Amazon S3 is highly scalable and you only pay for what you use, you can start small and grow your application as you wish, with no compromise on performance or reliability.';
+
+  return (
+    <Container header={<Header variant="h3">Generative AI assistant</Header>}>
+      <SpaceBetween size="xs">
+        <SpaceBetween size="xs">
+          <ChatBubble
+            type="incoming"
+            ariaLabel="Generative AI assistant at 05:32:25pm"
+            avatar={
+              <Avatar
+                tooltipText="Generative AI assistant"
+                ariaLabel="Generative AI assistant"
+                iconName="gen-ai"
+                color="gen-ai"
+              />
+            }
+            actions={
+              <ButtonGroup
+                ref={buttonGroupRef}
+                ariaLabel="Chat actions"
+                variant="icon"
+                items={[
+                  {
+                    type: 'group',
+                    text: 'Vote',
+                    items: [
+                      {
+                        type: 'icon-button',
+                        id: 'helpful',
+                        iconName: 'thumbs-up',
+                        text: 'Helpful',
+                        disabled: true,
+                        disabledReason: '"Helpful" option is unavailable after "Not helpful" feedback submitted.',
+                      },
+                      {
+                        type: 'icon-button',
+                        id: 'not-helpful',
+                        iconName: 'thumbs-down-filled',
+                        text: 'Not helpful',
+                        disabled: true,
+                        disabledReason: '"Not helpful" feedback has been submitted.',
+                      },
+                    ],
+                  },
+                  {
+                    type: 'icon-button',
+                    id: 'copy',
+                    iconName: 'copy',
+                    text: 'Copy',
+                    popoverFeedback: <StatusIndicator type="success">Message copied</StatusIndicator>,
+                  },
+                ]}
+                onItemClick={({ detail }) => {
+                  if (detail.id !== 'copy' || !navigator.clipboard) {
+                    return;
+                  }
+
+                  // eslint-disable-next-line no-console
+                  navigator.clipboard.writeText(content).catch(error => console.log('Failed to copy', error.message));
+                }}
+              />
+            }
+          >
+            {content}
+          </ChatBubble>
+
+          {isSubmitted && (
+            <ChatBubble
+              type="incoming"
+              ariaLabel="Generative AI assistant at 05:32:25pm"
+              hideAvatar={true}
+              avatar={
+                <Avatar
+                  tooltipText="Generative AI assistant"
+                  ariaLabel="Generative AI assistant"
+                  iconName="gen-ai"
+                  color="gen-ai"
+                />
+              }
+            >
+              Your feedback has been submitted. Thank you for your additional feedback.
+            </ChatBubble>
+          )}
+        </SpaceBetween>
+
+        {showFeedbackDialog && (
+          <div style={{ marginLeft: '34px' }}>
+            <FeedbackDialog
+              onDismiss={dismissFeedbackDialog}
+              onSubmit={() => {
+                setIsSubmitted(true);
+                dismissFeedbackDialog();
+              }}
+            />
+          </div>
+        )}
+      </SpaceBetween>
+    </Container>
+  );
+}

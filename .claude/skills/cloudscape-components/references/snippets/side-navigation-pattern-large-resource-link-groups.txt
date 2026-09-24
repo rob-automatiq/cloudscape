@@ -1,0 +1,69 @@
+import { useState } from 'react';
+import { SideNavigationProps } from '@cloudscape-design/components/side-navigation';
+
+import renderSideNavConfigs from './util-layout';
+
+const navItems: SideNavigationProps.Item[] = [
+  {
+    type: 'link',
+    text: 'Dashboard',
+    href: '#/page1',
+  },
+  {
+    type: 'expandable-link-group',
+    text: 'Data sources',
+    href: '#/group1',
+    defaultExpanded: true,
+    items: [
+      {
+        type: 'link',
+        text: 'Data summary',
+        href: '#/page2',
+      },
+      {
+        type: 'link',
+        text: 'Target distributions',
+        href: '#/page3',
+      },
+      {
+        type: 'link',
+        text: 'Missing values',
+        href: '#/page4',
+      },
+      {
+        type: 'link',
+        text: 'Attributes',
+        href: '#/page5',
+      },
+    ],
+  },
+  {
+    type: 'link',
+    text: 'ML models',
+    href: '#/page6',
+  },
+  {
+    type: 'link',
+    text: 'Evaluations',
+    href: '#/page7',
+  },
+  {
+    type: 'link',
+    text: 'Batch predictions',
+    href: '#/page8',
+  },
+];
+
+export default function SideNavigationLargeResourceLinkGroups() {
+  const [activeHref, setActiveHref] = useState('#/page2');
+  return renderSideNavConfigs(
+    navItems,
+    activeHref,
+    setActiveHref,
+    { href: '#/', text: 'Service' },
+    {
+      hideCollapsible: true,
+      moreResourcesHrefs: ['#/group1'],
+    }
+  );
+}

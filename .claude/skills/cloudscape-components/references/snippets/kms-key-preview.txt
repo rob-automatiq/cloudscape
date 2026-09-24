@@ -1,0 +1,107 @@
+import React from 'react';
+import {
+  Container,
+  FormField,
+  Autosuggest,
+  Button,
+  Link,
+  SpaceBetween,
+  Box,
+  StatusIndicator,
+  Checkbox,
+  Popover,
+} from '@cloudscape-design/components';
+import './kms-key-preview.scss';
+
+const ValueWithLabel = ({ label, children }) => (
+  <div>
+    <Box variant="awsui-key-label">{label}</Box>
+    <div>{children}</div>
+  </div>
+);
+
+const autosuggestOptions = [
+  { value: '6b22f61b-68f3-417b-b8f2-aaa29112d9a0', description: 'alias-1, alias-2' },
+  { value: '1c10ee1c-d4c7-4a0e-beb4-59b6a3c990b9', description: 'alias-1, alias-2' },
+  { value: '9e657a41-c326-46d8-9b3e-771f973c2c15', description: 'alias-1, alias-2' },
+  { value: '69a8c796-33d3-40cd-baac-421550d1048c', description: 'alias-1, alias-2' },
+];
+
+const EncryptionControls = ({ value, setValue }) => (
+  <FormField
+    description="This key will be used for encryption instead of the default key."
+    label="Choose an AWS KMS key"
+  >
+    <div className="kms-encryption-controls">
+      <Autosuggest
+        onChange={({ detail }) => setValue(detail.value)}
+        value={value}
+        options={autosuggestOptions}
+        enteredTextLabel={value => `Use: "${value}"`}
+        ariaLabel="Autosuggest example with suggestions"
+        placeholder="Choose an AWS KMS key or enter an ARN"
+        empty="No matches found"
+      />
+      <Button
+        href="/patterns/resource-selection/kms-key-selection"
+        iconAlign="right"
+        iconName="external"
+        wrapText={false}
+      >
+        Create an AWS KMS key
+      </Button>
+    </div>
+  </FormField>
+);
+
+const KeyDetails = ({ value }) => (
+  <FormField label="AWS KMS key details">
+    <SpaceBetween size="l">
+      <ValueWithLabel label="Key ARN">
+        <Box>
+          <Popover
+            dismissButton={false}
+            position="top"
+            size="small"
+            triggerType="custom"
+            content={<StatusIndicator type="success">Code snippet copied</StatusIndicator>}
+          >
+            <Button iconName="copy" variant="icon" />
+          </Popover>
+          <Link href="https://example.com/" external={true}>
+            {value}
+          </Link>
+        </Box>
+      </ValueWithLabel>
+      <ValueWithLabel label="Key status">Pending deletion</ValueWithLabel>
+      <ValueWithLabel label="Key aliases">alias-1, alias-2</ValueWithLabel>
+    </SpaceBetween>
+  </FormField>
+);
+
+const KMSKeyPreview = () => {
+  const [checked, setChecked] = React.useState(false);
+  const [value, setValue] = React.useState('');
+
+  return (
+    <Container>
+      <SpaceBetween size="s" direction="vertical">
+        <Box>
+          Your data is encrypted by default with a key that AWS owns and manages for you. To choose a different key,
+          customize your encryption settings. <Link>Learn more</Link>
+        </Box>
+        <Checkbox
+          onChange={({ detail }) => setChecked(detail.checked)}
+          checked={checked}
+          description="To use the default key, clear this option."
+        >
+          Customize encryption settings (advanced)
+        </Checkbox>
+        {checked && <EncryptionControls value={value} setValue={setValue} />}
+        {checked && value && <KeyDetails value={value} />}
+      </SpaceBetween>
+    </Container>
+  );
+};
+
+export default KMSKeyPreview;

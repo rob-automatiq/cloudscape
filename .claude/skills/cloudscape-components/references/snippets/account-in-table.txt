@@ -1,0 +1,74 @@
+import React from 'react';
+import Table from '@cloudscape-design/components/table';
+import Header from '@cloudscape-design/components/header';
+import PropertyFilter from '@cloudscape-design/components/property-filter';
+import { useCollection } from '@cloudscape-design/collection-hooks';
+import { accounts, getAccountNameDisplay } from './data';
+import Box from '@cloudscape-design/components/box';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import Button from '@cloudscape-design/components/button';
+import StatusIndicator from '@cloudscape-design/components/status-indicator';
+
+export const getTextFilterCounterText = (count: number | undefined = 0) =>
+  `${count} ${count === 1 ? 'match' : 'matches'}`;
+
+export default function AccountInTable() {
+  const { items, collectionProps, propertyFilterProps, filteredItemsCount, actions } = useCollection(accounts, {
+    sorting: {},
+    propertyFiltering: {
+      filteringProperties: [
+        { key: 'name', propertyLabel: 'Account name', groupValuesLabel: 'Account name values' },
+        { key: 'id', propertyLabel: 'Account ID', groupValuesLabel: 'Account ID values' },
+        { key: 'email', propertyLabel: 'Account email', groupValuesLabel: 'Account email values' },
+        { key: 'state', propertyLabel: 'Account status', groupValuesLabel: 'Account status values' },
+      ],
+      noMatch: (
+        <Box margin={{ vertical: 'xs' }} textAlign="center" color="inherit">
+          <SpaceBetween size="m">
+            <div>
+              <b>No matches</b>
+            </div>
+            <Button onClick={() => actions.setPropertyFiltering({ operation: 'and', tokens: [] })}>Clear filter</Button>
+          </SpaceBetween>
+        </Box>
+      ),
+    },
+  });
+
+  return (
+    <Table
+      {...collectionProps}
+      enableKeyboardNavigation={true}
+      wrapLines={true}
+      items={items}
+      columnDefinitions={[
+        {
+          id: 'name',
+          header: 'Name (ID)',
+          cell: a => getAccountNameDisplay(a),
+          sortingField: 'name',
+          isRowHeader: true,
+        },
+        { id: 'email', header: 'Email', cell: e => e.email ?? '-', sortingField: 'email' },
+        {
+          id: 'state',
+          header: 'Status',
+          cell: e => (
+            <StatusIndicator type={e.state === 'Suspended' ? 'warning' : 'success'}>{e.state}</StatusIndicator>
+          ),
+          sortingField: 'state',
+        },
+      ]}
+      header={<Header counter={`(${accounts.length})`}>Accounts</Header>}
+      filter={
+        <PropertyFilter
+          {...propertyFilterProps}
+          filteringEmpty="No suggestions found"
+          enableTokenGroups={true}
+          countText={getTextFilterCounterText(filteredItemsCount)}
+          i18nStrings={{ filteringAriaLabel: 'Find accounts', filteringPlaceholder: 'Find accounts' }}
+        />
+      }
+    />
+  );
+}

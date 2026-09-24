@@ -1,0 +1,60 @@
+import React from 'react';
+import ChatBubble from '@cloudscape-design/chat-components/chat-bubble';
+import Button from '@cloudscape-design/components/button';
+import Box from '@cloudscape-design/components/box';
+import Container from '@cloudscape-design/components/container';
+import Header from '@cloudscape-design/components/header';
+import ItemCard from '@cloudscape-design/components/item-card';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import { genAiAvatar, genAiName, userAvatar, userName } from '../genai-common/avatars';
+import CustomGenAIChatFooter from '../gen-ai-response-regeneration/custom-gen-ai-chat-footer';
+import '../genai-common/styles.scss';
+import './media.scss';
+
+export default function GenAiArtifactPreviewMedia() {
+  return (
+    <Container
+      header={<Header variant="h3">Generative AI assistant</Header>}
+      footer={<CustomGenAIChatFooter actionButtonIconName="send" actionButtonAriaLabel="Send message" />}
+    >
+      <div role="region" aria-label="Chat" className="chat-region">
+        <SpaceBetween size="xs">
+          <ChatBubble type="outgoing" ariaLabel={`${userName} at 05:37:30pm`} avatar={userAvatar}>
+            Create an image of a happy corgi dog.
+          </ChatBubble>
+
+          <ChatBubble type="incoming" ariaLabel={`${genAiName} at 05:37:35pm`} avatar={genAiAvatar}>
+            Here you go – an image of a happy corgi dog.
+          </ChatBubble>
+
+          <div className="chat-bubble-indentation media-card">
+            <ItemCard
+              variant="embedded"
+              header={
+                <Box fontSize="heading-xs" fontWeight="bold">
+                  dog-portrait.jpg
+                </Box>
+              }
+              description="886 × 408 – 487 KB"
+              disableContentPaddings
+              actions={
+                <SpaceBetween direction="horizontal" size="xxs">
+                  <Button iconName="download" variant="icon" ariaLabel="Download image" />
+                  <Button iconName="expand" variant="icon" ariaLabel="View fullscreen" />
+                </SpaceBetween>
+              }
+            >
+              <div className="media-image-wrapper">
+                <img
+                  src="/a-portrait-of-a-happy-corgi-dog.jpg"
+                  alt="A portrait of a happy corgi dog"
+                  className="media-image"
+                />
+              </div>
+            </ItemCard>
+          </div>
+        </SpaceBetween>
+      </div>
+    </Container>
+  );
+}

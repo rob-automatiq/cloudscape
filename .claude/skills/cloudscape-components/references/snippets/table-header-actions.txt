@@ -1,0 +1,69 @@
+import React from 'react';
+import Table from '@cloudscape-design/components/table';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import ButtonDropdown from '@cloudscape-design/components/button-dropdown';
+import Button from '@cloudscape-design/components/button';
+import TextFilter from '@cloudscape-design/components/text-filter';
+import Header from '@cloudscape-design/components/header';
+
+export default function TableHeader() {
+  const [selectedItems, setSelectedItems] = React.useState([{ name: 'Item 1' }]);
+  return (
+    <Table
+      columnDefinitions={[
+        { id: 'variable', header: 'Variable name', cell: e => e.name, sortingField: 'name', isRowHeader: true },
+        { id: 'value', header: 'Text value', cell: e => e.alt, sortingField: 'alt' },
+        { id: 'type', header: 'Type', cell: e => e.type },
+        { id: 'description', header: 'Description', cell: e => e.description },
+      ]}
+      items={[
+        {
+          name: 'Item 1',
+          alt: 'First',
+          description: 'This is the first item',
+          type: '1A',
+          size: 'Small',
+        },
+        {
+          name: 'Item 2',
+          alt: 'Second',
+          description: 'This is the second item',
+          type: '1B',
+          size: 'Large',
+        },
+      ]}
+      selectedItems={selectedItems}
+      onSelectionChange={({ detail }) => setSelectedItems(detail.selectedItems)}
+      trackBy="name"
+      ariaLabels={{
+        itemSelectionLabel: (e, t) => `select ${t.name}`,
+        selectionGroupLabel: 'Item selection',
+      }}
+      selectionType="multi"
+      filter={<TextFilter filteringPlaceholder="Find resources" />}
+      header={
+        <Header
+          counter={selectedItems.length ? '(' + selectedItems.length + '/2)' : '(2)'}
+          actions={
+            <SpaceBetween direction="horizontal" size="xs">
+              <ButtonDropdown
+                disabled={selectedItems.length === 0}
+                items={[
+                  {
+                    text: 'Deactivate',
+                  },
+                ]}
+              >
+                Actions
+              </ButtonDropdown>
+              <Button disabled={selectedItems.length === 0}>Create duplicate</Button>
+              <Button variant="primary">Create resource</Button>
+            </SpaceBetween>
+          }
+        >
+          Table title
+        </Header>
+      }
+    />
+  );
+}

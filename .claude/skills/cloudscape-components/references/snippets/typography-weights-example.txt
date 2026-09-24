@@ -1,0 +1,17 @@
+import React from 'react';
+import { Box } from '@cloudscape-design/components';
+
+const TypographyWeights = () => (
+  <Box margin={{ vertical: 'l' }}>
+    <Box fontWeight="bold" fontSize="display-l">
+      700 Bold
+    </Box>
+    <Box fontWeight="normal" fontSize="display-l">
+      400 Normal
+    </Box>
+    <Box fontWeight="light" fontSize="display-l">
+      300 Light
+    </Box>
+  </Box>
+);
+export default TypographyWeights;

@@ -1,0 +1,41 @@
+import React from 'react';
+import Steps from '@cloudscape-design/components/steps';
+import Header from '@cloudscape-design/components/header';
+import Link from '@cloudscape-design/components/link';
+import Container from '@cloudscape-design/components/container';
+import ExpandableSection from '@cloudscape-design/components/expandable-section';
+
+export default function CompletedWithExpandableSection() {
+  return (
+    <Container
+      header={
+        <Header variant="h3" info={<Link variant="info">Info</Link>}>
+          Personalized recommendation
+        </Header>
+      }
+    >
+      <ExpandableSection headerText="Investigation complete [4/4]">
+        <Steps
+          steps={[
+            { status: 'success', statusIconAriaLabel: 'Success', header: 'Evaluated' },
+            {
+              status: 'success',
+              statusIconAriaLabel: 'Success',
+              header: 'Checked 5 nodes',
+            },
+            {
+              status: 'success',
+              statusIconAriaLabel: 'Success',
+              header: 'Checked EKS clusters',
+            },
+            {
+              status: 'success',
+              statusIconAriaLabel: 'Success',
+              header: 'Summarized output',
+            },
+          ]}
+        />
+      </ExpandableSection>
+    </Container>
+  );
+}

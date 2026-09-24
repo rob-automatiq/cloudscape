@@ -1,0 +1,61 @@
+{
+  "name": "dialog",
+  "componentName": "Dialog",
+  "displayName": "Dialog",
+  "regions": [
+    {
+      "name": "children",
+      "displayName": "content",
+      "description": "Content of the dialog.",
+      "isDefault": true
+    },
+    {
+      "name": "footer",
+      "description": "Specifies a footer for the dialog, typically action buttons. If empty, the footer isn't displayed.",
+      "isDefault": false,
+      "displayName": "footer"
+    },
+    {
+      "name": "header",
+      "description": "Specifies the heading of the dialog.",
+      "isDefault": false,
+      "displayName": "header"
+    },
+    {
+      "name": "headerActions",
+      "description": "Actions displayed in the header row, before the close button.",
+      "isDefault": false,
+      "displayName": "headerActions"
+    }
+  ],
+  "functions": [],
+  "properties": [
+    {
+      "name": "i18nStrings",
+      "type": "DialogProps.I18nStrings",
+      "inlineType": {
+        "name": "DialogProps.I18nStrings",
+        "type": "object",
+        "properties": [
+          {
+            "name": "dismissAriaLabel",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "optional": true,
+      "description": "An object containing all the necessary localized strings required by the component.\n\n- `dismissAriaLabel` (string) - Adds an `aria-label` to the close button.",
+      "i18nTag": true,
+      "formattedType": "DialogProps.I18nStrings {\n  dismissAriaLabel?: string\n}"
+    }
+  ],
+  "events": [
+    {
+      "name": "onDismiss",
+      "description": "Called when the user dismisses the dialog using the close button or the Escape key.\nUse the event handler to remove the dialog from the page.\nWhen the dialog unmounts, it returns focus to the element that was focused before it mounted, as long as that element still exists.",
+      "cancelable": false
+    }
+  ],
+  "path": "/components/dialog"
+}

@@ -1,0 +1,70 @@
+import React, { useState } from 'react';
+import Input from '@cloudscape-design/components/input';
+import Button from '@cloudscape-design/components/button';
+import LiveRegion from '@cloudscape-design/components/live-region';
+import { useFormFieldContext } from '@cloudscape-design/components/contexts/form-field';
+import { useContainerQuery, useControllableState } from '@cloudscape-design/component-toolkit';
+import './index.scss';
+
+function EnumInput({ index: externalIndex, onChange: onChangeIndex, values, ...props }: any) {
+  const formFieldContext = useFormFieldContext(props);
+
+  const [useSmallButtons, ref] = useContainerQuery(entry => entry.contentBoxWidth < 688);
+
+  const [index, setIndex] = useControllableState(externalIndex, onChangeIndex, 0, {
+    componentName: 'EnumInput',
+    changeHandlerName: 'onChangeIndex',
+    propertyName: 'externalIndex',
+  });
+
+  const increment = () => setIndex((index + 1) % values.length);
+  const decrement = () => setIndex(index > 0 ? index - 1 : values.length - 1);
+
+  return (
+    <div ref={ref} className="enum-input">
+      <Input value={values[index]} {...props} {...formFieldContext} />
+
+      {useSmallButtons ? (
+        <Button variant="icon" iconSvg={<IncrementIcon />} onClick={increment} />
+      ) : (
+        <Button variant="link" onClick={increment}>
+          increment
+        </Button>
+      )}
+
+      {useSmallButtons ? (
+        <Button variant="icon" iconSvg={<DecrementIcon />} onClick={decrement} />
+      ) : (
+        <Button variant="link" onClick={decrement}>
+          decrement
+        </Button>
+      )}
+
+      <LiveRegion hidden={true}>{values[index]}</LiveRegion>
+    </div>
+  );
+}
+
+function IncrementIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+      <line x1="8" y1="1" x2="8" y2="15" />
+      <line x1="15" y1="8" x2="1" y2="8" />
+    </svg>
+  );
+}
+
+function DecrementIcon() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+      <line x1="15" y1="8" x2="1" y2="8" />
+    </svg>
+  );
+}
+
+const values = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+
+export default function EnumInputDemo() {
+  const [index, onChangeIndex] = useState(5);
+  return <EnumInput index={index} onChange={onChangeIndex} values={values} />;
+}

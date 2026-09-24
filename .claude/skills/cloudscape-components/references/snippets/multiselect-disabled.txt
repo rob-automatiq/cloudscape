@@ -1,0 +1,10 @@
+import React from 'react';
+import { Multiselect, FormField } from '@cloudscape-design/components';
+
+const MultiselectDisabled = () => (
+  <FormField label="Name">
+    <Multiselect options={[]} placeholder="Choose options" disabled={true} selectedOptions={[]} />
+  </FormField>
+);
+
+export default MultiselectDisabled;

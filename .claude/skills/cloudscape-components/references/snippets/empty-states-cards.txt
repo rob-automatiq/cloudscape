@@ -1,0 +1,54 @@
+import React from 'react';
+import { Cards, Pagination, CollectionPreferences, TextFilter, Button, Header, SpaceBetween, Box } from '@cloudscape-design/components';
+
+const CardsEmptyState = () => (
+  <Cards
+    header={
+      <Header
+        headingTagOverride="h3"
+        counter="(200)"
+        actions={
+          <SpaceBetween direction="horizontal" size="xs">
+            <Button disabled={true}>View details</Button>
+            <Button disabled={true}>Edit</Button>
+            <Button disabled={true}>Delete</Button>
+            <Button variant="primary">Create distribution</Button>
+          </SpaceBetween>
+        }
+      >
+        Distributions
+      </Header>
+    }
+    cardDefinition={[]}
+    items={[]}
+    empty={
+      <Box margin={{ vertical: 'xs' }} textAlign="center" color="inherit">
+        <SpaceBetween size="m">
+          <b>No matches</b>
+          <Button>Clear filter</Button>
+        </SpaceBetween>
+      </Box>
+    }
+    filter={
+      <TextFilter
+        filteringPlaceholder="Find distributions"
+        filteringText="us-east-1a"
+        onChange={() => {}}
+        countText="0 matches"
+      />
+    }
+    pagination={
+      <Pagination
+        currentPageIndex={1}
+        pagesCount={1}
+        ariaLabels={{
+          nextPageLabel: 'Next page',
+          previousPageLabel: 'Previous page',
+          pageLabel: pageNumber => `Page ${pageNumber} of all pages`,
+        }}
+      />
+    }
+    preferences={<CollectionPreferences title="Preferences" confirmLabel="Confirm" cancelLabel="Cancel" />}
+  ></Cards>
+);
+export default CardsEmptyState;

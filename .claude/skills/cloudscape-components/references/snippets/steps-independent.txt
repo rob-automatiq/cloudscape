@@ -1,0 +1,44 @@
+import React from 'react';
+import List from '@cloudscape-design/components/list';
+import Header from '@cloudscape-design/components/header';
+import Link from '@cloudscape-design/components/link';
+import Container from '@cloudscape-design/components/container';
+import StatusIndicator, { StatusIndicatorProps } from '@cloudscape-design/components/status-indicator';
+
+interface Item {
+  id: string;
+  label: string;
+  type: StatusIndicatorProps.Type;
+}
+
+export default function Independent() {
+  return (
+    <Container
+      header={
+        <Header variant="h3" info={<Link variant="info">Info</Link>}>
+          Region audit
+        </Header>
+      }
+    >
+      <List<Item>
+        ariaLabel="Region audit"
+        items={[
+          { id: 'us-east-1', label: 'Auditing us-east-1', type: 'loading' },
+          { id: 'us-west-2', label: 'Audited us-west-2', type: 'success' },
+          { id: 'eu-west-1', label: 'Auditing eu-west-1', type: 'loading' },
+          { id: 'ap-south-1', label: 'Audited ap-south-1', type: 'success' },
+          { id: 'sa-east-1', label: 'Auditing sa-east-1', type: 'loading' },
+          { id: 'ap-northeast-1', label: 'Auditing ap-northeast-1', type: 'loading' },
+        ]}
+        renderItem={item => ({
+          id: item.id,
+          content: (
+            <StatusIndicator type={item.type} iconAriaLabel={item.type}>
+              {item.label}
+            </StatusIndicator>
+          ),
+        })}
+      />
+    </Container>
+  );
+}

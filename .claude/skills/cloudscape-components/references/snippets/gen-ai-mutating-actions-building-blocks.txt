@@ -1,0 +1,73 @@
+import React from 'react';
+import Box from '@cloudscape-design/components/box';
+import Button from '@cloudscape-design/components/button';
+import Container from '@cloudscape-design/components/container';
+import Form from '@cloudscape-design/components/form';
+import FormField from '@cloudscape-design/components/form-field';
+import Header from '@cloudscape-design/components/header';
+import Input from '@cloudscape-design/components/input';
+import Link from '@cloudscape-design/components/link';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import Steps from '@cloudscape-design/components/steps';
+import Dialog from '../gen-ai-feedback/dialog';
+import './styles.scss';
+
+export default function GenAiMutatingActionsBuildingBlocks() {
+  return (
+    <Container header={<Header variant="h3">Generative AI application</Header>}>
+      <SpaceBetween size="m">
+        <Steps
+          steps={[
+            { status: 'success', header: 'Verification process' },
+            { status: 'success', header: 'Security assessment' },
+            { status: 'success', header: 'Pre-reopening checks' },
+            { status: 'pending', header: 'User consent required to reopen account' },
+          ]}
+        />
+        <div className="steps-indentation">
+          <Dialog
+            ariaLabel="User consent dialog"
+            footer={
+              <>
+                <Button>Reopen</Button>
+                <Button variant="link">Cancel</Button>
+              </>
+            }
+          >
+            <Form header={<Box variant="h4">Need your consent to reopen account</Box>}>
+              <SpaceBetween size="m">
+                <Box variant="p">
+                  Your AWS account can be automically reopened. You have an outstanding balance of{' '}
+                  <Box variant="span" fontWeight="bold">
+                    $127.50
+                  </Box>{' '}
+                  which will be charged to your <Link href="#">payment method</Link> (Visa ending in 2121).
+                </Box>
+                <div>
+                  <Box variant="p">
+                    To avoid unexpected results, review the details below and provide additional written consent.
+                  </Box>
+                  <Box variant="p">
+                    <Box variant="span" fontWeight="bold">
+                      Account no:
+                    </Box>{' '}
+                    983762018735
+                  </Box>
+                  <Box variant="p">
+                    <Box variant="span" fontWeight="bold">
+                      Action:
+                    </Box>{' '}
+                    Reopen account
+                  </Box>
+                </div>
+                <FormField label='To confirm this action, type "Reopen account"'>
+                  <Input value="Reopen account" />
+                </FormField>
+              </SpaceBetween>
+            </Form>
+          </Dialog>
+        </div>
+      </SpaceBetween>
+    </Container>
+  );
+}

@@ -1,0 +1,39 @@
+import React from 'react';
+import ChatBubble from '@cloudscape-design/chat-components/chat-bubble';
+import Avatar from '@cloudscape-design/chat-components/avatar';
+import Container from '@cloudscape-design/components/container';
+import Header from '@cloudscape-design/components/header';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+
+export default function Streaming() {
+  return (
+    <Container header={<Header variant="h3">Generative AI assistant</Header>}>
+      <SpaceBetween size="xs">
+        <ChatBubble
+          type="outgoing"
+          ariaLabel="Jane Doe at 05:37:30pm"
+          avatar={<Avatar initials="JD" tooltipText="Jane Doe" ariaLabel="Jane Doe" />}
+        >
+          What can I do with Amazon S3?
+        </ChatBubble>
+
+        <ChatBubble
+          type="incoming"
+          ariaLabel="Generative AI assistant at 05:37:35pm"
+          avatar={
+            <Avatar
+              tooltipText="Generative AI assistant"
+              ariaLabel="Generative AI assistant"
+              loading={true}
+              iconName="gen-ai"
+              color="gen-ai"
+            />
+          }
+        >
+          Amazon S3 (Simple Storage Service) is a highly scalable, durable, and secure object storage service offered by
+          Amazon Web services (AWS).
+        </ChatBubble>
+      </SpaceBetween>
+    </Container>
+  );
+}

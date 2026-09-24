@@ -1,0 +1,61 @@
+import React from 'react';
+import { Box, Container } from '@website-themed/components';
+
+import { LinkComponentContext } from '@/awsui-website-components/contexts';
+
+import './cards.scss';
+const HomePageCards = () => {
+  const Link = React.useContext(LinkComponentContext);
+
+  const cards = [
+    {
+      title: 'Foundation',
+      titleLink: '/foundation/',
+      description: (
+        <span>
+          Learn about the visual foundation of our design system, such as{' '}
+          <Link to="/foundation/visual-foundation/colors/">colors</Link>,{' '}
+          <Link to="/foundation/visual-foundation/spacing/">spacing</Link>, and{' '}
+          <Link to="/foundation/visual-foundation/iconography/">iconography</Link>.
+        </span>
+      ),
+    },
+    {
+      title: 'Components',
+      titleLink: '/components/',
+      description: (
+        <span>Discover our library of components. Built with React, they are tested, accessible, and responsive.</span>
+      ),
+    },
+    {
+      title: 'Patterns',
+      titleLink: '/patterns/',
+      description: <span>Explore our guidelines and best practices for building user experiences.</span>,
+    },
+    {
+      title: 'Demos',
+      titleLink: '/demos/',
+      description: <span>View Cloudscape in action by browsing through our demos.</span>,
+    },
+  ];
+  return (
+    <div className="homepage-cards-wrapper">
+      <Container disableContentPaddings={true}>
+        <div className="homepage-cards">
+          {cards.map(card => (
+            <div key={card.title}>
+              <Box variant="h3" margin={{ bottom: 'xs' }}>
+                <Link fontSize="heading-m" to={card.titleLink}>
+                  {card.title}
+                </Link>
+              </Box>
+              <div>{card.description}</div>
+            </div>
+          ))}
+        </div>
+      </Container>
+    </div>
+  );
+};
+
+export default HomePageCards;

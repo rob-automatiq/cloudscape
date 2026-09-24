@@ -1,0 +1,86 @@
+{
+  "name": "board-item",
+  "componentName": "BoardItem",
+  "displayName": "BoardItem",
+  "regions": [
+    {
+      "name": "children",
+      "description": "Main content of the item.",
+      "isDefault": true,
+      "displayName": "content"
+    },
+    {
+      "name": "footer",
+      "description": "Footer of the item.",
+      "isDefault": false,
+      "displayName": "footer"
+    },
+    {
+      "name": "header",
+      "description": "Heading element of the item. Use the [header component](/components/header/).",
+      "isDefault": false,
+      "displayName": "header"
+    },
+    {
+      "name": "settings",
+      "description": "Additional slot next to the heading. Use it to render an overflow actions menu in the form of a button dropdown.",
+      "isDefault": false,
+      "displayName": "settings"
+    }
+  ],
+  "functions": [],
+  "properties": [
+    {
+      "name": "disableContentPaddings",
+      "type": "boolean",
+      "optional": true,
+      "description": "Determines whether the main content of the item has padding. If `true`, removes the default padding\nfrom the content area.",
+      "formattedType": "boolean"
+    },
+    {
+      "name": "i18nStrings",
+      "type": "BoardItemProps.I18nStrings",
+      "inlineType": {
+        "name": "BoardItemProps.I18nStrings",
+        "type": "object",
+        "properties": [
+          {
+            "name": "dragHandleAriaDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "name": "dragHandleAriaLabel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "name": "dragHandleTooltipText",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "name": "resizeHandleAriaDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "name": "resizeHandleAriaLabel",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "name": "resizeHandleTooltipText",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "optional": false,
+      "description": "An object containing all the necessary localized strings required by the component.\n\nARIA labels:\n* `dragHandleAriaLabel` (string) - the ARIA label for the drag handle.\n* `dragHandleAriaDescription` (string, optional) - the ARIA description for the drag handle.\n* `resizeHandleAriaLabel` (string) - the ARIA label for the resize handle.\n* `resizeHandleAriaDescription` (string, optional) - the ARIA description for the resize handle.\n* `dragHandleTooltipText` (string, optional) - the ARIA description for the resize handle.\n* `resizeHandleTooltipText` (string, optional) - the Text for the resize handle Tooltip.",
+      "formattedType": "BoardItemProps.I18nStrings {\n  dragHandleAriaDescription?: string\n  dragHandleAriaLabel: string\n  dragHandleTooltipText?: string\n  resizeHandleAriaDescription?: string\n  resizeHandleAriaLabel: string\n  resizeHandleTooltipText?: string\n}"
+    }
+  ],
+  "events": [],
+  "path": "/components/board-item"
+}

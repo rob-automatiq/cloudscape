@@ -1,0 +1,60 @@
+import React, { useState } from 'react';
+import Button from '@cloudscape-design/components/button';
+import TagEditor, { getTagsDiff, TagEditorProps } from '@cloudscape-design/components/tag-editor';
+import { SpaceBetween } from '@cloudscape-design/components';
+
+const initialTags = [
+  {
+    key: 'key-1',
+    value: 'key 1',
+    existing: true,
+  },
+  {
+    key: 'key-2',
+    value: 'key 2',
+    existing: true,
+  },
+  {
+    key: 'key-3',
+    value: 'key 3',
+    existing: true,
+  },
+];
+
+const getTaggingService = () => {
+  // gets tagging service somehow
+  return {
+    untag: async (removed: string[]) => removed,
+    tag: async (created: Record<string, string>) => created,
+  };
+};
+export default function TagEditorForm() {
+  const [tags, setTags] = useState<readonly TagEditorProps.Tag[]>(initialTags);
+  const [taggingResponse, setTaggingResponse] = useState('');
+
+  const submitTagsTaggingService = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    // calling the getTagsDiff utility to get the `removed` and `created` tags:
+    const { created, removed } = getTagsDiff(initialTags, tags);
+
+    const taggingService = getTaggingService();
+    await taggingService.untag(removed);
+    await taggingService.tag(created);
+
+    setTaggingResponse(JSON.stringify({ removed, created }, null, 2));
+  };
+  return (
+    <form onSubmit={event => submitTagsTaggingService(event)}>
+      <SpaceBetween size="l">
+        <TagEditor tags={tags} onChange={({ detail }) => setTags(detail.tags)} />
+        <Button>Submit</Button>
+      </SpaceBetween>
+      {taggingResponse && (
+        <code>
+          <pre>{taggingResponse}</pre>
+        </code>
+      )}
+    </form>
+  );
+}

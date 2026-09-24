@@ -1,0 +1,473 @@
+import React from 'react';
+import { Box, Table, Header } from '@cloudscape-design/components';
+import Markdown from '@/awsui-website-components/components/markdown';
+
+const columns = [
+  {
+    header: 'Name',
+    cell: item => <Box padding={{ left: item.nested ? 'l' : 'n' }}>{item.name}</Box>,
+    isRowHeader: true,
+  },
+  {
+    header: 'Type',
+    cell: item => <code>{item.type}</code>,
+  },
+  {
+    header: 'Description',
+    cell: item => <Markdown text={item.description || ''} />,
+  },
+];
+
+export default function CollectionApiTable() {
+  return (
+    <>
+      <Box margin={{ vertical: 'l' }}>
+        <Table
+          header={<Header headingTagOverride="h3">Configuration</Header>}
+          columnDefinitions={columns}
+          wrapLines={true}
+          items={[
+            {
+              name: 'filtering',
+              type: 'Object',
+              description:
+                'Filtering configuration. If you want to activate filtering with default settings, provide an empty object.',
+            },
+            {
+              nested: true,
+              name: 'filteringFunction',
+              type: `(item: T, text: string, fields?: string[]) => boolean`,
+              description: `Custom function to filter items. The default value is a function that loops through all items
+             keys (unless \`fields\` property is provided, see below), converts all values to strings, and matches them against current \`filteringText\`.`,
+            },
+            {
+              nested: true,
+              name: 'fields',
+              type: 'string[]',
+              description: `Array of keys within the item object whose values are taken into account by the default filteringFunction.`,
+            },
+            {
+              nested: true,
+              name: 'defaultFilteringText',
+              type: 'string',
+              description: 'Initial filtering value on the first render.',
+            },
+            {
+              nested: true,
+              name: 'empty',
+              type: 'React.ReactNode',
+              description:
+                'Content to display in the table/cards empty slot when there are no items initially provided.',
+            },
+            {
+              nested: true,
+              name: 'noMatch',
+              type: 'React.ReactNode',
+              description: 'Content to display in the table/cards empty slot when filtering returns no matched items.',
+            },
+            {
+              name: 'propertyFiltering',
+              type: 'Object',
+              description: 'Configuration for property filtering.',
+            },
+            {
+              nested: true,
+              name: 'filteringProperties',
+              type: 'readonly PropertyFilterProperty[]',
+              description: `
+                Array of properties by which the data set is going to be filtered. Individual items have following properties:
+                * \`key\` [string]: The identifier of this property. Refer to a property name in type T of the data item to enable built-in filtering.
+                * \`groupValuesLabel\` [string]: Localized string to display for the 'Values' group label for a specific property. For example: EC2 instance values.
+                * \`propertyLabel\` [string]: A human-readable string for the property.
+                * \`operators\` [ReadonlyArray<PropertyFilterOperator | PropertyFilterOperatorExtended>, optional]: A list of all operators supported by this property. The equals operator should always be supported, even if you omit it in the list. Operators can be extended to accept additional properties. Include \`match\` to define an alternative filtering logic.
+                * \`group\` [string, optional]: Optional identifier of a custom group that this filtering option is assigned to. Use to create additional groups below the default one. Make sure to also define labels for the group in the customGroupsText property. Notice that only one level of options nesting is supported.
+              `,
+            },
+            {
+              nested: true,
+              name: 'filteringFunction',
+              type: `(item: T, query: PropertyFilterQuery) => boolean;`,
+              description: `Custom function to filter items. The default value is a function that takes values under the \`FilteringProperty['key']\` in individual items, and matches them against current \`filteringText\`.`,
+            },
+            {
+              nested: true,
+              name: 'defaultQuery',
+              type: 'PropertyFilterQuery',
+              description: 'Initial query on the first render.',
+            },
+            {
+              nested: true,
+              name: 'empty',
+              type: 'React.ReactNode',
+              description:
+                'Content to display in the table/cards empty slot when there are no items initially provided.',
+            },
+            {
+              nested: true,
+              name: 'noMatch',
+              type: 'React.ReactNode',
+              description: 'Content to display in the table/cards empty slot when filtering returns no matched items.',
+            },
+            {
+              name: 'sorting',
+              type: 'Object',
+              description:
+                'Sorting configuration. If you want to use sorting with default settings, provide an empty object. ' +
+                'This feature is only applicable for the table component.',
+            },
+            {
+              nested: true,
+              name: 'defaultState',
+              type: 'SortingState<T>',
+              description: 'Initial sorting state for single-column sorting. Ignored when `multiColumn` is enabled.',
+            },
+            {
+              nested: true,
+              name: 'multiColumn',
+              type: 'boolean',
+              description: 'Enables multi-column sorting. Defaults to `false`.',
+            },
+            {
+              nested: true,
+              name: 'defaultSortingColumns',
+              type: 'ReadonlyArray<SortingState<T>>',
+              description:
+                'Initial sorting columns in priority order, with the first column having the highest priority. Only used with `multiColumn`.',
+            },
+            {
+              name: 'pagination',
+              type: 'Object',
+              description:
+                'Pagination configuration. If you want to paginate items using default settings, provide an empty object.',
+            },
+            {
+              nested: true,
+              name: 'pageSize',
+              type: 'number',
+              description: 'Value of the desired page size.',
+            },
+            {
+              nested: true,
+              name: 'defaultPage',
+              type: 'number',
+              description: 'Page number for the initial render.',
+            },
+            {
+              nested: true,
+              name: 'allowPageOutOfRange',
+              type: 'boolean',
+              description: `Set to true to disable the logic that by default clamps the current page number to the number of
+                available pages of items. This can be useful in conjunction with \`openEnd\` pagination and lazy-loading of data.`,
+            },
+            {
+              name: 'selection',
+              type: 'Object',
+              description:
+                'Selection configuration. If you want to use the selection feature with default settings, provide an empty object.',
+            },
+            {
+              nested: true,
+              name: 'defaultSelectedItems',
+              type: 'ReadonlyArray<T>',
+              description:
+                'Items selected on the initial render. The items are matched by `trackBy` if defined and by reference otherwise.',
+            },
+            {
+              nested: true,
+              name: 'keepSelection',
+              type: 'boolean',
+              description:
+                'If set to `true`, selected items will be kept across pagination, sorting, filtering and page size changes.',
+            },
+            {
+              nested: true,
+              name: 'trackBy',
+              type: 'string | ((item: T) => string)',
+              description:
+                'Property of an item that uniquely identifies it. It is used for matching the objects in `items` and `selectedItems` arrays. ' +
+                'This value is also passed down to the `collectionProps` return value to ensure that the hook and the collection component use the same tracking logic. ' +
+                'Must be the same as `expandableRows.getId` if defined.',
+            },
+            {
+              name: 'expandableRows',
+              type: 'Object',
+              description: 'Expandable rows configuration.',
+            },
+            {
+              nested: true,
+              name: 'getId',
+              type: '(item: T) => string',
+              description:
+                'Property of an item that uniquely identifies it. It is used to make a nested items structure from of a plain list of items, and to match objects `items` and `expandedItems` arrays. ' +
+                'This value is also passed down to the `collectionProps` return value (as `trackBy`) to ensure that the hook and the collection component use the same tracking logic. ' +
+                'Must be the same as `selection.trackBy` if defined.',
+            },
+            {
+              nested: true,
+              name: 'getParentId',
+              type: '(item: T) => null | string',
+              description:
+                'Property of an item that identifies its parent by ID. For root items the function must return `null`.',
+            },
+            {
+              nested: true,
+              name: 'defaultExpandedItems',
+              type: 'ReadonlyArray<T>',
+              description: 'Items expanded on the initial render. The items are matched by `expandableRows.getId`.',
+            },
+            {
+              nested: true,
+              name: 'dataGrouping',
+              type: '{}',
+              description:
+                'Determines how counters and selection are computed. When set to `{}`, only leaf nodes are counted, and selecting an expandable row selects all nested rows.',
+            },
+          ]}
+        />
+      </Box>
+      <Table
+        header={<Header headingTagOverride="h3">Result</Header>}
+        columnDefinitions={columns}
+        wrapLines={true}
+        items={[
+          {
+            name: 'items',
+            type: 'ReadOnlyArray<T>',
+            description:
+              'Table items on the current page with filtering, sorting, and pagination applied. In tables with expandable rows, only root items are returned.',
+          },
+          {
+            name: 'allPageItems',
+            type: 'ReadOnlyArray<T>',
+            description:
+              'Table items across all pages with filtering and sorting applied. In tables with expandable rows, only root items are returned.',
+          },
+          {
+            name: 'filteredItemsCount',
+            type: 'number',
+            description: `Total numbers of items matching the current filter, ignoring the pagination. 
+            Use this value for creating the localized matches count text for the TextFilter component.`,
+          },
+          {
+            name: 'firstIndex',
+            type: 'number',
+            description:
+              'The 1-based index of the first item returned in the `items` array. This index changes when pagination is used.',
+          },
+          {
+            name: 'totalItemsCount',
+            type: 'number',
+            description:
+              'The total count of all items in a table. For tables with expandable rows it only includes the top-level items.',
+          },
+          {
+            name: 'actions',
+            type: 'Object',
+            description: 'An object with functions to perform different actions.',
+          },
+          {
+            nested: true,
+            name: 'setFiltering',
+            type: '(filteringText: string): void',
+            description: 'Sets new filtering text.',
+          },
+          {
+            nested: true,
+            name: 'setPropertyFiltering',
+            type: '(query: Query): void',
+            description: 'Sets new filtering query.',
+          },
+          {
+            nested: true,
+            name: 'setSorting',
+            type: '(state: SortingState<T>): void',
+            description: 'Sets the single-column sorting state.',
+          },
+          {
+            nested: true,
+            name: 'setMultiSorting',
+            type: '(sortingColumns: ReadonlyArray<SortingState<T>>) => void',
+            description: 'Sets the current multi-column sort state.',
+          },
+          {
+            nested: true,
+            name: 'setCurrentPage',
+            type: '(currentPageIndex: number): void',
+            description: 'Sets current page in pagination.',
+          },
+          {
+            nested: true,
+            name: 'setSelectedItems',
+            type: '(selectedItems: ReadonlyArray): void',
+            description: 'Sets the list of currently selected items.',
+          },
+          {
+            nested: true,
+            name: 'setExpandedItems',
+            type: '(expandedItems: ReadonlyArray): void',
+            description: 'Sets the list of currently expanded items.',
+          },
+          {
+            name: 'collectionProps',
+            type: 'Object',
+            description:
+              'Props object to spread on the table/cards component. For more details see the [table component API documentation](/components/table/?tabId=api).',
+          },
+          {
+            nested: true,
+            name: 'empty',
+            type: 'React.ReactNode',
+            description: '',
+          },
+          {
+            nested: true,
+            name: 'sortingColumn',
+            type: 'SortingColumn<T>',
+            description: '',
+          },
+          {
+            nested: true,
+            name: 'sortingDescending',
+            type: 'boolean',
+            description: '',
+          },
+          {
+            nested: true,
+            name: 'onSortingChange',
+            type: '(event: CustomEvent<SortingState<T>>) => void',
+            description: '',
+          },
+          {
+            nested: true,
+            name: 'multiColumnSort',
+            type: 'Object',
+            description: 'Props used by Table for multi-column sorting.',
+          },
+          {
+            nested: true,
+            name: 'sortingColumns',
+            type: 'ReadonlyArray<SortingState<T>>',
+            description: 'Current sorting columns in priority order.',
+          },
+          {
+            nested: true,
+            name: 'onChange',
+            type: '(event: CustomEvent<MultiColumnSortChangeDetail<T>>) => void',
+            description: 'Updates the multi-column sort state.',
+          },
+          {
+            nested: true,
+            name: 'selectedItems',
+            type: 'ReadonlyArray<T>',
+            description: '',
+          },
+          {
+            nested: true,
+            name: 'onSelectionChange',
+            type: '(event: CustomEvent<SelectionChangeDetail<T>>) => void',
+            description: '',
+          },
+          {
+            nested: true,
+            name: 'expandableRows',
+            type: 'Object',
+            description: 'Expandable rows configuration of the Table component (matches TableProps.ExpandableRows<T>).',
+          },
+          {
+            nested: true,
+            name: 'trackBy',
+            type: 'string | ((item: T) => string)',
+            description: '',
+          },
+          {
+            nested: true,
+            name: 'ref',
+            type: 'React.RefObject<CollectionRef>',
+            description: '',
+          },
+          {
+            name: 'filterProps',
+            type: 'Object',
+            description: 'Props object to spread on the TextFilter component.',
+          },
+          {
+            nested: true,
+            name: 'disabled',
+            type: 'boolean',
+            description: '',
+          },
+          {
+            nested: true,
+            name: 'filteringText',
+            type: 'string',
+            description: '',
+          },
+          {
+            nested: true,
+            name: 'onChange',
+            type: '(event: CustomEvent<ChangeDetail>) => void',
+            description: '',
+          },
+          {
+            name: 'propertyFilterProps',
+            type: 'Object',
+            description: 'Props object to spread on the PropertyFilter component.',
+          },
+          {
+            nested: true,
+            name: 'query',
+            type: 'PropertyFilterQuery',
+            description: '',
+          },
+          {
+            nested: true,
+            name: 'onChange',
+            type: '(event: CustomEvent<Query>) => void',
+            description: '',
+          },
+          {
+            nested: true,
+            name: 'filteringProperties',
+            type: 'readonly PropertyFilterProperty[]',
+            description: '',
+          },
+          {
+            nested: true,
+            name: 'filteringOptions',
+            type: 'readonly PropertyFilterOption[]',
+            description: '',
+          },
+          {
+            name: 'paginationProps',
+            type: 'Object',
+            description: 'Props object to spread on the Pagination component.',
+          },
+          {
+            nested: true,
+            name: 'disabled',
+            type: 'boolean',
+            description: '',
+          },
+          {
+            nested: true,
+            name: 'currentPageIndex',
+            type: 'number',
+            description: '',
+          },
+          {
+            nested: true,
+            name: 'pagesCount',
+            type: 'number',
+            description: '',
+          },
+          {
+            nested: true,
+            name: 'onChange',
+            type: '(event: CustomEvent<ChangeDetail>) => void',
+            description: '',
+          },
+        ]}
+      />
+    </>
+  );
+}

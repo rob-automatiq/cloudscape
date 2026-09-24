@@ -1,0 +1,6 @@
+import React from 'react';
+import Table from './table-location';
+
+const Snippet = () => <Table refreshIssues={true} />;
+
+export default Snippet;

@@ -1,0 +1,94 @@
+import React from 'react';
+import { Table, Button, Link, Header, TextFilter, Box } from '@cloudscape-design/components';
+import { useCollection } from '@cloudscape-design/collection-hooks';
+
+function getMatchesCountText(count: number): string {
+  return count === 1 ? `1 match` : `${count} matches`;
+}
+
+const ViewTags = () => {
+  const tags = [
+    {
+      key: 'aws:cloudformation',
+      value: 'exampleTDB',
+    },
+    {
+      key: 'aws:cluster234',
+      value: 'exampleTDB',
+    },
+    {
+      key: 'env',
+      value: 'staging',
+    },
+    {
+      key: 'name',
+      value: 'vault76',
+    },
+    {
+      key: 'role',
+      value: '',
+    },
+    {
+      key: 'user',
+      value: 'test',
+    },
+  ];
+
+  const { items, collectionProps, filteredItemsCount, filterProps, actions } = useCollection(tags, {
+    filtering: {
+      noMatch: (
+        <Box textAlign="center" color="inherit">
+          <Box variant="strong" textAlign="center" color="inherit">
+            No matches
+          </Box>
+          <Button onClick={() => actions.setFiltering('')}>Clear filter</Button>
+        </Box>
+      ),
+    },
+    sorting: {},
+  });
+
+  return (
+    <Table
+      header={
+        <Header
+          counter={`(${tags.length})`}
+          headingTagOverride="h3"
+          actions={<Button>Manage tags</Button>}
+          info={<Link variant="info">Info</Link>}
+          description="A tag is a label that you assign to an AWS resource. Each tag consists of a key and an optional value. You can use tags to search and filter your resources or track your AWS costs."
+        >
+          Tags
+        </Header>
+      }
+      filter={
+        <TextFilter
+          {...filterProps}
+          filteringPlaceholder="Find tags"
+          filteringAriaLabel="Filter tags"
+          countText={getMatchesCountText(filteredItemsCount!)}
+        />
+      }
+      columnDefinitions={[
+        {
+          id: 'key',
+          header: 'Key',
+          cell: item => item.key,
+          width: 300,
+          isRowHeader: true,
+          sortingField: 'key',
+        },
+        {
+          id: 'value',
+          header: 'Value',
+          cell: item => item.value || '-',
+          sortingField: 'value',
+        },
+      ]}
+      items={items}
+      {...collectionProps}
+    />
+  );
+};
+
+export default ViewTags;

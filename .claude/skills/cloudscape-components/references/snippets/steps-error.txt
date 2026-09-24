@@ -1,0 +1,167 @@
+import React from 'react';
+import TreeView from '@cloudscape-design/components/tree-view';
+import Header from '@cloudscape-design/components/header';
+import Link from '@cloudscape-design/components/link';
+import Container from '@cloudscape-design/components/container';
+import StatusIndicator, { StatusIndicatorProps } from '@cloudscape-design/components/status-indicator';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import Button from '@cloudscape-design/components/button';
+import Popover from '@cloudscape-design/components/popover';
+import Box from '@cloudscape-design/components/box';
+import Divider from '@cloudscape-design/components/divider';
+
+interface Item {
+  id: string;
+  label: string;
+  type: StatusIndicatorProps.Type;
+  details?: string;
+  hasRetry?: boolean;
+  statusDetails?: { header: string; content: string };
+  statusCounts?: { type: StatusIndicatorProps.Type; count: number }[];
+  children?: Item[];
+}
+
+export default function StepsError() {
+  const [retried, setRetried] = React.useState(false);
+  const [expandedItems, setExpandedItems] = React.useState(['2']);
+
+  return (
+    <Container
+      header={
+        <Header variant="h3" info={<Link variant="info">Info</Link>}>
+          Personalized recommendation
+        </Header>
+      }
+    >
+      <TreeView<Item>
+        connectorLines="vertical"
+        items={[
+          {
+            id: '1',
+            label: 'Evaluated',
+            type: 'success',
+          },
+          {
+            id: '2',
+            label: retried ? 'Checked 5 nodes' : 'Failed to check 1 of 5 nodes',
+            type: retried ? 'success' : 'error',
+            hasRetry: !retried,
+            statusDetails: retried
+              ? undefined
+              : {
+                  header: 'Node check failed',
+                  content:
+                    'node-19 (eksclu-node-ab123) did not respond within 10 seconds. The other 4 nodes were checked successfully, so only this node needs to be retried.',
+                },
+            statusCounts: retried
+              ? [
+                  { type: 'warning', count: 1 },
+                  { type: 'success', count: 4 },
+                ]
+              : [
+                  { type: 'error', count: 1 },
+                  { type: 'warning', count: 1 },
+                  { type: 'success', count: 3 },
+                ],
+            children: [
+              {
+                id: '2.1',
+                label: 'node-17 (eksclu-node-12345)',
+                type: 'success',
+              },
+              {
+                id: '2.2',
+                label: 'node-18 (eksclu-node-09876)',
+                type: 'warning',
+                statusDetails: {
+                  header: 'Disk pressure detected',
+                  content:
+                    'The node is reporting disk pressure at 84% of capacity. The check passed, but the node may begin evicting pods if usage keeps climbing.',
+                },
+              },
+              {
+                id: '2.3',
+                label: 'node-19 (eksclu-node-ab123)',
+                type: retried ? 'success' : 'error',
+                statusDetails: retried
+                  ? undefined
+                  : {
+                      header: 'Node health check failed',
+                      content:
+                        'The node health check was unable to connect to the node at the expected API endpoint. The node appears to be unresponsive and may be offline or experiencing a software or hardware issue.',
+                    },
+              },
+              {
+                id: '2.4',
+                label: 'node-20 (eksclu-node-cd456)',
+                type: 'success',
+              },
+              {
+                id: '2.5',
+                label: 'node-21 (eksclu-node-ef789)',
+                type: 'success',
+              },
+            ],
+          },
+          {
+            id: '3',
+            label: retried ? 'Summarizing findings' : 'Summarize findings',
+            type: retried ? 'loading' : 'stopped',
+            details: retried ? undefined : 'Skipped because checking the nodes failed.',
+          },
+        ]}
+        expandedItems={expandedItems}
+        renderItem={item => {
+          const status = (
+            <StatusIndicator type={item.type} iconAriaLabel={item.type}>
+              {item.label}
+            </StatusIndicator>
+          );
+
+          return {
+            content: (
+              <SpaceBetween direction="horizontal" size="xs" alignItems="center">
+                {item.statusDetails ? (
+                  <Popover
+                    header={item.statusDetails.header}
+                    content={item.statusDetails.content}
+                    dismissAriaLabel="Close"
+                    triggerType="text"
+                  >
+                    {status}
+                  </Popover>
+                ) : (
+                  status
+                )}
+                {item.hasRetry && (
+                  <Button variant="inline-link" onClick={() => setRetried(true)}>
+                    Retry
+                  </Button>
+                )}
+                {item.statusCounts && <Divider orientation="vertical" />}
+                {item.statusCounts?.map((s, i) => (
+                  <StatusIndicator key={i} type={s.type} iconAriaLabel={s.type}>
+                    {s.count}
+                  </StatusIndicator>
+                ))}
+              </SpaceBetween>
+            ),
+            secondaryContent: item.details && (
+              <Box variant="small" color="text-body-secondary">
+                {item.details}
+              </Box>
+            ),
+          };
+        }}
+        getItemId={item => item.id}
+        getItemChildren={item => item.children}
+        onItemToggle={({ detail }) =>
+          setExpandedItems(prev =>
+            detail.expanded ? [...prev, detail.item.id] : prev.filter(id => id !== detail.item.id)
+          )
+        }
+        ariaLabel="Personalized recommendation steps"
+      />
+    </Container>
+  );
+}

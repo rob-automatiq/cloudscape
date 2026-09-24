@@ -1,0 +1,54 @@
+import React from 'react';
+import ChatBubble from '@cloudscape-design/chat-components/chat-bubble';
+import Button from '@cloudscape-design/components/button';
+import Box from '@cloudscape-design/components/box';
+import Container from '@cloudscape-design/components/container';
+import Header from '@cloudscape-design/components/header';
+import Icon from '@cloudscape-design/components/icon';
+import ItemCard from '@cloudscape-design/components/item-card';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import { genAiAvatar, genAiName, userAvatar, userName } from '../genai-common/avatars';
+import chatBubbleActions from '../gen-ai-response-regeneration/chat-action';
+import CustomGenAIChatFooter from '../gen-ai-response-regeneration/custom-gen-ai-chat-footer';
+import '../genai-common/styles.scss';
+
+export default function GenAiArtifactPreviewDownloadOnlyFiles() {
+  return (
+    <Container
+      header={<Header variant="h3">Generative AI assistant</Header>}
+      footer={<CustomGenAIChatFooter actionButtonIconName="send" actionButtonAriaLabel="Send message" />}
+    >
+      <div role="region" aria-label="Chat" className="chat-region">
+        <SpaceBetween size="xs">
+          <ChatBubble type="outgoing" ariaLabel={`${userName} at 05:37:30pm`} avatar={userAvatar}>
+            Please create a .csv of my monthly budget with categories and expenses
+          </ChatBubble>
+
+          <ChatBubble
+            type="incoming"
+            ariaLabel={`${genAiName} at 05:37:35pm`}
+            avatar={genAiAvatar}
+            actions={chatBubbleActions}
+          >
+            Here is a .csv with your monthly budget and expenses. Let me know if you need any changes to the format or
+            categories.
+          </ChatBubble>
+
+          <div className="chat-bubble-indentation fit-content">
+            <ItemCard
+              variant="embedded"
+              icon={<Icon name="file" />}
+              header={
+                <Box fontSize="heading-xs" fontWeight="bold">
+                  jd-budget.csv
+                </Box>
+              }
+              description="1.82 MB"
+              actions={<Button iconName="download" variant="icon" ariaLabel="Download file" />}
+            />
+          </div>
+        </SpaceBetween>
+      </div>
+    </Container>
+  );
+}

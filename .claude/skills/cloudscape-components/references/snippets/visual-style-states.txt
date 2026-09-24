@@ -1,0 +1,105 @@
+import React from 'react';
+import { Table } from '@cloudscape-design/components';
+import { LinkComponentContext } from '@/awsui-website-components/contexts';
+import { generalDefinitions } from './internal/common';
+import './states.scss';
+
+const formatClassName = className => `${className}-visual-refresh`;
+
+export default function States() {
+  const Link = React.useContext(LinkComponentContext);
+  const stateItems = [
+    {
+      class: formatClassName('website-form-focused-shadow-container'),
+      focused: true,
+      role: 'Default focus state for clickable components.',
+      examples: (
+        <p>
+          Form elements such as <Link to="/components/button/">button</Link>,{' '}
+          <Link to="/components/expandable-section/">expandable section</Link>, and{' '}
+          <Link to="/components/radio-group/">radio button</Link>.
+        </p>
+      ),
+    },
+    {
+      class: formatClassName('website-form-focused-light-shadow-display'),
+      role: 'Default focus state for selectable components with border. The component border color will change depending on any additional states that are applied.',
+      examples: (
+        <p>
+          Form elements such as <Link to="/components/input/">input</Link>, <Link to="/components/select/">select</Link>
+          , and <Link to="/components/textarea/">textarea</Link> .
+        </p>
+      ),
+    },
+    {
+      class: formatClassName('website-element-selected-display'),
+      text: true,
+      role: 'Active state for selected items.',
+      examples: (
+        <p>
+          Selected <Link to="/components/table/">table</Link> row, <Link to="/components/cards/">card</Link>,{' '}
+          <Link to="/components/tiles/">tile</Link>, <Link to="/components/multiselect/">multiselect </Link> token, and{' '}
+          <Link to="/components/select/">select</Link> dropdown item.
+        </p>
+      ),
+    },
+    {
+      class: formatClassName('website-element-hover-display'),
+      text: true,
+      role: 'Hover state for highlighted dropdown items.',
+      examples: (
+        <p>
+          Hover state for
+          <Link to="/components/autosuggest/"> autosuggest</Link>, <Link to="/components/select/">select</Link>, and{' '}
+          <Link to="/components/button-dropdown/">button dropdown</Link> dropdown items.
+        </p>
+      ),
+    },
+    {
+      class: formatClassName('website-element-error-display'),
+      text: true,
+      role: 'Error state for form elements.',
+      examples: (
+        <p>
+          Form elements such as <Link to="/components/input/">input</Link>, <Link to="/components/select/">select</Link>
+          , and <Link to="/components/textarea/">textarea</Link>.
+        </p>
+      ),
+    },
+    {
+      class: formatClassName('website-element-disabled-display'),
+      text: true,
+      role: 'Disabled state for form elements.',
+      examples: (
+        <p>
+          Form elements such as <Link to="/components/input/">input</Link>, <Link to="/components/select/">select</Link>
+          , and <Link to="/components/textarea/">textarea</Link>.
+        </p>
+      ),
+    },
+    {
+      class: formatClassName('website-control-disabled-display'),
+      control: true,
+      role: 'Disabled state for form controls.',
+      examples: (
+        <p>
+          Form controls such as
+          <Link to="/components/checkbox/"> checkbox</Link> and <Link to="/components/radio-group/">radio button</Link>.
+        </p>
+      ),
+    },
+    {
+      class: formatClassName('website-control-selected-display'),
+      control: true,
+      role: 'Selected state for form controls.',
+      examples: (
+        <p>
+          Form controls such as
+          <Link to="/components/checkbox/"> checkbox</Link>, <Link to="/components/radio-group/">radio button</Link>,
+          and <Link to="/components/toggle/">toggle</Link>.
+        </p>
+      ),
+    },
+  ];
+  return <Table columnDefinitions={generalDefinitions} items={stateItems} wrapLines={true} resizableColumns={true} />;
+}

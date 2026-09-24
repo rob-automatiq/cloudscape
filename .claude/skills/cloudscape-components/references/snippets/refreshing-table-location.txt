@@ -1,0 +1,136 @@
+import React from 'react';
+import { Alert, Table, Box, Button, ColumnLayout, Header, Popover, SpaceBetween, StatusIndicator } from '@cloudscape-design/components';
+
+const Snippet = ({ loading = false, lastRefresh, refreshIssues, refreshFailed }) => (
+  <Table
+    loading={loading}
+    loadingText="Loading items"
+    columnDefinitions={[
+      {
+        id: 'variable',
+        header: 'Variable name',
+        cell: item => item.name,
+        isRowHeader: true,
+        minWidth: 120,
+      },
+      {
+        id: 'value',
+        header: 'Current value',
+        cell: item => item.alt,
+        minWidth: 130,
+      },
+      {
+        id: 'description',
+        header: 'Description',
+        cell: item => item.description,
+      },
+    ]}
+    items={[
+      {
+        name: 'Item 1',
+        alt: 'First',
+        description: 'This is the first item',
+      },
+      {
+        name: 'Item 2',
+        alt: 'Second',
+        description: 'This is the second item',
+      },
+      {
+        name: 'Item 3',
+        alt: 'Third',
+        description: 'This is the third item',
+      },
+      {
+        name: 'Item 4',
+        alt: 'Fourth',
+        description: 'This is the fourth item',
+      },
+      {
+        name: 'Item 5',
+        alt: 'Fifth',
+        description: 'This is the fifth item',
+      },
+      {
+        name: 'Item 6',
+        alt: 'Sixth',
+        description: 'This is the sixth item',
+      },
+    ]}
+    header={
+      <Header
+        headingTagOverride="h3"
+        actions={
+          <SpaceBetween direction="horizontal" size="xs" alignItems="center">
+            {lastRefresh && (
+              <Box variant="p" fontSize="body-s" padding="n" color="text-status-inactive" textAlign="right">
+                Last updated
+                <br />
+                {lastRefresh}
+              </Box>
+            )}
+            {refreshIssues && (
+              <Box color="text-status-inactive">
+                <Popover
+                  header="Loading issues"
+                  content="We are experiencing issues in reloading the data set. Some data might be out of sync."
+                  dismissButton={true}
+                >
+                  <StatusIndicator type="pending">Loading issues</StatusIndicator>
+                </Popover>
+              </Box>
+            )}
+            {refreshFailed && (
+              <Box color="text-status-warning">
+                <Popover
+                  header="Detected high error rate"
+                  size="large"
+                  content={
+                    <SpaceBetween size="m">
+                      <Alert type="warning" statusIconAriaLabel="Warning">
+                        Failed to fetch items. We will continue to check the affected availability zones.
+                      </Alert>
+                      <ColumnLayout columns={2} variant="text-grid">
+                        <div>
+                          <Box variant="awsui-key-label">Affected availability zone</Box>
+                          <div>us-west-2c</div>
+                        </div>
+                        <div>
+                          <Box variant="awsui-key-label">Last updated</Box>
+                          <div>December 21, 2023, 14:29 (UTC+01:00)</div>
+                        </div>
+                      </ColumnLayout>
+                      <Box float="right">
+                        <SpaceBetween size="xs" direction="horizontal">
+                          <Button variant="link">Refresh</Button>
+                          <Button>Filter out affected zones</Button>
+                        </SpaceBetween>
+                      </Box>
+                    </SpaceBetween>
+                  }
+                  dismissButton={true}
+                >
+                  <StatusIndicator type="warning">Loading failed</StatusIndicator>
+                </Popover>
+              </Box>
+            )}
+            <Button
+              iconName="refresh"
+              ariaLabel="Refresh"
+              loadingText="Refreshing table content"
+              loading={refreshIssues}
+            />
+            <Button>Edit</Button>
+            <Button>Delete</Button>
+            <Button variant="primary">Create</Button>
+          </SpaceBetween>
+        }
+      >
+        Items
+      </Header>
+    }
+    resizableColumns={true}
+  />
+);
+
+export default Snippet;

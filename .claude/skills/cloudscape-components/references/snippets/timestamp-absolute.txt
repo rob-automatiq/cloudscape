@@ -1,0 +1,18 @@
+import React from 'react';
+import { Box, Link } from '@cloudscape-design/components';
+
+export default function TimestampAbsolute() {
+  return (
+    <>
+      <p>
+        <Box variant="awsui-key-label">Creation date</Box>
+        October 3, 2012, 09:32 (UTC+3:30) by <Link href="#">plrs</Link>
+      </p>
+      <br />
+      <p>
+        <Box variant="awsui-key-label">Bucket deleted</Box>
+        January 31, 2010, 14:56 (UTC+3:30) by <Link href="#">plrs</Link>
+      </p>
+    </>
+  );
+}

@@ -1,0 +1,37 @@
+import React, { useState } from 'react';
+import Select, { SelectProps } from '@cloudscape-design/components/select';
+import { Region, regionsByLocation } from './common';
+import { FormField } from '@cloudscape-design/components';
+
+const formatRegionOption = (regionDef: Region): SelectProps.Option => {
+  return {
+    value: regionDef.code,
+    label: regionDef.name,
+    description: regionDef.code,
+  };
+};
+
+const groupedRegionOptions = Object.entries(regionsByLocation).map(([groupName, regions]) => ({
+  label: groupName,
+  options: (regions as Region[]).map((region: Region) => formatRegionOption(region)),
+}));
+
+const RegionSelector = () => {
+  const [selectedOption, setSelectedOption] = useState<SelectProps.Option>(
+    formatRegionOption(regionsByLocation['United States'].filter((region: Region) => region.code === 'us-east-1')[0])
+  );
+
+  return (
+    <FormField label="Region">
+      <Select
+        selectedOption={selectedOption}
+        onChange={({ detail }) => setSelectedOption(detail.selectedOption)}
+        options={groupedRegionOptions}
+        triggerVariant="option"
+        placeholder="Choose a region"
+      />
+    </FormField>
+  );
+};
+
+export default RegionSelector;

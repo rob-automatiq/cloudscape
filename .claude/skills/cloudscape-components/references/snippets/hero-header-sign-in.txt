@@ -1,0 +1,49 @@
+import React, { useState } from 'react';
+import * as awsui from '@cloudscape-design/design-tokens/index.js';
+import { Box, Button, Container, ContentLayout, Header, FormField, Input, SpaceBetween, Checkbox } from '@cloudscape-design/components';
+
+import './sign-in-page.scss';
+
+export default function SignInPage() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
+  return (
+    <ContentLayout
+      defaultPadding
+      headerVariant="high-contrast"
+      maxContentWidth={500}
+      headerBackgroundStyle={`${awsui.colorBackgroundHomeHeader}`}
+      header={
+        <div className="sign-in-header">
+          <Box variant="h1" padding={{ vertical: 'xxxl' }} textAlign="center">
+            Welcome to Application X
+          </Box>
+        </div>
+      }
+    >
+      <div>
+        <Container header={<Header>Sign in</Header>}>
+          <SpaceBetween size="l">
+            <FormField label="Email address">
+              <Input type="email" value={email} onChange={({ detail }) => setEmail(detail.value)} placeholder="Email" />
+            </FormField>
+            <FormField label="Password">
+              <Input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={({ detail }) => setPassword(detail.value)}
+                placeholder="Password"
+              />
+            </FormField>
+            <Checkbox checked={showPassword} onChange={({ detail }) => setShowPassword(detail.checked)}>
+              Show password
+            </Checkbox>
+            <Button variant="primary">Sign in</Button>
+          </SpaceBetween>
+        </Container>
+      </div>
+    </ContentLayout>
+  );
+}

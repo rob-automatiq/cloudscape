@@ -1,0 +1,23 @@
+import React from 'react';
+
+import { Tabs } from '@cloudscape-design/components';
+
+export default function NewFeatureTabs() {
+  return (
+    <Tabs
+      tabs={[
+        { label: 'Details', id: 'details', content: 'Distribution details' },
+        { label: 'Permissions', id: 'permissions', content: 'Distribution permissions' },
+        {
+          label: (
+            <>
+              Monitoring - <em>new</em>
+            </>
+          ),
+          id: 'monitoring',
+          content: 'Distribution monitoring',
+        },
+      ]}
+    />
+  );
+}

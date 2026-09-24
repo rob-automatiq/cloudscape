@@ -1,0 +1,69 @@
+import React from 'react';
+import { Table, Header, TableProps } from '@cloudscape-design/components';
+import { LinkComponentContext } from '@/awsui-website-components/contexts';
+
+const columnDefinitions: TableProps.ColumnDefinition<any>[] = [
+  {
+    id: 'name',
+    cell: item => item.name,
+    header: 'Context ID',
+    minWidth: '170px',
+    isRowHeader: true,
+  },
+  {
+    id: 'description',
+    cell: item => item.description,
+    header: 'Description',
+    minWidth: '130px',
+  },
+];
+
+export default function VisualContextsTable() {
+  const Link = React.useContext(LinkComponentContext);
+
+  const items = [
+    {
+      name: 'top-navigation',
+      description: (
+        <>
+          Used for the <Link to="/components/top-navigation">Top navigation</Link> component and its content.
+        </>
+      ),
+    },
+    {
+      name: 'header',
+      description: (
+        <>
+          Used for the dark header area of the page (high contrast header variant of{' '}
+          <Link to="/components/app-layout">app layout</Link> and
+          <Link to="/components/content-layout">content layout</Link>).
+        </>
+      ),
+    },
+    {
+      name: 'flashbar',
+      description: (
+        <>
+          Used for the <Link to="/components/flashbar">Flashbar</Link> component and its content.
+        </>
+      ),
+    },
+    {
+      name: 'alert',
+      description: (
+        <>
+          Used for the <Link to="/components/alert">Alert</Link> component and its content.
+        </>
+      ),
+    },
+  ];
+
+  return (
+    <Table
+      header={<Header variant="h3">Available visual contexts</Header>}
+      items={items}
+      columnDefinitions={columnDefinitions}
+      wrapLines={true}
+    />
+  );
+}

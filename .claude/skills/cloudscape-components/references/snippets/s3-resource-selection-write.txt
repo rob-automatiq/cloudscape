@@ -1,0 +1,27 @@
+import * as React from 'react';
+import { S3ResourceSelector } from '@cloudscape-design/components';
+
+// API calls are mocked. Please refer to the original Amazon S3 API documentation
+// https://docs.aws.amazon.com/AmazonS3/latest/API/Welcome.html
+import { request } from './mocks';
+import { enUS } from './constants';
+
+const S3WriteDemo = () => {
+  const [resource, setResource] = React.useState({
+    uri: '',
+  });
+  return (
+    <S3ResourceSelector
+      onChange={({ detail }) => setResource(detail.resource)}
+      resource={resource}
+      objectsIsItemDisabled={item => !item.IsFolder}
+      fetchBuckets={() => request('buckets')}
+      fetchObjects={() => request('objects')}
+      fetchVersions={() => request('versions')}
+      i18nStrings={enUS}
+      selectableItemsTypes={['buckets', 'objects']}
+    />
+  );
+};
+
+export default S3WriteDemo;

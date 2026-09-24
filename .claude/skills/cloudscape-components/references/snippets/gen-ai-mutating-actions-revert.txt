@@ -1,0 +1,81 @@
+import React, { useState } from 'react';
+import Alert from '@cloudscape-design/components/alert';
+import ChatBubble from '@cloudscape-design/chat-components/chat-bubble';
+import Container from '@cloudscape-design/components/container';
+import ExpandableSection from '@cloudscape-design/components/expandable-section';
+import Header from '@cloudscape-design/components/header';
+import KeyValuePairs from '@cloudscape-design/components/key-value-pairs';
+import Popover from '@cloudscape-design/components/popover';
+import Steps from '@cloudscape-design/components/steps';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import TextContent from '@cloudscape-design/components/text-content';
+import { userAvatar, userName, genAiAvatar, genAiName } from '../genai-common/avatars';
+import chatBubbleActions from '../genai-common/chat-bubble-actions';
+import './styles.scss';
+
+export default function GenAiFollowUpClarifyIntent() {
+  const [showAlert, setShowAlert] = useState(true);
+  return (
+    <Container header={<Header variant="h3">Generative AI assistant</Header>}>
+      <SpaceBetween size="xs">
+        <ChatBubble avatar={userAvatar} type="outgoing" ariaLabel={`${userName} at 05:37:30pm`}>
+          Can you tag my EC2 instance ‘i-1234abcd’ as production?
+        </ChatBubble>
+        <ChatBubble
+          avatar={genAiAvatar}
+          type="incoming"
+          ariaLabel={`${genAiName} at 05:37:40pm`}
+          actions={chatBubbleActions}
+        >
+          <SpaceBetween size="m">
+            <ExpandableSection headerText="Production tag added [4/4]" defaultExpanded={true}>
+              <Steps
+                steps={[
+                  { status: 'success', header: 'Validated access' },
+                  { status: 'success', header: 'Fetched instance details' },
+                  { status: 'success', header: 'Constructed tag structure' },
+                  {
+                    status: 'success',
+                    header: (
+                      <>
+                        Requested user consent:{' '}
+                        <Popover
+                          content={
+                            <KeyValuePairs
+                              items={[
+                                { label: 'Tags added', value: 'production' },
+                                { label: 'Consent provider', value: 'Account 123456789012' },
+                                { label: 'Creation date', value: 'July 25, 2025, 9:00 (UTC+2:00)' },
+                              ]}
+                            />
+                          }
+                        >
+                          Added production tag
+                        </Popover>
+                      </>
+                    ),
+                  },
+                ]}
+              />
+            </ExpandableSection>
+            {showAlert && (
+              <Alert type="success" dismissible={true} onDismiss={() => setShowAlert(false)}>
+                Successfully tagged the EC2 instance ‘i-1234abcd’ as production.
+              </Alert>
+            )}
+            <TextContent>
+              <p>
+                <b>Now that the production tag is added to ‘i-1234abcd’ EC2 instance, consider these next steps:</b>
+              </p>
+              <ol>
+                <li>Verify tags appear correctly in AWS Console and all connected systems</li>
+                <li>Update relevant documentation and system records</li>
+                <li>Check if related AWS resources need the same tags</li>
+              </ol>
+            </TextContent>
+          </SpaceBetween>
+        </ChatBubble>
+      </SpaceBetween>
+    </Container>
+  );
+}

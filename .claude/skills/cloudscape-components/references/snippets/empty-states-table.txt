@@ -1,0 +1,65 @@
+import React from 'react';
+import { Table, Pagination, CollectionPreferences, TextFilter, Button, Header, SpaceBetween, Box } from '@cloudscape-design/components';
+
+const TableEmptyState = () => (
+  <Table
+    header={
+      <Header
+        headingTagOverride="h3"
+        counter="(0)"
+        actions={
+          <SpaceBetween direction="horizontal" size="xs">
+            <Button disabled={true}>View details</Button>
+            <Button disabled={true}>Edit</Button>
+            <Button disabled={true}>Delete</Button>
+            <Button variant="primary">Create distribution</Button>
+          </SpaceBetween>
+        }
+      >
+        Distributions
+      </Header>
+    }
+    columnDefinitions={[
+      {
+        id: 'id',
+        header: 'Distribution ID',
+        cell: item => item.id,
+        isRowHeader: true,
+      },
+      {
+        id: 'domainName',
+        cell: item => item.domainName,
+        header: 'Domain name',
+      },
+      {
+        id: 'deliveryMethod',
+        header: 'Delivery method',
+        cell: item => item.deliveryMethod,
+      },
+    ]}
+    items={[]}
+    empty={
+      <Box margin={{ vertical: 'xs' }} textAlign="center" color="inherit">
+        <SpaceBetween size="m">
+          <b>No distributions</b>
+          <Button>Create distribution</Button>
+        </SpaceBetween>
+      </Box>
+    }
+    filter={<TextFilter filteringPlaceholder="Find distributions" />}
+    pagination={
+      <Pagination
+        currentPageIndex={1}
+        pagesCount={1}
+        ariaLabels={{
+          nextPageLabel: 'Next page',
+          previousPageLabel: 'Previous page',
+          pageLabel: pageNumber => `Page ${pageNumber} of all pages`,
+        }}
+      />
+    }
+    preferences={<CollectionPreferences title="Preferences" confirmLabel="Confirm" cancelLabel="Cancel" />}
+  ></Table>
+);
+
+export default TableEmptyState;

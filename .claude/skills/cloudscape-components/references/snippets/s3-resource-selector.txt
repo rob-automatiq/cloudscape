@@ -1,0 +1,62 @@
+import React, { useState } from 'react';
+import { Alert, Container, FormField, Header, S3ResourceSelector } from '@cloudscape-design/components';
+
+// API calls are mocked. Please refer to the original Amazon S3 API documentation
+// https://docs.aws.amazon.com/AmazonS3/latest/API/Welcome.html
+import { request } from './mocks';
+import { enUS } from './constants';
+
+function SelfDismissibleAlert(props) {
+  const [visible, setVisible] = useState(true);
+  return <Alert {...props} visible={visible} dismissible={true} onDismiss={() => setVisible(false)} />;
+}
+
+export default function S3ResourceSelectorExample() {
+  const [validationError, setValidationError] = useState();
+  const [fetchError, setFetchError] = useState(null);
+  const [resource, setResource] = useState({ uri: '' });
+
+  function wrapWithErrorHandler(callback) {
+    return (...args) => {
+      setFetchError(null);
+      // intercept the error to display it and then propagate to the component
+      return callback(...args).catch(error => {
+        setFetchError(error.message);
+        throw error;
+      });
+    };
+  }
+
+  return (
+    <Container header={<Header>S3 Resource Selector Example</Header>}>
+      <FormField
+        label={<Header variant="h3">Read archives from S3</Header>}
+        description="Choose an archive in Amazon S3. Amazon S3 is an object storage built to store and retrieve data."
+        constraintText="Format: s3://bucket/prefix/object. For objects in a bucket with versioning enabled, you can choose the most recent or a previous version of the object."
+        errorText={validationError}
+        stretch={true}
+      >
+        <S3ResourceSelector
+          resource={resource}
+          alert={
+            fetchError && (
+              <SelfDismissibleAlert type="error" header="Data fetching error">
+                {fetchError}
+              </SelfDismissibleAlert>
+            )
+          }
+          selectableItemsTypes={['objects', 'versions']}
+          objectsIsItemDisabled={object => object.IsFolder}
+          fetchBuckets={wrapWithErrorHandler(() => request('buckets'))}
+          fetchObjects={wrapWithErrorHandler(() => request('objects'))}
+          fetchVersions={wrapWithErrorHandler(() => request('versions'))}
+          i18nStrings={enUS}
+          onChange={({ detail }) => {
+            setResource(detail.resource);
+            setValidationError(detail.errorText);
+          }}
+        />
+      </FormField>
+    </Container>
+  );
+}

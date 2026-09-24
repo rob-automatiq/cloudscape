@@ -1,0 +1,93 @@
+import React, { ReactNode } from 'react';
+import { Table, TableProps, StatusIndicator, StatusIndicatorProps } from '@cloudscape-design/components';
+import { LinkComponentContext } from '@/awsui-website-components/contexts';
+
+type Status = 'Inactive' | 'In progress';
+
+interface Resource {
+  name: ReactNode;
+  what: ReactNode;
+  use: ReactNode;
+  status: Status;
+  link: ReactNode;
+}
+
+const indicatorStatus: Record<Status, StatusIndicatorProps.Type> = {
+  Inactive: 'stopped',
+  'In progress': 'in-progress',
+};
+
+const columns: TableProps<Resource>['columnDefinitions'] = [
+  {
+    id: 'name',
+    header: 'Resource name',
+    cell: item => item.name,
+    isRowHeader: true,
+  },
+  {
+    id: 'what',
+    header: 'What is it',
+    cell: item => item.what,
+    width: 200,
+  },
+  {
+    id: 'use',
+    header: 'What to use this for',
+    cell: item => item.use,
+  },
+  {
+    id: 'status',
+    header: 'Status',
+    cell: item => <StatusIndicator type={indicatorStatus[item.status]}>{item.status}</StatusIndicator>,
+    width: 125,
+  },
+  {
+    id: 'link',
+    header: 'Link',
+    cell: item => item.link,
+    minWidth: 113,
+  },
+];
+
+export default function GenAIResourcesTable() {
+  const Link = React.useContext(LinkComponentContext);
+  const resources: Resource[] = [
+    {
+      name: 'Initial set of use cases',
+      what: (
+        <>
+          A community effort led by <Link to="https://phonetool.amazon.com/users/adaimoll">Molly Adair</Link> and{' '}
+          <Link to="https://phonetool.amazon.com/users/coudriet">Jay Coudriet</Link> to create an inventory of shared
+          Gen AI use cases and patterns.
+        </>
+      ),
+      use: 'Get inspired',
+      status: 'Inactive',
+      link: (
+        <Link to="https://www.figma.com/file/yXI3vvJKM0NU7MQpOI3G3A/GenAI-Components-and-Patterns-Pool?type=whiteboard&node-id=0%3A1&t=1t2S7kcsQp7p6ozO-1">
+          Figma
+        </Link>
+      ),
+    },
+    {
+      name: 'Cloudscape inventory of Gen AI use cases',
+      what: 'On-going inventory that is tracking current, new, and upcoming Gen AI use-cases.',
+      use: 'Add your use-cases here!',
+      status: 'In progress',
+      link: (
+        <Link to="https://www.figma.com/file/BFVVspOn4wnHR2L3MfBpZG/Gen-AI-use-cases?type=design&node-id=1%3A2&mode=design&t=Zfzx5lGkuZq43qc1-1">
+          Figma
+        </Link>
+      ),
+    },
+  ];
+  return (
+    <Table<Resource>
+      wrapLines={true}
+      resizableColumns={true}
+      contentDensity="compact"
+      items={resources}
+      columnDefinitions={columns}
+    />
+  );
+}

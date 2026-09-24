@@ -1,0 +1,10 @@
+import React from 'react';
+import { FormField, Input } from '@cloudscape-design/components';
+
+const InputReadonly = () => (
+  <FormField label="Name">
+    <Input value="roleName" readOnly={true} />
+  </FormField>
+);
+
+export default InputReadonly;

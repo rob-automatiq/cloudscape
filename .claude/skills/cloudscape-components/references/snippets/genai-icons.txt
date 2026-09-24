@@ -1,0 +1,15 @@
+import React from 'react';
+import { Icon, SpaceBetween } from '@cloudscape-design/components';
+
+const Icons = () => {
+  return (
+    <SpaceBetween alignItems="center" direction="horizontal" size="l">
+      <Icon name="gen-ai" size="big" />
+      <Icon name="gen-ai" size="medium" />
+      <Icon name="gen-ai" />
+      <Icon name="gen-ai" size="small" />{' '}
+    </SpaceBetween>
+  );
+};
+
+export default Icons;

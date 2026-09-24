@@ -1,0 +1,78 @@
+import React from 'react';
+import KeyValuePairs from '@cloudscape-design/components/key-value-pairs';
+import { accounts } from './data';
+import Link from '@cloudscape-design/components/link';
+import Box from '@cloudscape-design/components/box';
+import Container from '@cloudscape-design/components/container';
+import CopyToClipboard from '@cloudscape-design/components/copy-to-clipboard';
+import Header from '@cloudscape-design/components/header';
+
+function AccountLinkInKeyValuePairs() {
+  return (
+    <Container header={<Header>Account details</Header>}>
+      <KeyValuePairs
+        columns={1}
+        items={[
+          {
+            label: 'Account',
+            value: (
+              <span>
+                <Link href="#" variant="primary" external={true} externalIconAriaLabel=" (opens in new tab)">
+                  {accounts[0].name}
+                </Link>{' '}
+                <span>({accounts[0].id})</span>{' '}
+                <Box variant="span" color="text-body-secondary" fontSize="body-s">
+                  {accounts[0].email}
+                </Box>
+              </span>
+            ),
+          },
+        ]}
+      />
+    </Container>
+  );
+}
+
+function AccountInfoInKeyValuePairs() {
+  return (
+    <Container header={<Header>Resource details</Header>}>
+      <KeyValuePairs
+        columns={3}
+        items={[
+          {
+            label: 'Account owner name',
+            value: (
+              <span>
+                {accounts[1].name} (
+                <CopyToClipboard
+                  variant="inline"
+                  textToCopy={accounts[1].id}
+                  copySuccessText="Account ID copied"
+                  copyErrorText="Account ID failed to copy"
+                />
+                )
+              </span>
+            ),
+          },
+          {
+            label: 'Account owner email',
+            value: accounts[1].email,
+          },
+          {
+            label: 'Account ARN',
+            value: (
+              <CopyToClipboard
+                variant="inline"
+                textToCopy={`arn:aws:iam:${accounts[1].id}:root`}
+                copySuccessText="Account ARN copied"
+                copyErrorText="Account ARN failed to copy"
+              />
+            ),
+          },
+        ]}
+      />
+    </Container>
+  );
+}
+
+export { AccountLinkInKeyValuePairs, AccountInfoInKeyValuePairs };

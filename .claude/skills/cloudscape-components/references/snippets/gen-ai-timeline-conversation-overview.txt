@@ -1,0 +1,66 @@
+import React from 'react';
+
+import Drawer from '@cloudscape-design/components/drawer';
+import Icon from '@cloudscape-design/components/icon';
+import Link from '@cloudscape-design/components/link';
+import Steps, { StepsProps } from '@cloudscape-design/components/steps';
+
+interface OverviewEvent {
+  status: StepsProps.Step['status'];
+  statusIconAriaLabel: string;
+  text: string;
+  href?: string;
+}
+
+const overviewEvents: OverviewEvent[] = [
+  { status: 'log', statusIconAriaLabel: 'User message', text: 'Build a todo app for petcare' },
+  { status: 'log', statusIconAriaLabel: 'Log', text: 'A pet care todo app - nice', href: '#/message/1' },
+  {
+    status: 'log',
+    statusIconAriaLabel: 'User message',
+    text: 'Provided preferences: Keep it simple, Save on this device only',
+  },
+  { status: 'success', statusIconAriaLabel: 'Success', text: 'Created project: PetCareTodo' },
+  {
+    status: 'log',
+    statusIconAriaLabel: 'Log',
+    text: "Ready when you are - let me know if you'd like to adjust anything",
+  },
+  { status: 'log', statusIconAriaLabel: 'User message', text: 'Start building' },
+];
+
+export default function ConversationOverview() {
+  return (
+    <Drawer header="Overview">
+      <Steps
+        ariaLabel="Conversation overview"
+        steps={overviewEvents.map(event => ({
+          status: event.status,
+          statusIconAriaLabel: event.statusIconAriaLabel,
+          header: event.href ? (
+            <Link href={event.href} variant="secondary">
+              {event.text}
+            </Link>
+          ) : (
+            event.text
+          ),
+        }))}
+        renderStep={step => {
+          if (step.statusIconAriaLabel === 'User message') {
+            return {
+              header: step.header,
+              icon: <Icon name="user-profile" variant="subtle" ariaLabel="User message" />,
+            };
+          }
+          if (step.statusIconAriaLabel === 'Success') {
+            return {
+              header: step.header,
+              icon: <Icon name="status-positive" variant="success" ariaLabel="Success" />,
+            };
+          }
+          return { header: step.header };
+        }}
+      />
+    </Drawer>
+  );
+}

@@ -1,0 +1,86 @@
+import React, { useState } from 'react';
+import { Button, TagEditor, Form, Container, Header, Link, SpaceBetween } from '@cloudscape-design/components';
+
+const EditTags = () => {
+  const i18nStrings = {
+    keyPlaceholder: 'Enter key',
+    valuePlaceholder: 'Enter value',
+    addButton: 'Add new tag',
+    removeButton: 'Remove',
+    undoButton: 'Undo',
+    undoPrompt: 'This tag will be removed upon saving changes',
+    loading: 'Loading tags that are associated with this resource',
+    keyHeader: 'Key',
+    valueHeader: 'Value',
+    optional: 'optional',
+    keySuggestion: 'Custom tag key',
+    valueSuggestion: 'Custom tag value',
+    emptyTags: 'No tags associated with the resource.',
+    tooManyKeysSuggestion: 'You have more keys than can be displayed',
+    tooManyValuesSuggestion: 'You have more values than can be displayed',
+    keysSuggestionLoading: 'Loading tag keys',
+    keysSuggestionError: 'Tag keys could not be retrieved',
+    valuesSuggestionLoading: 'Loading tag values',
+    valuesSuggestionError: 'Tag values could not be retrieved',
+    emptyKeyError: 'You must specify a tag key',
+    maxKeyCharLengthError: 'The maximum number of characters you can use in a tag key is 128.',
+    maxValueCharLengthError: 'The maximum number of characters you can use in a tag value is 256.',
+    duplicateKeyError: 'You must specify a unique tag key.',
+    invalidKeyError:
+      'Invalid key. Keys can only contain Unicode letters, digits, white space and any of the following: _.:/=+@-',
+    invalidValueError:
+      'Invalid value. Values can only contain Unicode letters, digits, white space and any of the following: _.:/=+@-',
+    awsPrefixError: 'Cannot start with aws:',
+    tagLimit: availableTags => `You can add ${availableTags} more tags.`,
+    tagLimitReached: tagLimit => `You have reached the limit of ${tagLimit} tags.`,
+    tagLimitExceeded: tagLimit => `You have exceeded the limit of ${tagLimit} tags.`,
+    enteredKeyLabel: key => `Use "${key}"`,
+    enteredValueLabel: value => `Use "${value}"`,
+  };
+
+  const TagEditorDemo = () => {
+    const [tags, setTags] = useState([
+      { key: 'name', value: 'value76', existing: true },
+      { key: 'env', value: 'staging', existing: true },
+      { key: 'role', value: '', existing: false },
+    ]);
+
+    return (
+      <TagEditor
+        i18nStrings={i18nStrings}
+        tags={tags}
+        onChange={({ detail: { tags } }) => {
+          setTags(tags);
+        }}
+        keysRequest={() => Promise.resolve(['some-existing-key-3', 'some-existing-key-4', 'some-existing-key-5'])}
+        valuesRequest={() => Promise.resolve([])}
+      />
+    );
+  };
+
+  return (
+    <Form
+      actions={
+        <SpaceBetween direction="horizontal" size="xs">
+          <Button variant="link">Cancel</Button>
+          <Button variant="primary">Save</Button>
+        </SpaceBetween>
+      }
+    >
+      <Container
+        header={
+          <Header
+            headingTagOverride="h3"
+            info={<Link variant="info">Info</Link>}
+            description="A tag is a label that you assign to an AWS resource. Each tag consists of a key and an optional value. You can use tags to search and filter your resources or track your AWS costs"
+          >
+            Tags
+          </Header>
+        }
+      >
+        <TagEditorDemo />
+      </Container>
+    </Form>
+  );
+};
+export default EditTags;

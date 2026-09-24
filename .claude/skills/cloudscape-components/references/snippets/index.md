@@ -1,0 +1,209 @@
+> Source: https://cloudscape.design/snippets-content/index.md (fetched 2026-09-24)
+
+# Cloudscape Code Snippets
+
+Searchable index of coded UI pattern snippets from the Cloudscape design system.
+Each snippet demonstrates a specific UI pattern using Cloudscape components.
+
+Each entry below lists the snippet name and a short description of what it does.
+To access any snippet's source code, use: `{domain}/snippets-content/{snippet-name}.txt`
+For example: `{domain}/snippets-content/empty-states-table.txt`
+
+Total snippets: 192
+
+## Snippets
+
+- [attribute-editor](attribute-editor.txt) - Key-value attribute editor with add/remove rows, inline validation, and tag limit
+- [tagging-view-tags](tagging-view-tags.txt) - Read-only tag display for viewing resource tags
+- [tagging-edit-tags](tagging-edit-tags.txt) - Editable tag editor for adding, editing, and removing resource tags
+- [collection-hooks-react](collection-hooks-react.txt) - React hook usage for collection filtering, sorting, and pagination
+- [collection-hooks-api-table](collection-hooks-api-table.txt) - Server-side collection hooks with API-driven table data
+- [empty-states-table](empty-states-table.txt) - Table empty state with header actions, filter, pagination, and create button
+- [empty-states-cards](empty-states-cards.txt) - Cards empty state with header actions and create button
+- [inclusive-language-validation](inclusive-language-validation.txt) - Form field validation that checks for inclusive language compliance
+- [unsaved-changes-modal](unsaved-changes-modal.txt) - Confirmation modal warning users about unsaved changes before navigation
+- [validation-initial-state](validation-initial-state.txt) - Form validation initial state before user interaction
+- [validation-with-errors](validation-with-errors.txt) - Form validation displaying inline error messages on invalid fields
+- [validation-server-side](validation-server-side.txt) - Server-side form validation with async error handling
+- [refreshing-table-location](refreshing-table-location.txt) - Table with location-based auto-refresh indicator
+- [refreshing-table-loading](refreshing-table-loading.txt) - Table with loading state during data refresh
+- [refreshing-table-loading-skeleton](refreshing-table-loading-skeleton.txt) - Table with skeleton loading state during data refresh
+- [refreshing-form-location](refreshing-form-location.txt) - Form with location-based auto-refresh indicator
+- [refreshing-form-loading](refreshing-form-loading.txt) - Form with loading state during data refresh
+- [table-manual-refresh-success](table-manual-refresh-success.txt) - Table with manual refresh button showing success state
+- [table-manual-refresh-issues](table-manual-refresh-issues.txt) - Table with manual refresh button showing partial issues
+- [table-manual-refresh-error](table-manual-refresh-error.txt) - Table with manual refresh button showing error state
+- [migration-simple](migration-simple.txt)
+- [migration-detailed](migration-detailed.txt)
+- [async-autosuggest](async-autosuggest.txt) - Autosuggest with async data fetching, loading states, and filtering
+- [async-property-filter](async-property-filter.txt) - Property filter with async option loading and token-based filtering
+- [security-group-multi-select](security-group-multi-select.txt) - Multi-select dropdown for choosing multiple security groups
+- [security-group-single-select](security-group-single-select.txt) - Single-select dropdown for choosing one security group
+- [s3-resource-selector](s3-resource-selector.txt) - S3 resource selector with bucket and object browsing
+- [timestamp-relative](timestamp-relative.txt) - Relative timestamp display (e.g. "2 hours ago")
+- [timestamp-absolute](timestamp-absolute.txt) - Absolute timestamp display with full date and time
+- [timestamp-iso](timestamp-iso.txt) - ISO 8601 formatted timestamp display
+- [visual-style-shadows](visual-style-shadows.txt) - Shadow style examples for elevation and depth
+- [visual-style-borders](visual-style-borders.txt) - Border style examples for containers and dividers
+- [visual-style-outlines-fills](visual-style-outlines-fills.txt) - Outline and fill style examples for interactive elements
+- [visual-style-states](visual-style-states.txt) - Visual state examples for hover, focus, active, and disabled
+- [visual-style-spacing](visual-style-spacing.txt) - Spacing scale examples for margins and padding
+- [key-value-pairs-one-column](key-value-pairs-one-column.txt) - Key-value pairs in a single column layout
+- [key-value-pairs-three-columns](key-value-pairs-three-columns.txt) - Key-value pairs in a three column layout
+- [key-value-pairs-two-columns](key-value-pairs-two-columns.txt) - Key-value pairs in a two column layout
+- [key-value-pairs-with-table](key-value-pairs-with-table.txt) - Key-value pairs combined with a table layout
+- [key-value-pairs-preview](key-value-pairs-preview.txt) - Key-value pairs preview with mixed content types
+- [global-styles-visual-modes-table](global-styles-visual-modes-table.txt) - Reference table of available visual modes (light, dark, etc.)
+- [global-styles-dark-mode-table](global-styles-dark-mode-table.txt) - Reference table of dark mode design token mappings
+- [global-styles-motion-table](global-styles-motion-table.txt) - Reference table of motion and animation design tokens
+- [top-navigation-example](top-navigation-example.txt) - Top navigation bar with logo, search, and utility links
+- [design-system-history](design-system-history.txt)
+- [icons-usage](icons-usage.txt) - Icon usage examples with sizes and variants
+- [external-homepage-cards](external-homepage-cards.txt)
+- [iam-role-preview](iam-role-preview.txt) - IAM role selection preview with service-linked role details
+- [kms-key-preview](kms-key-preview.txt) - KMS key selection preview with key details and ARN
+- [s3-resource-selection-read](s3-resource-selection-read.txt) - S3 resource selector configured for read-only object selection
+- [s3-resource-selection-write](s3-resource-selection-write.txt) - S3 resource selector configured for write destination selection
+- [error-form-field](error-form-field.txt) - Form field with inline error message display
+- [error-flashbar](error-flashbar.txt) - Flashbar notification for displaying error messages
+- [error-alert](error-alert.txt) - Alert component for displaying error messages with recovery actions
+- [unexpected-error-alert](unexpected-error-alert.txt) - Alert for unexpected/unhandled errors with retry guidance
+- [page-header-actions](page-header-actions.txt) - Page header with primary and secondary action buttons
+- [cards-header-actions](cards-header-actions.txt) - Cards collection header with action buttons
+- [table-header-actions](table-header-actions.txt) - Table header with action buttons for selected items
+- [container-context-actions](container-context-actions.txt) - Container with contextual action buttons
+- [cards-context-actions](cards-context-actions.txt) - Cards with contextual per-card action buttons
+- [table-context-actions](table-context-actions.txt) - Table with contextual per-row action buttons
+- [enum-input-demo](enum-input-demo.txt) - Enum input pattern for selecting from predefined values
+- [visual-contexts-table](visual-contexts-table.txt) - Reference table of visual context variants and their usage
+- [typography-weights-example](typography-weights-example.txt) - Typography font weight examples across all available weights
+- [datavis-sequence-animation](datavis-sequence-animation.txt) - Data visualization sequence animation for chart transitions
+- [heading-types-table](heading-types-table.txt) - Reference table of heading typography styles with sizes and weights
+- [body-types-table](body-types-table.txt) - Reference table of body typography styles with sizes and weights
+- [code-types-table](code-types-table.txt) - Reference table of code typography styles with monospace fonts
+- [display-types-table](display-types-table.txt) - Reference table of display typography styles for large headings
+- [genai-resources](genai-resources.txt) - Gen AI fundamentals reference table with resource links
+- [genai-icons](genai-icons.txt) - Gen AI specific iconography examples and usage
+- [integrated-sparkle](integrated-sparkle.txt) - Sparkle icon integration for AI-generated content indicators
+- [sparkle-button](sparkle-button.txt) - Button with sparkle icon for triggering AI actions
+- [sparkle-output](sparkle-output.txt) - Output container with sparkle indicator for AI-generated content
+- [sparkle-edit-button](sparkle-edit-button.txt) - Edit button with sparkle icon for AI-assisted editing
+- [sparkle-search-button](sparkle-search-button.txt) - Search button with sparkle icon for AI-powered search
+- [genai-normal-button](genai-normal-button.txt) - Standard button variant for non-primary AI actions
+- [genai-primary-button](genai-primary-button.txt) - Primary button variant for main AI actions
+- [genai-buttons](genai-buttons.txt) - Collection of Gen AI button variants and styles
+- [user-feedback-standard](user-feedback-standard.txt) - Standard user feedback widget with sentiment rating
+- [user-feedback-link](user-feedback-link.txt) - Inline link-style user feedback prompt
+- [user-feedback-expandable](user-feedback-expandable.txt) - Expandable user feedback form with optional details
+- [user-feedback-contextual](user-feedback-contextual.txt) - Contextual user feedback attached to specific content
+- [genai-color-palette](genai-color-palette.txt) - Gen AI color palette reference with design tokens
+- [hero-header-landing](hero-header-landing.txt) - Hero header layout for landing pages
+- [hero-header-product-detail](hero-header-product-detail.txt) - Hero header layout for product detail pages
+- [hero-header-category](hero-header-category.txt) - Hero header layout for category pages
+- [hero-header-article](hero-header-article.txt) - Hero header layout for article pages
+- [hero-header-sign-in](hero-header-sign-in.txt) - Hero header layout for sign-in pages
+- [app-layout-previewer](app-layout-previewer.txt) - Interactive app layout previewer with navigation, tools, and content areas
+- [app-layout-toolbar-previewer](app-layout-toolbar-previewer.txt) - Interactive app layout previewer with toolbar variant
+- [split-panel-previewer](split-panel-previewer.txt) - Interactive split panel previewer with bottom and side positions
+- [gen-ai-label](gen-ai-label.txt) - Label component for marking AI-generated content
+- [gen-ai-loading](gen-ai-loading.txt) - Loading bar animation for AI content generation progress
+- [side-navigation-new](side-navigation-new.txt) - Side navigation with sections, links, and expandable groups
+- [side-navigation-beta](side-navigation-beta.txt) - Side navigation with beta badge indicators on items
+- [side-navigation-pattern-simple](side-navigation-pattern-simple.txt) - Flat side navigation IA with and without icons
+- [side-navigation-pattern-expandable-link-groups](side-navigation-pattern-expandable-link-groups.txt) - Sectioned side navigation IA with and without icons
+- [side-navigation-pattern-organized-with-sections](side-navigation-pattern-organized-with-sections.txt) - Sectioned side navigation nested IA with and without icons
+- [side-navigation-pattern-large-resource-link-groups](side-navigation-pattern-large-resource-link-groups.txt) - Grouped side navigation nested IA with groups of indented links
+- [side-navigation-pattern-organized-with-nested-groups](side-navigation-pattern-organized-with-nested-groups.txt) - Grouped side navigation nested IA with a section nested inside a section group
+- [new-features-flashbar](new-features-flashbar.txt) - Flashbar announcing new console features with feedback link
+- [in-preview-features-flashbar](in-preview-features-flashbar.txt) - Flashbar indicating a service is in preview with disclaimers
+- [in-page-features](in-page-features.txt) - In-page feature highlights with badges and descriptions
+- [new-feature-form-field](new-feature-form-field.txt) - Form field label with a "new" indicator for a newly added field
+- [new-feature-key-value-pairs](new-feature-key-value-pairs.txt) - Key-value pairs service overview with a "new" indicator on a value
+- [new-feature-tabs](new-feature-tabs.txt) - Tab label with a "new" indicator for a newly added tab
+- [new-feature-table-column](new-feature-table-column.txt) - Table column header with a "new" indicator for a newly added column
+- [density-settings-flashbar](density-settings-flashbar.txt) - Flashbar promoting density settings customization
+- [migration-communication-flashbar](migration-communication-flashbar.txt) - Flashbar for console migration feedback collection
+- [steps-loading](steps-loading.txt) - Multi-step loading indicator with step progress
+- [steps-loading-with-sub-steps](steps-loading-with-sub-steps.txt) - Multi-step loading indicator with sub-steps
+- [steps-loading-with-details](steps-loading-with-details.txt) - Multi-step loading indicator with detailed step descriptions
+- [steps-loading-with-progress-bar](steps-loading-with-progress-bar.txt) - Multi-step loading indicator with progress bar
+- [steps-completed-with-expandable-section](steps-completed-with-expandable-section.txt) - Completed steps with expandable section for details
+- [steps-sequential](steps-sequential.txt) - Ordered steps where the queued steps wait for the running one
+- [steps-independent](steps-independent.txt) - Independent steps running at once, completing in their own order
+- [steps-sub-steps](steps-sub-steps.txt) - Sub-steps in a tree, using list for unordered and steps for ordered work
+- [steps-error](steps-error.txt) - Failed step with rolled-up sub-step statuses, error popover, and retry
+- [hands-on-tutorial](hands-on-tutorial.txt) - Hands-on tutorial panel with step-by-step instructions
+- [access-denied-alert](access-denied-alert.txt) - Access denied alert with permission details
+- [access-denied-alert-expandable](access-denied-alert-expandable.txt) - Access denied alert with expandable permission details
+- [access-denied-alert-alphabetical](access-denied-alert-alphabetical.txt) - Access denied alert with alphabetically sorted permissions
+- [access-denied-popover](access-denied-popover.txt) - Access denied popover for inline permission explanations
+- [density-settings](density-settings.txt) - Content density settings toggle (comfortable vs compact)
+- [density-settings-partial](density-settings-partial.txt) - Choose the preferred level of content density of this console. The compact experience is available for some features in this console.
+- [multiselect-disabled](multiselect-disabled.txt) - Multiselect in disabled state with tooltip explanation
+- [button-disabled](button-disabled.txt) - Button in disabled state with tooltip explanation
+- [radio-group-readonly](radio-group-readonly.txt) - Radio group in read-only state showing selected value
+- [input-readonly](input-readonly.txt) - Input field in read-only state displaying current value
+- [button-dropdown-disabled](button-dropdown-disabled.txt) - Button dropdown in disabled state with tooltip explanation
+- [cloud-editor-json-lsp](cloud-editor-json-lsp.txt) - Cloud editor with JSON language server protocol support
+- [table-view-error](table-view-error.txt) - Table view displaying an error state with retry action
+- [rtl-toggle](rtl-toggle.txt) - Right-to-left text direction toggle control
+- [rtl-breadcrumb-group](rtl-breadcrumb-group.txt) - Breadcrumb group with right-to-left layout support
+- [tag-editor-diff](tag-editor-diff.txt) - Tag editor with diff view showing added, removed, and modified tags
+- [chat-bubble-loading](chat-bubble-loading.txt) - Chat bubble with loading animation for pending AI response
+- [chat-bubble-streaming](chat-bubble-streaming.txt) - Chat bubble with streaming text animation for AI response
+- [chat-bubble-loading-with-loading-bar](chat-bubble-loading-with-loading-bar.txt) - Chat bubble with loading bar for long AI operations
+- [gen-ai-error-state](gen-ai-error-state.txt) - Error state display for failed AI generation with retry
+- [gen-ai-feedback](gen-ai-feedback.txt) - Feedback widget for rating AI-generated responses (thumbs up/down)
+- [gen-ai-followup-clarify-intent](gen-ai-followup-clarify-intent.txt) - AI follow-up prompt to clarify user intent
+- [gen-ai-followup-guided-selection](gen-ai-followup-guided-selection.txt) - AI follow-up with guided selection options
+- [gen-ai-followup-form-input](gen-ai-followup-form-input.txt) - AI follow-up with form input for structured user response
+- [gen-ai-followup-steps-input](gen-ai-followup-steps-input.txt) - AI follow-up with multi-step input wizard
+- [gen-ai-mutating-actions-building-blocks](gen-ai-mutating-actions-building-blocks.txt) - Building blocks for AI mutating action confirmation flows
+- [gen-ai-mutating-actions-simple-consent](gen-ai-mutating-actions-simple-consent.txt) - Simple consent dialog for AI-initiated resource changes
+- [gen-ai-mutating-actions-additional-confirmation](gen-ai-mutating-actions-additional-confirmation.txt) - Additional confirmation step for high-risk AI-initiated changes
+- [gen-ai-mutating-actions-failure](gen-ai-mutating-actions-failure.txt) - Failure state for AI-initiated mutating actions with rollback
+- [gen-ai-mutating-actions-revert](gen-ai-mutating-actions-revert.txt) - Revert action for undoing AI-initiated resource changes
+- [gen-ai-mutating-actions-no-consent](gen-ai-mutating-actions-no-consent.txt) - State when user declines AI-initiated mutating action
+- [gen-ai-mutating-actions-initiation](gen-ai-mutating-actions-initiation.txt) - Initiation flow for AI-triggered resource mutations
+- [progressive-disclosure-checkbox](progressive-disclosure-checkbox.txt) - Progressive disclosure using checkbox to reveal additional options
+- [data-grid-1](data-grid-1.txt) - Editable data grid with inline cell editing
+- [aws-region-key-value-pair](aws-region-key-value-pair.txt) - AWS region displayed as a key-value pair
+- [aws-region-selector](aws-region-selector.txt) - AWS region selector dropdown with region names and codes
+- [aws-region-table](aws-region-table.txt) - Table listing AWS regions with availability details
+- [code-editor](code-editor.txt) - Code editor with syntax highlighting and language support (client-side only)
+- [drag-handle-all](drag-handle-all.txt) - All drag handle variants: area resize, vertical, horizontal, and drag indicator
+- [drag-handle-area-resize](drag-handle-area-resize.txt) - Drag handle for area resize interactions
+- [drag-handle-vertical-resize](drag-handle-vertical-resize.txt) - Drag handle for vertical resize interactions
+- [drag-handle-horizontal-resize](drag-handle-horizontal-resize.txt) - Drag handle for horizontal resize interactions
+- [drag-handle-drag-indicator](drag-handle-drag-indicator.txt) - Drag indicator handle for reordering items
+- [account-in-table](account-in-table.txt) - AWS account display within a table with account ID and name
+- [account-in-select](account-in-select.txt) - AWS account selector dropdown with account details
+- [account-info-in-key-value-pairs](account-info-in-key-value-pairs.txt) - AWS account info displayed as key-value pairs
+- [account-link-in-key-value-pairs](account-link-in-key-value-pairs.txt) - AWS account link displayed as key-value pairs with navigation
+- [error-bar-colors-table](error-bar-colors-table.txt) - Reference table of error bar color tokens and their usage
+- [password-strength-indicator](password-strength-indicator.txt) - Password strength indicator with real-time validation feedback (client-side only)
+- [gen-ai-completed-response](gen-ai-completed-response.txt) - Completed AI response with regeneration option
+- [gen-ai-interrupted-response](gen-ai-interrupted-response.txt) - Interrupted AI response with resume or regenerate options
+- [gen-ai-support-prompt-during-conversation](gen-ai-support-prompt-during-conversation.txt) - AI support prompt suggestions shown during conversation
+- [gen-ai-support-prompt-get-started](gen-ai-support-prompt-get-started.txt) - AI support prompt suggestions for getting started
+- [thinking-extended-reasoning](thinking-extended-reasoning.txt) - Chat with extended reasoning showing completed thinking and response
+- [thinking-high-stakes-auditable](thinking-high-stakes-auditable.txt) - Chat with extended reasoning in a high-stakes auditable context with loading state
+- [thinking-agentic-decision-making](thinking-agentic-decision-making.txt) - Chat with thinking steps showing diagnostic investigation with progress indicators
+- [gen-ai-timeline](gen-ai-timeline.txt) - Event log timeline grouped by day using steps with the log status and timestamp annotations
+- [gen-ai-timeline-conversation-overview](gen-ai-timeline-conversation-overview.txt) - Conversation overview timeline using steps with participant icons and anchor link labels
+- [genai-inline-chat-context-prompt-context](genai-inline-chat-context-prompt-context.txt) - Chat with inline prompt context providing project details
+- [genai-inline-chat-context-local-files](genai-inline-chat-context-local-files.txt) - Chat with local file upload for providing context
+- [genai-inline-chat-context-external-service](genai-inline-chat-context-external-service.txt) - Chat with external service connection for repository context
+- [genai-navigational-diagram](genai-navigational-diagram.txt) - Navigational diagram for GenAI hub page
+- [root-error-boundary](root-error-boundary.txt) - Error boundary with default fallback example
+- [skeleton-paragraph](skeleton-paragraph.txt) - Skeleton loading text content
+- [skeleton-card](skeleton-card.txt) - Skeleton loading card
+- [genai-artifact-preview-code-snippets](genai-artifact-preview-code-snippets.txt) - Gen AI artifact preview for code snippets with copy and download actions
+- [genai-artifact-preview-media](genai-artifact-preview-media.txt) - Gen AI artifact preview for media files with fullscreen and download actions
+- [genai-artifact-preview-download-only-files](genai-artifact-preview-download-only-files.txt) - Gen AI artifact preview for download-only file types
+- [genai-artifact-preview-selectable-preview](genai-artifact-preview-selectable-preview.txt) - Gen AI artifact preview with selectable side panel for document viewing
+- [genai-inline-chat-actions-form-input](genai-inline-chat-actions-form-input.txt) - Inline form input for collecting values to execute an action with synchronous creation flow
+- [genai-inline-chat-actions-multi-step](genai-inline-chat-actions-multi-step.txt) - Multi-step async process with individual collapsible cards for each step
+- [genai-inline-chat-actions-inline-edit](genai-inline-chat-actions-inline-edit.txt) - Inline editing of agent-generated values within the chat response
+
+Generated: 2026-09-24T10:46:18.621Z

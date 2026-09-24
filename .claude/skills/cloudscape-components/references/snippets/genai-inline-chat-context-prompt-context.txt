@@ -1,0 +1,58 @@
+import React, { useState } from 'react';
+import Box from '@cloudscape-design/components/box';
+import ButtonGroup from '@cloudscape-design/components/button-group';
+import Container from '@cloudscape-design/components/container';
+import Header from '@cloudscape-design/components/header';
+import PromptInput from '@cloudscape-design/components/prompt-input';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import ChatBubble from '@cloudscape-design/chat-components/chat-bubble';
+import { genAiAvatar, genAiLoadingAvatar, genAiName, userAvatar, userName } from '../genai-common/avatars';
+
+export default function ContextEnrichmentPrompt() {
+  const [prompt, setPrompt] = useState('');
+
+  return (
+    <Container
+      header={<Header variant="h3">Generative AI assistant</Header>}
+      footer={
+        <PromptInput
+          value={prompt}
+          onChange={({ detail }) => setPrompt(detail.value)}
+          actionButtonIconName="send"
+          actionButtonAriaLabel="Send message"
+          placeholder="Ask a question"
+          disableSecondaryActionsPaddings
+          secondaryActions={
+            <Box padding={{ left: 'xxs', top: 'xs' }}>
+              <ButtonGroup
+                ariaLabel="Additional chat input actions"
+                items={[
+                  { type: 'icon-button', id: 'upload-files', iconName: 'upload', text: 'Upload files' },
+                  { type: 'icon-button', id: 'add-reference', iconName: 'at-symbol', text: 'Add reference' },
+                ]}
+                variant="icon"
+              />
+            </Box>
+          }
+        />
+      }
+    >
+      <div role="region" aria-label="Chat" style={{ minHeight: 280 }}>
+        <SpaceBetween size="xs">
+          <ChatBubble type="incoming" ariaLabel={`${genAiName} at 4:00pm`} avatar={genAiAvatar}>
+            What can I help you with?
+          </ChatBubble>
+
+          <ChatBubble type="outgoing" ariaLabel={`${userName} at 4:01pm`} avatar={userAvatar}>
+            I need help setting up CI/CD. Our stack is React, TypeScript, and DynamoDB. We use a monorepo with packages
+            under /apps and follow conventional commits.
+          </ChatBubble>
+
+          <ChatBubble type="incoming" ariaLabel={`${genAiName} at 4:01pm`} avatar={genAiLoadingAvatar}>
+            <Box color="text-status-inactive">Generating a response</Box>
+          </ChatBubble>
+        </SpaceBetween>
+      </div>
+    </Container>
+  );
+}

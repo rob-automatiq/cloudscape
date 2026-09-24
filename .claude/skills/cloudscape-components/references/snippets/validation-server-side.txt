@@ -1,0 +1,19 @@
+import React from 'react';
+import Form from './common-form';
+import { Link } from '@cloudscape-design/components';
+
+const Snippet = () => (
+  <Form
+    serverSideError={
+      <>
+        You have reached the maximum amount of distributions you can create.{' '}
+        <Link external variant="primary" href="#">
+          Learn more about distribution limits
+        </Link>
+      </>
+    }
+    defaultInputValue="MyInstanceName"
+    validate={() => 'The instance name is already in use. Use a different name.'}
+  />
+);
+export default Snippet;

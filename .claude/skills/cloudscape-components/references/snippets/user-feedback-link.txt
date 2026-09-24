@@ -1,0 +1,12 @@
+import React from 'react';
+import { Link, SpaceBetween } from '@cloudscape-design/components';
+import UserFeedbackSentiment from './sentiment';
+
+export default function LinkFeedback() {
+  return (
+    <SpaceBetween size="s">
+      <UserFeedbackSentiment />
+      <Link onFollow={() => {}}>Provide more feedback</Link>
+    </SpaceBetween>
+  );
+}

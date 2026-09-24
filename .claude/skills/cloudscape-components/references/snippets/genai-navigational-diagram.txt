@@ -1,0 +1,435 @@
+import { useState } from 'react';
+import type { CSSProperties } from 'react';
+import Box from '@cloudscape-design/components/box';
+import * as tokens from '@cloudscape-design/design-tokens';
+import { useHubFilter } from '@/awsui-website-components/contexts';
+import { DIAGRAM_FLOW_STAGES, DIAGRAM_CHAT_STAGE } from './diagram-taxonomy';
+
+interface FlowNode {
+  label: string;
+  count?: number;
+  variant?: 'accent' | 'default';
+}
+
+interface Tag {
+  label: string;
+  count?: number;
+  highlighted?: boolean;
+}
+
+const styles: Record<string, CSSProperties> = {
+  container: {
+    position: 'relative',
+    background: tokens.colorBackgroundLayoutMain,
+    borderRadius: tokens.borderRadiusContainer,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: tokens.spaceStaticM,
+    fontFamily: tokens.fontFamilyBase,
+    overflow: 'visible',
+    marginBlock: '20px',
+  },
+  borderSvg: {
+    position: 'absolute',
+    inset: 0,
+    width: '100%',
+    height: '100%',
+    pointerEvents: 'none',
+    overflow: 'visible',
+  } as CSSProperties,
+  title: {
+    position: 'absolute',
+    top: '-15px',
+    left: tokens.spaceStaticL,
+    background: tokens.colorBackgroundLayoutMain,
+    padding: `0 ${tokens.spaceStaticXxs}`,
+    fontSize: tokens.fontSizeBodyS,
+    lineHeight: tokens.lineHeightBodyS,
+    color: tokens.colorTextBodyDefault,
+    letterSpacing: '0.02em',
+  },
+  context: {
+    position: 'absolute',
+    bottom: tokens.spaceStaticXs,
+    left: tokens.spaceStaticL,
+    fontSize: tokens.fontSizeBodyM,
+    lineHeight: tokens.lineHeightBodyS,
+    color: tokens.colorTextBodySecondary,
+    padding: tokens.spaceStaticXxs,
+    fontStyle: 'italic',
+  },
+  scrollable: {
+    overflowX: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: tokens.spaceStaticM,
+    padding: `${tokens.spaceStaticXxl} ${tokens.spaceStaticXxxl} ${tokens.spaceStaticXxl} ${tokens.spaceStaticL}`,
+  },
+  flow: {
+    display: 'flex',
+    alignItems: 'flex-start',
+  },
+  node: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: tokens.spaceStaticXs,
+    padding: `${tokens.spaceStaticXs} ${tokens.spaceStaticXxxl}`,
+    borderRadius: '20px',
+    fontSize: tokens.fontSizeBodyM,
+    fontWeight: 500,
+    whiteSpace: 'nowrap',
+    transition: 'ease 0.2s',
+    cursor: 'pointer',
+    border: '1.5px solid rgba(101, 104, 113, 0.2)',
+    fontFamily: 'inherit',
+  },
+  nodeAccent: {
+    background: '#656871',
+    border: '1.5px solid #656871',
+    color: '#ffffff',
+  },
+  nodeDefault: {
+    background: 'transparent',
+    border: `1.5px solid ${tokens.colorBorderSegmentDefault}`,
+    color: tokens.colorTextInteractiveDefault,
+  },
+  nodeCount: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: tokens.spaceStaticL,
+    height: tokens.spaceStaticL,
+    padding: `0 ${tokens.spaceStaticXxs}`,
+    borderRadius: '4px',
+    background: 'rgba(43, 43, 43, 0.6)',
+    fontSize: tokens.fontSizeBodyS,
+    fontWeight: 600,
+    color: tokens.colorTextHomeHeaderDefault,
+  },
+  nodeCountBordered: {
+    background: `${tokens.colorBackgroundControlDisabled}`,
+    color: tokens.colorTextBodyDefault,
+  },
+  connectorWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    paddingBlockStart: '34px',
+  },
+  connector: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: `0 ${tokens.spaceStaticXxs}`,
+  },
+  connectorLine: {
+    width: tokens.spaceStaticXl,
+    height: '1px',
+    background: tokens.colorTextInteractiveDefault,
+  },
+  connectorArrow: {
+    width: 0,
+    height: 0,
+    borderTop: '5px solid transparent',
+    borderBottom: '5px solid transparent',
+    borderLeft: `7px solid ${tokens.colorTextInteractiveDefault}`,
+  },
+  group: {
+    border: '2px solid #962EFF',
+    borderRadius: tokens.borderRadiusContainer,
+    padding: tokens.spaceStaticL,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: tokens.spaceStaticL,
+    marginInlineEnd: tokens.spaceStaticXxl,
+  },
+  groupNodes: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  segment: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  tags: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: tokens.spaceStaticXs,
+    flexWrap: 'wrap',
+  },
+  tag: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: tokens.spaceStaticXxs,
+    padding: `${tokens.spaceStaticXxs} ${tokens.spaceStaticS}`,
+    borderRadius: '20px',
+    background: tokens.colorBackgroundLayoutToggleDefault,
+    fontSize: tokens.fontSizeBodyS,
+    color: tokens.colorTextHomeHeaderDefault,
+    fontWeight: 500,
+    height: '28px',
+    boxSizing: 'border-box',
+  },
+  tagHighlighted: {
+    background: '#962EFF',
+    color: '#ffffff',
+  },
+  tagHighlightedHover: {
+    background: 'rgba(150, 46, 255, 0.9)',
+    color: '#ffffff',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+    transition: 'background 0.2s ease',
+  },
+  tagInteractive: {
+    cursor: 'pointer',
+    border: 'none',
+    fontFamily: 'inherit',
+    transition: `transform ${tokens.motionDurationResponsive} ${tokens.motionEasingResponsive}, box-shadow ${tokens.motionDurationResponsive} ${tokens.motionEasingResponsive}`,
+  },
+  tagCount: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: tokens.spaceStaticL,
+    height: tokens.spaceStaticL,
+    padding: `0 ${tokens.spaceStaticXxs}`,
+    borderRadius: '4px',
+    background: 'rgba(255, 255, 255, 0.20)',
+    fontSize: tokens.fontSizeBodyS,
+    fontWeight: 600,
+  },
+  annotation: {
+    fontSize: tokens.fontSizeBodyS,
+    color: tokens.colorTextBodySecondary,
+    fontStyle: 'italic',
+  },
+  nodeDefaultHover: {
+    borderColor: '#962EFF',
+    background: 'rgba(150, 46, 255, 0.05)',
+  },
+  nodeAccentHover: {
+    border: '1.5px solid #656871',
+    background: '#6d7079',
+  },
+};
+
+function NodeButton({
+  className,
+  style,
+  variant = 'default',
+  onClick,
+  children,
+}: {
+  className: string;
+  style: CSSProperties;
+  variant?: 'accent' | 'default';
+  onClick?: () => void;
+  children: React.ReactNode;
+}) {
+  const [hovered, setHovered] = useState(false);
+  const hoverStyle = variant === 'accent' ? styles.nodeAccentHover : styles.nodeDefaultHover;
+  return (
+    <button
+      className={className}
+      style={{ ...style, ...(hovered ? hoverStyle : {}) }}
+      type="button"
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {children}
+    </button>
+  );
+}
+
+function TagButton({
+  className,
+  style,
+  highlighted,
+  onClick,
+  children,
+}: {
+  className: string;
+  style: CSSProperties;
+  highlighted: boolean;
+  onClick?: () => void;
+  children: React.ReactNode;
+}) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <button
+      className={className}
+      style={{ ...style, ...(hovered && highlighted ? styles.tagHighlightedHover : {}) }}
+      type="button"
+      onClick={onClick}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {children}
+    </button>
+  );
+}
+
+export default function InteractiveOverview() {
+  const { filterText, setFilterText, categoryCounts } = useHubFilter();
+
+  // Labels + order come from the shared taxonomy; counts come from live tag data
+  // via context. When no counts are provided (e.g. standalone snippet preview),
+  // the count badges are omitted rather than showing stale numbers.
+  const flowNodes: FlowNode[] = DIAGRAM_FLOW_STAGES.map((stage, index) => ({
+    label: stage.label,
+    count: categoryCounts[stage.label],
+    variant: index === 0 ? 'accent' : 'default',
+  }));
+
+  const tags: Tag[] = [
+    { label: DIAGRAM_CHAT_STAGE.label, count: categoryCounts[DIAGRAM_CHAT_STAGE.label], highlighted: true },
+    { label: 'Image' },
+    { label: 'Text' },
+  ];
+
+  const handleFilterClick = (label: string) => {
+    // Toggle: clicking the same label again clears the filter
+    setFilterText(filterText === label ? '' : label);
+  };
+
+  return (
+    <div className="container" style={styles.container}>
+      <svg style={styles.borderSvg}>
+        <rect
+          rx={tokens.borderRadiusContainer}
+          ry={tokens.borderRadiusContainer}
+          fill="none"
+          stroke={tokens.colorBorderControlDefault}
+          strokeWidth="1"
+          strokeDasharray="8 6"
+          strokeDashoffset="4"
+          style={{ x: 1, y: 1, width: 'calc(100% - 2px)', height: 'calc(100% - 2px)' }}
+        />
+      </svg>
+      <span className="title" style={styles.title}>
+        <Box variant="h4">Pattern abstraction</Box>
+      </span>
+
+      <div className="scrollable" style={styles.scrollable}>
+        <div style={{ margin: '0 auto' }}>
+          <div className="flow" style={styles.flow}>
+            {/* Ingress node (outside the group) */}
+            <Box padding={{ top: 'l' }}>
+              <NodeButton
+                className="node node--accent"
+                variant="accent"
+                style={{
+                  ...styles.node,
+                  ...styles.nodeAccent,
+                  ...(filterText === flowNodes[0].label ? styles.nodeAccentHover : {}),
+                }}
+                onClick={() => handleFilterClick(flowNodes[0].label)}
+              >
+                <span>{flowNodes[0].label}</span>
+                {flowNodes[0].count !== undefined && (
+                  <span className="nodeCount" style={styles.nodeCount}>
+                    {flowNodes[0].count}
+                  </span>
+                )}
+              </NodeButton>
+            </Box>
+
+            <div className="connectorWrapper" style={styles.connectorWrapper}>
+              <div className="connector" style={styles.connector}>
+                <div className="connectorLine" style={styles.connectorLine} />
+                <div className="connectorArrow" style={styles.connectorArrow} />
+              </div>
+            </div>
+
+            {/* Grouped nodes */}
+            <div className="group" style={styles.group}>
+              <div className="groupNodes" style={styles.groupNodes}>
+                {flowNodes.slice(1).map((node, idx) => (
+                  <div className="segment" style={styles.segment} key={node.label}>
+                    <NodeButton
+                      className="node node--default"
+                      style={{
+                        ...styles.node,
+                        ...styles.nodeDefault,
+                        ...(filterText === node.label ? styles.nodeDefaultHover : {}),
+                      }}
+                      onClick={() => handleFilterClick(node.label)}
+                    >
+                      <span>{node.label}</span>
+                      {node.count !== undefined && (
+                        <span
+                          className="nodeCount nodeCount--bordered"
+                          style={{ ...styles.nodeCount, ...styles.nodeCountBordered }}
+                        >
+                          {node.count}
+                        </span>
+                      )}
+                    </NodeButton>
+                    {idx < flowNodes.length - 2 && (
+                      <div className="connector" style={styles.connector}>
+                        <div className="connectorLine" style={styles.connectorLine} />
+                        <div className="connectorArrow" style={styles.connectorArrow} />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Tags row */}
+              <div className="tags" style={styles.tags}>
+                {tags.map(tag => {
+                  const isInteractive = tag.count !== undefined;
+                  const isActive = filterText === tag.label;
+                  const tagStyle = {
+                    ...styles.tag,
+                    ...(tag.highlighted || isActive ? styles.tagHighlighted : {}),
+                    ...(isInteractive ? styles.tagInteractive : {}),
+                  };
+                  const tagClassName = [
+                    'tag',
+                    tag.highlighted || isActive ? 'tag--highlighted' : '',
+                    isInteractive ? 'tag--interactive' : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ');
+
+                  if (isInteractive) {
+                    return (
+                      <TagButton
+                        className={tagClassName}
+                        style={tagStyle}
+                        highlighted={!!tag.highlighted || isActive}
+                        key={tag.label}
+                        onClick={() => handleFilterClick(tag.label)}
+                      >
+                        <span>{tag.label}</span>
+                        <span className="tagCount" style={styles.tagCount}>
+                          {tag.count}
+                        </span>
+                      </TagButton>
+                    );
+                  }
+
+                  return (
+                    <span className={tagClassName} style={tagStyle} key={tag.label}>
+                      <span>{tag.label}</span>
+                    </span>
+                  );
+                })}
+                <span className="annotation" style={styles.annotation}>
+                  interaction paradigm,
+                </span>
+                <span className="annotation" style={styles.annotation}>
+                  model modality
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <span className="context" style={styles.context}>
+        Context
+      </span>
+    </div>
+  );
+}

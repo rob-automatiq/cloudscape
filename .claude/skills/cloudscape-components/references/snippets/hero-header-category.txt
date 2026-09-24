@@ -1,0 +1,32 @@
+import React from 'react';
+import { Box, ContentLayout, Header, BreadcrumbGroup } from '@cloudscape-design/components';
+
+export default function CategoryPage() {
+  return (
+    <ContentLayout
+      defaultPadding
+      disableOverlap
+      headerVariant="high-contrast"
+      maxContentWidth={1200}
+      breadcrumbs={
+        <BreadcrumbGroup
+          items={[
+            { text: 'Home', href: '#' },
+            { text: 'Category', href: '#category' },
+          ]}
+          ariaLabel="Breadcrumbs"
+        />
+      }
+      header={
+        <Header variant="h1" description="Description of the category.">
+          Category
+        </Header>
+      }
+    >
+      <Box variant="h2" padding={{ top: 'm' }}>
+        {' '}
+        Content
+      </Box>
+    </ContentLayout>
+  );
+}

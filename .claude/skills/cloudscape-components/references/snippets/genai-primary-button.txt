@@ -1,0 +1,12 @@
+import React from 'react';
+import { Button } from '@cloudscape-design/components';
+
+const PrimaryButton = () => {
+  return (
+    <Button variant="primary" iconAlign="left" iconName="gen-ai" ariaLabel="Generative AI - Primary button">
+      Primary button
+    </Button>
+  );
+};
+
+export default PrimaryButton;

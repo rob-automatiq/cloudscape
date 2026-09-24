@@ -1,0 +1,56 @@
+import React from 'react';
+import Alert from '@cloudscape-design/components/alert';
+import Button from '@cloudscape-design/components/button';
+import Header from '@cloudscape-design/components/header';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import Table from '@cloudscape-design/components/table';
+
+const Snippet = () => (
+  <Table
+    columnDefinitions={[
+      {
+        id: 'variable',
+        header: 'Variable name',
+        cell: () => '',
+        isRowHeader: true,
+      },
+      {
+        id: 'value',
+        header: 'Current value',
+        cell: () => '',
+      },
+      {
+        id: 'description',
+        header: 'Description',
+        cell: () => '',
+      },
+    ]}
+    items={[]}
+    header={
+      <Header
+        headingTagOverride="h3"
+        actions={
+          <SpaceBetween direction="horizontal" size="xs" alignItems="center">
+            <Button>Edit</Button>
+            <Button>Delete</Button>
+            <Button variant="primary">Create</Button>
+          </SpaceBetween>
+        }
+      >
+        Resources
+      </Header>
+    }
+    empty={
+      <Alert
+        header="Failed to fetch resources"
+        action={<Button>Retry</Button>}
+        type="error"
+        statusIconAriaLabel="Error"
+      >
+        The list of resources could not be loaded due to a server error. Try again later.
+      </Alert>
+    }
+  />
+);
+
+export default Snippet;

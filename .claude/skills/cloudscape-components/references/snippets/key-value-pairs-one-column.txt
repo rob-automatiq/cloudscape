@@ -1,0 +1,27 @@
+import React from 'react';
+import { Box, Container, Header, Link, SpaceBetween, StatusIndicator } from '@cloudscape-design/components';
+
+const ValueWithLabel = ({ label, children }) => (
+  <div>
+    <Box variant="awsui-key-label">{label}</Box>
+    <div>{children}</div>
+  </div>
+);
+
+export default function OneColumn() {
+  return (
+    <Container header={<Header headingTagOverride="h3">Header</Header>}>
+      <SpaceBetween size="l">
+        <ValueWithLabel label="Label for key">Value</ValueWithLabel>
+        <ValueWithLabel label="Label for key">
+          <StatusIndicator>Value for positive status</StatusIndicator>
+        </ValueWithLabel>
+        <ValueWithLabel label="Label for key">
+          <Link href="https://example.com/" external={true} variant="primary">
+            Value with external link
+          </Link>
+        </ValueWithLabel>
+      </SpaceBetween>
+    </Container>
+  );
+}

@@ -1,0 +1,47 @@
+import React, { useId } from 'react';
+import { Button, Flashbar, Alert, Icon, Input, SpaceBetween, ColumnLayout } from '@cloudscape-design/components';
+import { VisualElement } from './internal/common';
+
+export default function OutlinesFills() {
+  const id = useId();
+  return (
+    <ColumnLayout columns={3}>
+      <VisualElement
+        label="Dark fill, without outline"
+        description="Important elements are inverted to create the greatest contrast with other elements on the page."
+        otherExamples="Other examples not shown: badge, selected checkbox, toggle, and radio button."
+      >
+        <SpaceBetween size="m">
+          <Button variant="primary">Primary button</Button>
+          <Flashbar items={[{ content: 'Flash', id }]} />
+        </SpaceBetween>
+      </VisualElement>
+
+      <VisualElement
+        label="Light fill, with outline"
+        description="Emphasized elements have a lighter background, typically acompanied with a darker border of a similar color. For dark mode, the inverse applies."
+        otherExamples="Other examples not shown: selected card, tile, table row, and multiselect token."
+      >
+        <SpaceBetween size="m">
+          <Alert statusIconAriaLabel="Info">Alert</Alert>
+        </SpaceBetween>
+      </VisualElement>
+
+      <VisualElement
+        label="Outline only"
+        description="Most elements don't have any fill and only have a border or outline."
+        otherExamples="Other examples not shown: autosuggest, button dropdown, multiselect, select, textarea, default radio, checkbox, and tiles."
+      >
+        <SpaceBetween size="m">
+          <SpaceBetween size="l" direction="horizontal">
+            <Icon name="settings" />
+            <Icon name="notification" />
+            <Icon name="filter" />
+            <Icon name="folder" />
+          </SpaceBetween>
+          <Input value="Input" />
+        </SpaceBetween>
+      </VisualElement>
+    </ColumnLayout>
+  );
+}

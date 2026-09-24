@@ -1,5 +1,5 @@
 ---
-name: cloudscape-components
+name: cloudscape
 description: Expert guidance for designing and building UI with the Cloudscape Design System (AWS's React design system, @cloudscape-design/components), bundled with the full cloudscape.design docs. Includes every component's usage, writing and accessibility guidelines, named playground examples, and exact API, plus all UX patterns (create, edit, delete, tables, validation, empty states, navigation, dashboards, generative-AI chat) and the visual foundation. Use it whenever the user mentions Cloudscape, names a Cloudscape component (DatePicker, Table, FormField, AppLayout, Header, Modal, Wizard, Flashbar…), builds or reviews UI in a project using @cloudscape-design/*, or asks how to design a page, form, or flow the Cloudscape way, for example "use a date picker, disable weekends with the reason 'You can only select a weekday.'", "add a table with filtering", or "should this be a modal or a page?" Use it even when the user only describes the behavior, and give design feedback when there's a better Cloudscape way.
 ---
 

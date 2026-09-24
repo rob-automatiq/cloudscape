@@ -303,7 +303,6 @@ function TasksPage({ tasks, loading, browserOnly, onCreate, onDoneChange, onDueC
               ariaLabel: 'Due date',
               editIconAriaLabel: 'editable',
               errorIconAriaLabel: 'Due date error',
-              constraintText: 'Use YYYY/MM/DD format. Leave it empty to remove the due date.',
               validation: (_task, value) => (value === undefined ? undefined : dueError(value as string)),
               editingCell: (task, { currentValue, setValue }) => (
                 <DueDatePicker value={(currentValue as string | undefined) ?? task.due ?? ''} onChange={setValue} />

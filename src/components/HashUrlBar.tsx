@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useNavigationType } from 'react-router-dom'
 
 export const HASH_URL_BAR_HEIGHT = 40
 
@@ -25,10 +25,28 @@ const NAV_BUTTON: CSSProperties = {
   padding: 0,
 }
 
+const NAV_BUTTON_DISABLED: CSSProperties = {
+  ...NAV_BUTTON,
+  color: '#ebebf52e',
+  cursor: 'default',
+}
+
+// React Router records each entry's position in history.state.idx (0 = first page of the app).
+// The browser can't report forward entries, so remember the furthest position reached;
+// a PUSH discards everything ahead of it. Recomputing on every render is idempotent.
+function useHistoryBounds() {
+  const navigationType = useNavigationType()
+  const maxIdx = useRef(0)
+  const idx: number = window.history.state?.idx ?? 0
+  if (navigationType === 'PUSH' || idx > maxIdx.current) maxIdx.current = idx
+  return { canGoBack: idx > 0, canGoForward: idx < maxIdx.current }
+}
+
 export default function HashUrlBar() {
   const location = useLocation()
   const navigate = useNavigate()
   const inputRef = useRef<HTMLInputElement>(null)
+  const { canGoBack, canGoForward } = useHistoryBounds()
 
   const route = location.pathname + location.search
   const [value, setValue] = useState(route)
@@ -51,13 +69,25 @@ export default function HashUrlBar() {
         background: '#1c1c1e', borderBottom: '1px solid #3a3a3c',
         display: 'flex', alignItems: 'center', padding: '0 12px', gap: 8,
       }}>
-        <button onClick={() => navigate(-1)} title="Back" aria-label="Back" style={NAV_BUTTON}>
+        <button
+          onClick={() => navigate(-1)}
+          disabled={!canGoBack}
+          title="Back"
+          aria-label="Back"
+          style={canGoBack ? NAV_BUTTON : NAV_BUTTON_DISABLED}
+        >
           <svg width="8" height="13" viewBox="0 0 8 13" fill="none">
             <path d="M7 1L1 6.5L7 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
 
-        <button onClick={() => navigate(1)} title="Forward" aria-label="Forward" style={NAV_BUTTON}>
+        <button
+          onClick={() => navigate(1)}
+          disabled={!canGoForward}
+          title="Forward"
+          aria-label="Forward"
+          style={canGoForward ? NAV_BUTTON : NAV_BUTTON_DISABLED}
+        >
           <svg width="8" height="13" viewBox="0 0 8 13" fill="none">
             <path d="M1 1L7 6.5L1 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>

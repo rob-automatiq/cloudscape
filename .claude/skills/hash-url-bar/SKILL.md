@@ -54,5 +54,6 @@ These came from direct user feedback on earlier versions, so don't "improve" the
 - **The text never shifts on focus.** Use the same element in both states: an always-rendered `<input>`, not a span that turns into an input. Otherwise the text jumps when clicked.
 - **It stays in sync.** When the route changes from in-app links, back/forward, or a top nav, the field updates to match.
 - **Back (‹) and forward (›)** sit to the left of the field and call `navigate(-1)` and `navigate(1)`.
+- **They disable and dim when there's nowhere to go.** Back is off on the app's first history entry. This also stops Back from leaving the app, for example navigating the page that embeds an Artifact. Forward is off unless you've gone back and not navigated anywhere new since. This relies on React Router's `history.state.idx`, which exists in v6+ `HashRouter`/`BrowserRouter`, plus the furthest position the component has seen. After a full page reload, Forward starts out disabled, because that furthest position is kept in memory only. That's an accepted limitation. Don't add sessionStorage to work around it.
 
 If the user asks for changes to the bar itself, make them in the project's copy, and mention that the skill's `assets/HashUrlBar.tsx` should get the same change if they want it to stick for future projects.

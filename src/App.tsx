@@ -1,5 +1,9 @@
-import { HashRouter, useLocation, useNavigate, Routes, Route, Link, useParams } from 'react-router-dom'
+import { useState } from 'react'
+import { HashRouter, useLocation, useNavigate, Routes, Route, useParams } from 'react-router-dom'
 import AppLayout from '@cloudscape-design/components/app-layout'
+import Table from '@cloudscape-design/components/table'
+import Checkbox from '@cloudscape-design/components/checkbox'
+import Link from '@cloudscape-design/components/link'
 import ContentLayout from '@cloudscape-design/components/content-layout'
 import Header from '@cloudscape-design/components/header'
 import Container from '@cloudscape-design/components/container'
@@ -9,11 +13,17 @@ import KeyValuePairs from '@cloudscape-design/components/key-value-pairs'
 import TopNavigation from '@cloudscape-design/components/top-navigation'
 import HashUrlBar, { HASH_URL_BAR_HEIGHT } from './components/HashUrlBar'
 
-const TASKS: Record<number, string> = {
-  1: 'Eat lunch',
-  2: 'Mow lawn',
-  3: 'Do laundry',
+interface Task {
+  id: number
+  name: string
+  done: boolean
 }
+
+const INITIAL_TASKS: Task[] = [
+  { id: 1, name: 'Eat lunch', done: false },
+  { id: 2, name: 'Mow lawn', done: false },
+  { id: 3, name: 'Do laundry', done: false },
+]
 
 // ── Top navigation ────────────────────────────────────────────────────────
 
@@ -53,23 +63,48 @@ function HomePage() {
   )
 }
 
-function TasksPage() {
+function TasksPage({ tasks, onDoneChange }: { tasks: Task[]; onDoneChange: (id: number, done: boolean) => void }) {
+  const navigate = useNavigate()
   return (
-    <Container header={<Header variant="h2">Tasks</Header>}>
-      <SpaceBetween size="xs">
-        {Object.entries(TASKS).map(([id, name]) => (
-          <Link key={id} to={`/tasks/${id}`} style={{ display: 'block', color: '#0a84ff', textDecoration: 'none', fontSize: 14 }}>
-            {id}. {name}
-          </Link>
-        ))}
-      </SpaceBetween>
-    </Container>
+    <Table
+      variant="container"
+      header={<Header counter={`(${tasks.length})`}>Tasks</Header>}
+      items={tasks}
+      trackBy="id"
+      columnDefinitions={[
+        {
+          id: 'name',
+          header: 'Name',
+          isRowHeader: true,
+          cell: task => (
+            <Link
+              href={`#/tasks/${task.id}`}
+              onFollow={e => { e.preventDefault(); navigate(`/tasks/${task.id}`) }}
+            >
+              {task.name}
+            </Link>
+          ),
+        },
+        {
+          id: 'done',
+          header: 'Done',
+          cell: task => (
+            <Checkbox
+              checked={task.done}
+              onChange={({ detail }) => onDoneChange(task.id, detail.checked)}
+              ariaLabel={`${task.name} done`}
+            />
+          ),
+        },
+        { id: 'id', header: 'ID', cell: task => task.id },
+      ]}
+    />
   )
 }
 
-function TaskDetailPage() {
+function TaskDetailPage({ tasks }: { tasks: Task[] }) {
   const { id } = useParams<{ id: string }>()
-  const name = id ? TASKS[Number(id)] : undefined
+  const name = tasks.find(task => String(task.id) === id)?.name
 
   if (!name) {
     return (
@@ -95,6 +130,10 @@ function TaskDetailPage() {
 // ── Shell ──────────────────────────────────────────────────────────────────
 
 function PageContent() {
+  const [tasks, setTasks] = useState(INITIAL_TASKS)
+  const setDone = (id: number, done: boolean) =>
+    setTasks(current => current.map(task => (task.id === id ? { ...task, done } : task)))
+
   return (
     <AppLayout
       navigationHide
@@ -109,8 +148,8 @@ function PageContent() {
         >
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/tasks" element={<TasksPage />} />
-            <Route path="/tasks/:id" element={<TaskDetailPage />} />
+            <Route path="/tasks" element={<TasksPage tasks={tasks} onDoneChange={setDone} />} />
+            <Route path="/tasks/:id" element={<TaskDetailPage tasks={tasks} />} />
           </Routes>
         </ContentLayout>
       }

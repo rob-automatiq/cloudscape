@@ -73,6 +73,18 @@ function TasksPage({ tasks, onDoneChange }: { tasks: Task[]; onDoneChange: (id: 
       trackBy="id"
       columnDefinitions={[
         {
+          id: 'done',
+          header: 'Done',
+          cell: task => (
+            <Checkbox
+              checked={task.done}
+              onChange={({ detail }) => onDoneChange(task.id, detail.checked)}
+              ariaLabel={`${task.name} done`}
+            />
+          ),
+        },
+        { id: 'id', header: 'ID', cell: task => task.id },
+        {
           id: 'name',
           header: 'Name',
           isRowHeader: true,
@@ -85,18 +97,6 @@ function TasksPage({ tasks, onDoneChange }: { tasks: Task[]; onDoneChange: (id: 
             </Link>
           ),
         },
-        {
-          id: 'done',
-          header: 'Done',
-          cell: task => (
-            <Checkbox
-              checked={task.done}
-              onChange={({ detail }) => onDoneChange(task.id, detail.checked)}
-              ariaLabel={`${task.name} done`}
-            />
-          ),
-        },
-        { id: 'id', header: 'ID', cell: task => task.id },
       ]}
     />
   )

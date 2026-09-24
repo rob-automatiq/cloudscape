@@ -17,6 +17,7 @@ import FormField from '@cloudscape-design/components/form-field'
 import Input from '@cloudscape-design/components/input'
 import Flashbar, { type FlashbarProps } from '@cloudscape-design/components/flashbar'
 import StatusIndicator from '@cloudscape-design/components/status-indicator'
+import DatePicker from '@cloudscape-design/components/date-picker'
 import HashUrlBar, { HASH_URL_BAR_HEIGHT } from './components/HashUrlBar'
 import { openTaskStore, type Task, type TaskStore, type StoreError } from './taskStore'
 
@@ -58,23 +59,50 @@ function HomePage() {
   )
 }
 
+// Dates are stored as ISO strings (YYYY-MM-DD) and parsed as local dates so weekdays don't shift by time zone.
+function parseIsoDate(iso: string): Date | null {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso)
+  if (!match) return null
+  const [year, month, day] = match.slice(1).map(Number)
+  const date = new Date(year, month - 1, day)
+  return date.getMonth() === month - 1 && date.getDate() === day ? date : null
+}
+
+const isWeekend = (date: Date) => date.getDay() === 0 || date.getDay() === 6
+
+function formatDue(iso: string | null) {
+  const date = iso ? parseIsoDate(iso) : null
+  return date ? `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}` : '-'
+}
+
+function dueError(value: string) {
+  if (!value) return undefined
+  const date = parseIsoDate(value)
+  if (!date) return 'Enter a valid date in YYYY/MM/DD format.'
+  if (isWeekend(date)) return 'You can only select a weekday.'
+  return undefined
+}
+
 function CreateTaskModal({ visible, onDismiss, onCreate }: {
   visible: boolean
   onDismiss: () => void
-  onCreate: (name: string) => Promise<void>
+  onCreate: (name: string, due: string | null) => Promise<void>
 }) {
   const [name, setName] = useState('')
+  const [due, setDue] = useState('')
+  const [dueTouched, setDueTouched] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [saving, setSaving] = useState(false)
-  const error = submitted && !name.trim() ? 'Enter a task name.' : undefined
+  const nameErrorText = submitted && !name.trim() ? 'Enter a task name.' : undefined
+  const dueErrorText = submitted || dueTouched ? dueError(due) : undefined
 
-  const close = () => { setName(''); setSubmitted(false); onDismiss() }
+  const close = () => { setName(''); setDue(''); setDueTouched(false); setSubmitted(false); onDismiss() }
   const submit = async () => {
     setSubmitted(true)
-    if (!name.trim() || saving) return
+    if (!name.trim() || dueError(due) || saving) return
     setSaving(true)
     try {
-      await onCreate(name.trim())
+      await onCreate(name.trim(), due || null)
       close()
     } finally {
       setSaving(false)
@@ -96,20 +124,39 @@ function CreateTaskModal({ visible, onDismiss, onCreate }: {
         </Box>
       }
     >
-      <FormField label="Task name" errorText={error}>
-        <Input
-          value={name}
-          onChange={({ detail }) => setName(detail.value)}
-          onKeyDown={event => {
-            if (event.detail.key !== 'Enter') return
-            // Otherwise the Enter keypress lands on the "Create task" button that regains focus when the modal closes, reopening it.
-            event.preventDefault()
-            submit()
-          }}
-          invalid={!!error}
-          autoFocus
-        />
-      </FormField>
+      <SpaceBetween size="l">
+        <FormField label="Task name" errorText={nameErrorText}>
+          <Input
+            value={name}
+            onChange={({ detail }) => setName(detail.value)}
+            onKeyDown={event => {
+              if (event.detail.key !== 'Enter') return
+              // Otherwise the Enter keypress lands on the "Create task" button that regains focus when the modal closes, reopening it.
+              event.preventDefault()
+              submit()
+            }}
+            invalid={!!nameErrorText}
+            autoFocus
+          />
+        </FormField>
+        <FormField
+          label={<>Due <i>- optional</i></>}
+          constraintText="Use YYYY/MM/DD format. Weekends aren't available."
+          errorText={dueErrorText}
+        >
+          <DatePicker
+            value={due}
+            onChange={({ detail }) => setDue(detail.value)}
+            onBlur={() => setDueTouched(true)}
+            isDateEnabled={date => !isWeekend(date)}
+            dateDisabledReason={date => (isWeekend(date) ? 'You can only select a weekday.' : '')}
+            placeholder="YYYY/MM/DD"
+            openCalendarAriaLabel={selectedDate => 'Choose due date' + (selectedDate ? `, selected date is ${selectedDate}` : '')}
+            invalid={!!dueErrorText}
+            expandToViewport
+          />
+        </FormField>
+      </SpaceBetween>
     </Modal>
   )
 }
@@ -155,7 +202,7 @@ function TasksPage({ tasks, loading, browserOnly, onCreate, onDoneChange, onDele
   tasks: Task[]
   loading: boolean
   browserOnly: boolean
-  onCreate: (name: string) => Promise<void>
+  onCreate: (name: string, due: string | null) => Promise<void>
   onDoneChange: (id: string, done: boolean) => void
   onDelete: (id: string) => Promise<void>
 }) {
@@ -215,6 +262,7 @@ function TasksPage({ tasks, loading, browserOnly, onCreate, onDoneChange, onDele
               </Link>
             ),
           },
+          { id: 'due', header: 'Due', cell: task => formatDue(task.due) },
           {
             id: 'actions',
             header: 'Actions',
@@ -255,10 +303,11 @@ function TaskDetailPage({ tasks, loading }: { tasks: Task[]; loading: boolean })
   return (
     <Container header={<Header variant="h2">Task</Header>}>
       <KeyValuePairs
-        columns={2}
+        columns={3}
         items={[
           { label: 'ID', value: task.id },
           { label: 'Name', value: task.name },
+          { label: 'Due', value: formatDue(task.due) },
         ]}
       />
     </Container>
@@ -298,9 +347,9 @@ function PageContent() {
     return () => { cancelled = true; unsubscribe?.() }
   }, [])
 
-  const createTask = async (name: string) => {
+  const createTask = async (name: string, due: string | null) => {
     try {
-      await store.current?.create(name)
+      await store.current?.create(name, due)
     } catch (e) {
       showError(saveErrorMessage(e as StoreError))
       throw e

@@ -3,6 +3,8 @@ export interface Task {
   name: string
   done: boolean
   createdAt: number
+  /** ISO date (YYYY-MM-DD), or null when no due date is set. */
+  due: string | null
 }
 
 export type Backend = 'artifact-db' | 'browser'
@@ -10,7 +12,7 @@ export type Backend = 'artifact-db' | 'browser'
 export interface TaskStore {
   backend: Backend
   subscribe(onTasks: (tasks: Task[]) => void, onError: (error: StoreError) => void): () => void
-  create(name: string): Promise<void>
+  create(name: string, due: string | null): Promise<void>
   setDone(id: string, done: boolean): Promise<void>
   remove(id: string): Promise<void>
 }
@@ -45,7 +47,13 @@ const nextId = (tasks: Task[]) => String(tasks.reduce((max, t) => Math.max(max, 
 function toTask(doc: DbDocSnapshot): Task | null {
   const data = doc.data()
   if (!data || typeof data.name !== 'string') return null
-  return { id: doc.id, name: data.name, done: data.done === true, createdAt: Number(data.createdAt) || 0 }
+  return {
+    id: doc.id,
+    name: data.name,
+    done: data.done === true,
+    createdAt: Number(data.createdAt) || 0,
+    due: typeof data.due === 'string' ? data.due : null,
+  }
 }
 
 function artifactDbStore(db: Db): TaskStore {
@@ -68,10 +76,10 @@ function artifactDbStore(db: Db): TaskStore {
         onTasks(latest)
       }, onError)
     },
-    create(name) {
+    create(name, due) {
       lastIssuedId = Math.max(Number(nextId(latest)), lastIssuedId + 1)
       const id = String(lastIssuedId)
-      return serial(id, () => tasks.doc(id).set({ name, done: false, createdAt: Date.now() }))
+      return serial(id, () => tasks.doc(id).set({ name, done: false, createdAt: Date.now(), due }))
     },
     setDone(id, done) {
       return serial(id, () => tasks.doc(id).update({ done }))
@@ -84,16 +92,16 @@ function artifactDbStore(db: Db): TaskStore {
 
 const STORAGE_KEY = 'cloudscape-app:tasks'
 const LOCAL_SEED: Task[] = [
-  { id: '1', name: 'Eat lunch', done: false, createdAt: 0 },
-  { id: '2', name: 'Mow lawn', done: false, createdAt: 0 },
-  { id: '3', name: 'Do laundry', done: false, createdAt: 0 },
+  { id: '1', name: 'Eat lunch', done: false, createdAt: 0, due: null },
+  { id: '2', name: 'Mow lawn', done: false, createdAt: 0, due: null },
+  { id: '3', name: 'Do laundry', done: false, createdAt: 0, due: null },
 ]
 
 function browserStore(): TaskStore {
   const read = (): Task[] => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY)
-      return raw ? (JSON.parse(raw) as Task[]) : LOCAL_SEED
+      return raw ? (JSON.parse(raw) as Task[]).map(t => ({ ...t, due: t.due ?? null })) : LOCAL_SEED
     } catch {
       return LOCAL_SEED
     }
@@ -113,8 +121,8 @@ function browserStore(): TaskStore {
       onTasks(current)
       return () => { listener = null }
     },
-    async create(name) {
-      save([...current, { id: nextId(current), name, done: false, createdAt: Date.now() }])
+    async create(name, due) {
+      save([...current, { id: nextId(current), name, done: false, createdAt: Date.now(), due }])
     },
     async setDone(id, done) {
       save(current.map(t => (t.id === id ? { ...t, done } : t)))

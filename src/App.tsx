@@ -15,11 +15,12 @@ import Button from '@cloudscape-design/components/button'
 import Modal from '@cloudscape-design/components/modal'
 import FormField from '@cloudscape-design/components/form-field'
 import Input from '@cloudscape-design/components/input'
+import Form from '@cloudscape-design/components/form'
 import Flashbar, { type FlashbarProps } from '@cloudscape-design/components/flashbar'
 import StatusIndicator from '@cloudscape-design/components/status-indicator'
 import DatePicker from '@cloudscape-design/components/date-picker'
 import HashUrlBar, { HASH_URL_BAR_HEIGHT } from './components/HashUrlBar'
-import { openTaskStore, type Task, type TaskStore, type StoreError } from './taskStore'
+import { openTaskStore, type Task, type TaskChanges, type TaskStore, type StoreError } from './taskStore'
 
 // ── Top navigation ────────────────────────────────────────────────────────
 
@@ -268,6 +269,7 @@ function TasksPage({ tasks, loading, browserOnly, onCreate, onDoneChange, onDueC
           {
             id: 'done',
             header: 'Done',
+            width: 90,
             cell: task => (
               <Checkbox
                 checked={task.done}
@@ -276,11 +278,12 @@ function TasksPage({ tasks, loading, browserOnly, onCreate, onDoneChange, onDueC
               />
             ),
           },
-          { id: 'id', header: 'ID', cell: task => task.id },
+          { id: 'id', header: 'ID', width: 80, cell: task => task.id },
           {
             id: 'name',
             header: 'Name',
             isRowHeader: true,
+            minWidth: 200,
             cell: task => (
               <Link
                 href={`#/tasks/${task.id}`}
@@ -293,6 +296,8 @@ function TasksPage({ tasks, loading, browserOnly, onCreate, onDoneChange, onDueC
           {
             id: 'due',
             header: 'Due',
+            // Fixed width (room for the inline date picker) so editing doesn't resize the other columns.
+            width: 340,
             cell: task => formatDue(task.due),
             editConfig: {
               ariaLabel: 'Due date',
@@ -308,6 +313,7 @@ function TasksPage({ tasks, loading, browserOnly, onCreate, onDoneChange, onDueC
           {
             id: 'actions',
             header: 'Actions',
+            width: 110,
             cell: task => (
               <Button variant="inline-link" ariaLabel={`Delete ${task.name}`} onClick={() => setDeleting(task)}>
                 Delete
@@ -323,6 +329,7 @@ function TasksPage({ tasks, loading, browserOnly, onCreate, onDoneChange, onDueC
 }
 
 function TaskDetailPage({ tasks, loading }: { tasks: Task[]; loading: boolean }) {
+  const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const task = tasks.find(t => t.id === id)
 
@@ -343,16 +350,110 @@ function TaskDetailPage({ tasks, loading }: { tasks: Task[]; loading: boolean })
   }
 
   return (
-    <Container header={<Header variant="h2">Task</Header>}>
+    <Container
+      header={
+        <Header variant="h2" actions={<Button onClick={() => navigate(`/tasks/${task.id}/edit`)}>Edit</Button>}>
+          Task
+        </Header>
+      }
+    >
       <KeyValuePairs
-        columns={3}
+        columns={4}
         items={[
           { label: 'ID', value: task.id },
           { label: 'Name', value: task.name },
           { label: 'Due', value: formatDue(task.due) },
+          { label: 'Done', value: task.done ? 'Yes' : 'No' },
         ]}
       />
     </Container>
+  )
+}
+
+function TaskEditPage({ tasks, loading, onSave }: {
+  tasks: Task[]
+  loading: boolean
+  onSave: (task: Task, changes: TaskChanges) => Promise<void>
+}) {
+  const navigate = useNavigate()
+  const { id } = useParams<{ id: string }>()
+  const task = tasks.find(t => t.id === id)
+
+  if (loading) {
+    return (
+      <Container header={<Header variant="h2">Edit task</Header>}>
+        <StatusIndicator type="loading">Loading task</StatusIndicator>
+      </Container>
+    )
+  }
+  if (!task) {
+    return (
+      <Container header={<Header variant="h2">Not found</Header>}>
+        <Box color="text-status-error">No task with id {id}.</Box>
+      </Container>
+    )
+  }
+  return <TaskEditForm key={task.id} task={task} onSave={onSave} onDone={() => navigate(`/tasks/${task.id}`)} />
+}
+
+function TaskEditForm({ task, onSave, onDone }: {
+  task: Task
+  onSave: (task: Task, changes: TaskChanges) => Promise<void>
+  onDone: () => void
+}) {
+  const [name, setName] = useState(task.name)
+  const [due, setDue] = useState(task.due ?? '')
+  const [done, setDone] = useState(task.done)
+  const [dueTouched, setDueTouched] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [saving, setSaving] = useState(false)
+  const nameErrorText = submitted && !name.trim() ? 'Enter a task name.' : undefined
+  const dueErrorText = submitted || dueTouched ? dueError(due) : undefined
+
+  const save = async () => {
+    setSubmitted(true)
+    if (!name.trim() || dueError(due) || saving) return
+    const changes: TaskChanges = {}
+    if (name.trim() !== task.name) changes.name = name.trim()
+    if ((due || null) !== task.due) changes.due = due || null
+    if (done !== task.done) changes.done = done
+    setSaving(true)
+    try {
+      await onSave(task, changes)
+      onDone()
+    } catch {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <form onSubmit={e => { e.preventDefault(); save() }}>
+      <Form
+        header={<Header variant="h2">Edit {task.name}</Header>}
+        actions={
+          <SpaceBetween direction="horizontal" size="xs">
+            <Button formAction="none" variant="link" onClick={onDone}>Cancel</Button>
+            <Button variant="primary" loading={saving}>Save changes</Button>
+          </SpaceBetween>
+        }
+      >
+        <Container header={<Header variant="h2">Task details</Header>}>
+          <SpaceBetween size="l">
+            <FormField label="Task name" errorText={nameErrorText}>
+              <Input value={name} onChange={({ detail }) => setName(detail.value)} invalid={!!nameErrorText} />
+            </FormField>
+            <FormField
+              label={<>Due <i>- optional</i></>}
+              constraintText="Use YYYY/MM/DD format. Leave it empty to remove the due date."
+              errorText={dueErrorText}
+            >
+              <DueDatePicker value={due} onChange={setDue} onBlur={() => setDueTouched(true)} invalid={!!dueErrorText} />
+            </FormField>
+            <Checkbox checked={done} onChange={({ detail }) => setDone(detail.checked)}>Done</Checkbox>
+          </SpaceBetween>
+        </Container>
+      </Form>
+    </form>
   )
 }
 
@@ -371,8 +472,9 @@ function PageContent() {
   const [browserOnly, setBrowserOnly] = useState(false)
   const [flash, setFlash] = useState<FlashbarProps.MessageDefinition[]>([])
 
-  const showError = (content: string) =>
-    setFlash([{ id: 'save-error', type: 'error', content, dismissible: true, dismissLabel: 'Dismiss', onDismiss: () => setFlash([]) }])
+  const showFlash = (type: FlashbarProps.Type, content: string) =>
+    setFlash([{ id: 'status', type, content, dismissible: true, dismissLabel: 'Dismiss', onDismiss: () => setFlash([]) }])
+  const showError = (content: string) => showFlash('error', content)
 
   useEffect(() => {
     let unsubscribe: (() => void) | undefined
@@ -400,6 +502,19 @@ function PageContent() {
   const deleteTask = async (id: string) => {
     try {
       await store.current?.remove(id)
+    } catch (e) {
+      showError(saveErrorMessage(e as StoreError))
+      throw e
+    }
+  }
+  const updateTask = async (task: Task, changes: TaskChanges) => {
+    if (Object.keys(changes).length === 0) {
+      showFlash('info', 'No changes were made.')
+      return
+    }
+    try {
+      await store.current?.update(task.id, changes)
+      showFlash('success', `Task "${changes.name ?? task.name}" was updated.`)
     } catch (e) {
       showError(saveErrorMessage(e as StoreError))
       throw e
@@ -437,6 +552,7 @@ function PageContent() {
               element={<TasksPage tasks={tasks} loading={loading} browserOnly={browserOnly} onCreate={createTask} onDoneChange={setDone} onDueChange={setDue} onDelete={deleteTask} />}
             />
             <Route path="/tasks/:id" element={<TaskDetailPage tasks={tasks} loading={loading} />} />
+            <Route path="/tasks/:id/edit" element={<TaskEditPage tasks={tasks} loading={loading} onSave={updateTask} />} />
           </Routes>
         </ContentLayout>
       }

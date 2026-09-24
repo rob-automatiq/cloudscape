@@ -9,12 +9,15 @@ export interface Task {
 
 export type Backend = 'artifact-db' | 'browser'
 
+export type TaskChanges = Partial<Pick<Task, 'name' | 'done' | 'due'>>
+
 export interface TaskStore {
   backend: Backend
   subscribe(onTasks: (tasks: Task[]) => void, onError: (error: StoreError) => void): () => void
   create(name: string, due: string | null): Promise<void>
   setDone(id: string, done: boolean): Promise<void>
   setDue(id: string, due: string | null): Promise<void>
+  update(id: string, changes: TaskChanges): Promise<void>
   remove(id: string): Promise<void>
 }
 
@@ -88,6 +91,9 @@ function artifactDbStore(db: Db): TaskStore {
     setDue(id, due) {
       return serial(id, () => tasks.doc(id).update({ due }))
     },
+    update(id, changes) {
+      return serial(id, () => tasks.doc(id).update(changes))
+    },
     remove(id) {
       return serial(id, () => tasks.doc(id).delete())
     },
@@ -133,6 +139,9 @@ function browserStore(): TaskStore {
     },
     async setDue(id, due) {
       save(current.map(t => (t.id === id ? { ...t, due } : t)))
+    },
+    async update(id, changes) {
+      save(current.map(t => (t.id === id ? { ...t, ...changes } : t)))
     },
     async remove(id) {
       save(current.filter(t => t.id !== id))

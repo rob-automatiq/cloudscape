@@ -1,0 +1,20 @@
+/*
+ * Cloudscape (components 3.0.1382) draws a 1px border around an editable table cell on hover, but only
+ * partly offsets it in the padding: the value shifts right and the row changes height, which reads as
+ * jitter on hover and right after saving an inline edit (the pointer is still over the cell). These
+ * paddings keep the value exactly where it sits at rest. The first and last rows differ because their
+ * resting borders are 2px where rows share a divider. They target Cloudscape's internal class names,
+ * so re-check them after upgrading the package.
+ */
+td[class*='awsui_body-cell-editable_']:not([class*='awsui_body-cell-edit-active_']):hover > [class*='awsui_body-cell-content_'] {
+  padding-inline-start: 18px !important;
+  padding-block: 8.5px 9.5px !important;
+}
+
+tr:first-child > td[class*='awsui_body-cell-editable_']:not([class*='awsui_body-cell-edit-active_']):hover > [class*='awsui_body-cell-content_'] {
+  padding-block: 8.5px 8.5px !important;
+}
+
+tr:last-child > td[class*='awsui_body-cell-editable_']:not([class*='awsui_body-cell-edit-active_']):hover > [class*='awsui_body-cell-content_'] {
+  padding-block: 7.5px 9.5px !important;
+}

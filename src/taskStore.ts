@@ -14,6 +14,7 @@ export interface TaskStore {
   subscribe(onTasks: (tasks: Task[]) => void, onError: (error: StoreError) => void): () => void
   create(name: string, due: string | null): Promise<void>
   setDone(id: string, done: boolean): Promise<void>
+  setDue(id: string, due: string | null): Promise<void>
   remove(id: string): Promise<void>
 }
 
@@ -84,6 +85,9 @@ function artifactDbStore(db: Db): TaskStore {
     setDone(id, done) {
       return serial(id, () => tasks.doc(id).update({ done }))
     },
+    setDue(id, due) {
+      return serial(id, () => tasks.doc(id).update({ due }))
+    },
     remove(id) {
       return serial(id, () => tasks.doc(id).delete())
     },
@@ -126,6 +130,9 @@ function browserStore(): TaskStore {
     },
     async setDone(id, done) {
       save(current.map(t => (t.id === id ? { ...t, done } : t)))
+    },
+    async setDue(id, due) {
+      save(current.map(t => (t.id === id ? { ...t, due } : t)))
     },
     async remove(id) {
       save(current.filter(t => t.id !== id))

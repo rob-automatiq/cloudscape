@@ -83,6 +83,27 @@ function dueError(value: string) {
   return undefined
 }
 
+function DueDatePicker({ value, onChange, onBlur, invalid }: {
+  value: string
+  onChange: (value: string) => void
+  onBlur?: () => void
+  invalid?: boolean
+}) {
+  return (
+    <DatePicker
+      value={value}
+      onChange={({ detail }) => onChange(detail.value)}
+      onBlur={onBlur}
+      isDateEnabled={date => !isWeekend(date)}
+      dateDisabledReason={date => (isWeekend(date) ? 'You can only select a weekday.' : '')}
+      placeholder="YYYY/MM/DD"
+      openCalendarAriaLabel={selectedDate => 'Choose due date' + (selectedDate ? `, selected date is ${selectedDate}` : '')}
+      invalid={invalid}
+      expandToViewport
+    />
+  )
+}
+
 function CreateTaskModal({ visible, onDismiss, onCreate }: {
   visible: boolean
   onDismiss: () => void
@@ -144,17 +165,7 @@ function CreateTaskModal({ visible, onDismiss, onCreate }: {
           constraintText="Use YYYY/MM/DD format. Weekends aren't available."
           errorText={dueErrorText}
         >
-          <DatePicker
-            value={due}
-            onChange={({ detail }) => setDue(detail.value)}
-            onBlur={() => setDueTouched(true)}
-            isDateEnabled={date => !isWeekend(date)}
-            dateDisabledReason={date => (isWeekend(date) ? 'You can only select a weekday.' : '')}
-            placeholder="YYYY/MM/DD"
-            openCalendarAriaLabel={selectedDate => 'Choose due date' + (selectedDate ? `, selected date is ${selectedDate}` : '')}
-            invalid={!!dueErrorText}
-            expandToViewport
-          />
+          <DueDatePicker value={due} onChange={setDue} onBlur={() => setDueTouched(true)} invalid={!!dueErrorText} />
         </FormField>
       </SpaceBetween>
     </Modal>
@@ -198,12 +209,13 @@ function DeleteTaskModal({ task, onDismiss, onDelete }: {
   )
 }
 
-function TasksPage({ tasks, loading, browserOnly, onCreate, onDoneChange, onDelete }: {
+function TasksPage({ tasks, loading, browserOnly, onCreate, onDoneChange, onDueChange, onDelete }: {
   tasks: Task[]
   loading: boolean
   browserOnly: boolean
   onCreate: (name: string, due: string | null) => Promise<void>
   onDoneChange: (id: string, done: boolean) => void
+  onDueChange: (id: string, due: string | null) => Promise<void>
   onDelete: (id: string) => Promise<void>
 }) {
   const navigate = useNavigate()
@@ -228,6 +240,22 @@ function TasksPage({ tasks, loading, browserOnly, onCreate, onDoneChange, onDele
         loading={loading}
         loadingText="Loading tasks"
         trackBy="id"
+        submitEdit={async (task, column, newValue) => {
+          // undefined means the value wasn't changed; an empty value removes the due date.
+          if (column.id !== 'due' || newValue === undefined) return
+          const due = newValue as string
+          // The table shows validation errors but doesn't block submitting; throwing keeps the editor open.
+          if (dueError(due)) throw new Error(dueError(due))
+          await onDueChange(task.id, due || null)
+        }}
+        ariaLabels={{
+          activateEditLabel: (column, task) => `Edit ${task.name} ${column.header}`,
+          cancelEditLabel: column => `Cancel editing ${column.header}`,
+          submitEditLabel: column => `Submit editing ${column.header}`,
+          submittingEditText: () => 'Saving',
+          successfulEditLabel: () => 'Saved',
+          tableLabel: 'Tasks',
+        }}
         empty={
           <Box margin={{ vertical: 'xs' }} textAlign="center" color="inherit">
             <SpaceBetween size="m">
@@ -262,7 +290,21 @@ function TasksPage({ tasks, loading, browserOnly, onCreate, onDoneChange, onDele
               </Link>
             ),
           },
-          { id: 'due', header: 'Due', cell: task => formatDue(task.due) },
+          {
+            id: 'due',
+            header: 'Due',
+            cell: task => formatDue(task.due),
+            editConfig: {
+              ariaLabel: 'Due date',
+              editIconAriaLabel: 'editable',
+              errorIconAriaLabel: 'Due date error',
+              constraintText: 'Use YYYY/MM/DD format. Leave it empty to remove the due date.',
+              validation: (_task, value) => (value === undefined ? undefined : dueError(value as string)),
+              editingCell: (task, { currentValue, setValue }) => (
+                <DueDatePicker value={(currentValue as string | undefined) ?? task.due ?? ''} onChange={setValue} />
+              ),
+            },
+          },
           {
             id: 'actions',
             header: 'Actions',
@@ -363,6 +405,14 @@ function PageContent() {
       throw e
     }
   }
+  const setDue = async (id: string, due: string | null) => {
+    try {
+      await store.current?.setDue(id, due)
+    } catch (e) {
+      showError(saveErrorMessage(e as StoreError))
+      throw e
+    }
+  }
   const setDone = (id: string, done: boolean) => {
     store.current?.setDone(id, done).catch(e => showError(saveErrorMessage(e as StoreError)))
   }
@@ -384,7 +434,7 @@ function PageContent() {
             <Route path="/" element={<HomePage />} />
             <Route
               path="/tasks"
-              element={<TasksPage tasks={tasks} loading={loading} browserOnly={browserOnly} onCreate={createTask} onDoneChange={setDone} onDelete={deleteTask} />}
+              element={<TasksPage tasks={tasks} loading={loading} browserOnly={browserOnly} onCreate={createTask} onDoneChange={setDone} onDueChange={setDue} onDelete={deleteTask} />}
             />
             <Route path="/tasks/:id" element={<TaskDetailPage tasks={tasks} loading={loading} />} />
           </Routes>

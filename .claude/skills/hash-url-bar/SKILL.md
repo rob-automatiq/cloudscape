@@ -23,20 +23,20 @@ The finished component is at `assets/HashUrlBar.tsx`. Copy it as-is rather than 
 
 2. **Copy the component** to `src/components/HashUrlBar.tsx`, or wherever the project keeps shared components.
 
-3. **Mount it** as the first child inside the router, and push the app content down by the bar's height so nothing ends up under it:
+3. **Mount it** as the first child inside the router. Nothing else is needed, because the component reserves its own space:
 
    ```tsx
-   import HashUrlBar, { HASH_URL_BAR_HEIGHT } from './components/HashUrlBar'
+   import HashUrlBar from './components/HashUrlBar'
 
    <HashRouter>
      <HashUrlBar />
-     <div style={{ paddingTop: HASH_URL_BAR_HEIGHT }}>
-       {/* existing app */}
-     </div>
+     {/* existing app */}
    </HashRouter>
    ```
 
-4. **Offset any other fixed headers.** The bar is `position: fixed; top: 0; z-index: 10000`. Any other element pinned to `top: 0` (a Cloudscape `TopNavigation` wrapper, a sticky navbar) needs `top: HASH_URL_BAR_HEIGHT` and a lower z-index. Also add its height to the content's `paddingTop`, e.g. `HASH_URL_BAR_HEIGHT + 56` for Cloudscape's TopNavigation.
+   How it works: the bar is `position: fixed`, so it stays pinned while the page scrolls. A fixed element takes up no space in the page, though, so the component also renders a 40px spacer `<div>` right before the bar, and the page content starts below it. Don't switch the bar to `position: sticky` to drop the spacer. Sticky silently stops working when any parent element has `overflow: hidden` or `auto`, which is common in app layouts.
+
+4. **Offset any other fixed headers.** Other `position: fixed` elements are placed relative to the screen, so they can't see the spacer. Any element pinned to `top: 0` (a Cloudscape `TopNavigation` wrapper, a fixed navbar) needs `top: HASH_URL_BAR_HEIGHT` (import the constant) and a z-index below 10000. The content still has to clear that header's own height, for example `paddingTop: 56` for Cloudscape's TopNavigation. The URL bar's 40px is already covered by its spacer.
 
 5. **Make the build work on static hosting.** If the app will be published as a claude.ai Artifact or served from a sub-path, make asset URLs relative. For Vite, set `base: './'` in `vite.config.ts`. Without this, the built `index.html` points to `/assets/...` and the preview renders a blank page.
 
@@ -47,7 +47,8 @@ The finished component is at `assets/HashUrlBar.tsx`. Copy it as-is rather than 
 These came from direct user feedback on earlier versions, so don't "improve" them back:
 
 - **Full width.** The route field stretches across the bar. No `max-width`, no centering.
-- **No decorative chrome.** No macOS traffic-light circles or lock icon. Controls that do nothing were explicitly rejected.
+- **No decorative chrome.** No macOS traffic-light circles, Windows style controls, or lock icon. Do not add any unnecessary controls that do not perform a real function. Controls that do nothing were explicitly rejected.
+- **Cross-platform.** It shouldn't look like it belongs to any one operating system. Keep the font lists generic (`system-ui` and `ui-monospace` first, then fallbacks for macOS, Windows, and Linux), and keep the button icons as plain inline SVG chevrons rather than OS-specific glyphs or emoji.
 - **A dim `#` on the left, then exactly what the user typed.** The field's value is the raw route, and whatever is typed is exactly what goes after `#`: typing `/things/123/list` gives `#/things/123/list`. Don't add a `claude.ai/artifact` prefix, a static `#/` segment, or auto-insert slashes.
 - **Go is always visible**, not only while editing. Clicking Go with an unchanged value re-navigates to the same route, and Enter does the same.
 - **The text never shifts on focus.** Use the same element in both states: an always-rendered `<input>`, not a span that turns into an input. Otherwise the text jumps when clicked.

@@ -351,14 +351,7 @@ function useFollow() {
 // ── Pages ────────────────────────────────────────────────────────────────────
 
 function HomePage() {
-  const location = useLocation()
-  return (
-    <ContentLayout header={<Header variant="h1" description="Built with Cloudscape Design System">Hello, Cloudscape</Header>}>
-      <Container header={<Header variant="h2">Current route</Header>}>
-        <Box variant="code" fontSize="heading-l">#{location.pathname + location.search}</Box>
-      </Container>
-    </ContentLayout>
-  )
+  return <ContentLayout header={<Header variant="h1" description="Built with Cloudscape Design System">Hello, Cloudscape</Header>} />
 }
 
 // ── Tasks ────────────────────────────────────────────────────────────────────

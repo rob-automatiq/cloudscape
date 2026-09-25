@@ -171,9 +171,9 @@ function artifactDbCollection(db, path) {
   }
   return {
     backend: 'artifact-db',
-    subscribe(onItems, onError) {
+    subscribe(onDocs, onError) {
       return collection.onSnapshot(
-        snap => onItems(snap.docs.map(doc => ({ ...doc.data(), id: doc.id })).sort(byCreatedAt)),
+        snap => onDocs(snap.docs.map(doc => ({ ...doc.data(), id: doc.id })).sort(byCreatedAt)),
         onError,
       )
     },
@@ -216,10 +216,11 @@ function browserCollection(path) {
   }
 }
 
-// Live list of the documents in one collection, plus add/update/remove. Each document is a plain
-// JSON object; `id` and `createdAt` are managed here. Call it once per collection per page.
+// Live list of the documents in one collection (one collection per entity type, e.g. 'customers',
+// 'orders'), plus add/update/remove. Each document is a plain JSON object; `id` and `createdAt` are
+// managed here. Call it once per collection, in Shell, and pass the result down to pages.
 function useDocuments(path) {
-  const [state, setState] = useState({ items: [], loading: true, error: null, backend: null })
+  const [state, setState] = useState({ docs: [], loading: true, error: null, backend: null })
   const store = useRef(null)
 
   useEffect(() => {
@@ -229,7 +230,7 @@ function useDocuments(path) {
       if (cancelled) return
       store.current = db ? artifactDbCollection(db, path) : browserCollection(path)
       unsubscribe = store.current.subscribe(
-        items => setState({ items, loading: false, error: null, backend: store.current.backend }),
+        docs => setState({ docs, loading: false, error: null, backend: store.current.backend }),
         error => setState(current => ({ ...current, loading: false, error })),
       )
     })
@@ -271,7 +272,9 @@ function useFollow() {
   }
 }
 
-// ── Pages: replace or extend these ──────────────────────────────────────────
+// ── Pages ────────────────────────────────────────────────────────────────────
+// "Items" is a placeholder entity showing the list, create and details pattern. Rename or replace it
+// with the app's own entities, and add one useDocuments(collection) per entity type in Shell.
 
 function HomePage() {
   const follow = useFollow()
@@ -361,14 +364,14 @@ function ItemsPage({ items }) {
         header={
           <Header
             variant="awsui-h1-sticky"
-            counter={items.loading ? undefined : `(${items.items.length})`}
+            counter={items.loading ? undefined : `(${items.docs.length})`}
             description={items.backend === 'browser' ? 'Saved in this browser only.' : undefined}
             actions={<Button variant="primary" onClick={() => setCreating(true)}>Create item</Button>}
           >
             Items
           </Header>
         }
-        items={items.items}
+        items={items.docs}
         loading={items.loading}
         loadingText="Loading items"
         trackBy="id"
@@ -397,7 +400,7 @@ function ItemsPage({ items }) {
 
 function ItemPage({ items }) {
   const { id } = useParams()
-  const item = items.items.find(candidate => candidate.id === id)
+  const item = items.docs.find(candidate => candidate.id === id)
 
   if (items.loading) return <StatusIndicator type="loading">Loading item</StatusIndicator>
   if (!item) return <NotFoundPage />
@@ -439,7 +442,7 @@ function useBreadcrumbs(items) {
   if (matchPath('/items/*', location.pathname)) trail.push({ text: 'Items', href: '#/items' })
   const itemMatch = matchPath('/items/:id', location.pathname)
   if (itemMatch) {
-    const item = items.items.find(candidate => candidate.id === itemMatch.params.id)
+    const item = items.docs.find(candidate => candidate.id === itemMatch.params.id)
     trail.push({ text: item?.name ?? 'Item', href: `#/items/${itemMatch.params.id}` })
   }
   return trail

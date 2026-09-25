@@ -53,26 +53,52 @@ The page header is one sticky element holding the hash URL bar and then Cloudsca
 
 ## Data: the Artifact database by default
 
-Use the claude.ai Artifact `db` store unless the user names another database. The template's data layer wraps it:
+Use the claude.ai Artifact `db` store unless the user names another database. It holds any kind of record the app needs, with one collection per entity type. The template's data layer wraps it with one generic hook:
 
 ```jsx
-const tasks = useDocuments('tasks')
-tasks.items            // live array of { id, createdAt, ...fields }, sorted by createdAt
-tasks.loading          // true until the first snapshot
-tasks.error            // set if the subscription fails
-tasks.backend          // 'artifact-db' in the claude.ai viewer, 'browser' elsewhere
-await tasks.add({ name: 'Mow lawn', done: false })   // resolves to the new id
-await tasks.update(id, { done: true })               // merges fields; pass null to clear one
-await tasks.remove(id)
+const customers = useDocuments('customers')   // any collection name, one per entity type
+customers.docs      // live array of { id, createdAt, ...fields }, sorted by createdAt
+customers.loading   // true until the first snapshot
+customers.error     // set if the subscription fails
+customers.backend   // 'artifact-db' in the claude.ai viewer, 'browser' elsewhere
+await customers.add({ name: 'Acme Corp', tier: 'gold' })   // resolves to the new id
+await customers.update(id, { tier: 'silver' })             // merges fields; pass null to clear one
+await customers.remove(id)
 ```
 
-- **Not collection-hooks:** `useDocuments` is this app's data store. Cloudscape's `useCollection`, from `@cloudscape-design/collection-hooks`, handles filtering, sorting and pagination of what's on screen. Use them together: `useCollection(tasks.items, {...})`.
+### Modeling entities
+
+- **Collections:** use one collection per entity type, named with a lowercase plural: `customers`, `orders`, `invoices`. Names may use letters, digits and `_ - . ~ : @ +`. Each record is one document, and the store generates its ID.
+- **Fields:**
+  - Plain JSON only: strings, numbers, booleans, `null`, arrays and nested objects.
+  - Store dates as ISO strings, like `2026-09-25`.
+  - Store money as a number of the smallest unit (cents), or as a decimal string.
+  - Choices like status or tier are strings from a fixed list, defined once in `App.jsx` and reused by the form, the table and the details page.
+- **Links between records:** store the other record's ID in a field named for it, for example an order's `customerId`. Look it up in the other collection's `docs` for display, such as a customer name in the orders table. Many-to-many links are an array of IDs (`tagIds: [...]`) or a small join collection when the link has its own fields.
+- **Deleting linked records:** deleting a record doesn't delete records that point to it. When removing one that others reference, say so in the delete confirmation. Either block it, remove or reassign the dependents, or show "Unknown customer" where a link no longer resolves.
+- **Nested collections:** use one only when the children are meaningless outside one parent, like `projects/<projectId>/notes`. Call ``useDocuments(`projects/${projectId}/notes`)`` in that parent's pages. Deleting the parent doesn't delete them.
+- **Private data per person:** per-person data (preferences, drafts) goes under `data/users/<id>/…`, which only that viewer can read. This also needs the `user` capability, declared as `capabilities: {"db": {}, "user": {}}`, and the viewer's ID from `claude.use('user')`. See the `artifact-capabilities` skill.
+- **Size limit:** all collections together share one database capped at 5,000 documents. Keep ever-growing streams, such as activity logs, out of one-document-per-event designs: batch them into one document per day, or prune old ones.
+
+### Adding an entity to the app
+
+1. **Data:** in `Shell`, add `const orders = useDocuments('orders')` and pass it to that entity's pages. Pass related collections too, such as `customers` for showing customer names.
+2. **Routes:** `#/orders` (list), `#/orders/:id` (details), and `#/orders/create` or `#/orders/:id/edit` when the create or edit patterns call for full pages. Declare them inside `<Routes>` before the `*` route.
+3. **Navigation:** add a side-navigation link, and extend `useBreadcrumbs` and the side navigation's `activeHref` logic, so the entity's pages highlight its section.
+4. **Pages:** follow the resource-management patterns:
+   - **List:** `patterns/resource-management/view/table-view.md`.
+   - **Details:** `details/details-page.md`.
+   - **Create:** `create.md`, which says when to use a modal, a page or a wizard.
+   - **Edit and delete:** `edit.md` and `delete.md`.
+
+   Reuse the template's Items pages as the starting shape, but write each entity's fields, validation and columns explicitly.
+
+### Using the data layer
+
+- **Not collection-hooks:** `useDocuments` is this app's data store. Cloudscape's `useCollection`, from `@cloudscape-design/collection-hooks`, handles filtering, sorting and pagination of what's on screen. Use them together: `useCollection(orders.docs, {...})`.
 - **Where it runs:** inside the claude.ai viewer, `window.claude.use('db')` provides the store. Elsewhere, such as `npm run dev`, a local copy of the page, or a view without the capability, it falls back to `localStorage` under the same API. Show "Saved in this browser only." when `backend === 'browser'`.
-- **Subscribe once:** call `useDocuments(path)` once per collection, high enough in the tree that data survives route changes. The template calls it in `Shell` and passes the result to pages. Updates are live, including other people's edits, so tables don't need a refresh button.
-- **Document shape:**
-  - One document per record, at `<collection>/<id>`, holding plain JSON with no functions or `Date` objects. Store dates as ISO strings, for example `2026-09-25`.
-  - IDs are generated by the store, so two people can't create the same one.
-  - Each document is limited to 256 KiB, and the whole database to 5,000 documents. Don't store an ever-growing log as one document per entry.
+- **Subscribe once:** call `useDocuments(collection)` once per collection, high enough in the tree that data survives route changes. The template calls it in `Shell` and passes the result to pages. Updates are live, including other people's edits, so tables don't need a refresh button.
+- **Document size:** each document holds at most 256 KiB. Split large content, like long text or many rows, across documents.
 - **Writes and errors:** the data layer queues writes to the same document one at a time, as the store requires. Writes reject with `{ code, message }`. Show `saveErrorMessage(error)` in a Flashbar via `useNotify()`, and keep forms open so nothing is lost. Common codes:
   - `quota_exceeded`: the database is full.
   - `invalid_argument`: this viewer isn't allowed to write, or the call was invalid.

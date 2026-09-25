@@ -6,7 +6,7 @@
 //   window.location or a plain <a href="/...">.
 // - Hash URL bar: HashUrlBar sits at the very top, in the same sticky header as TopNavigation.
 //   AppLayout's headerSelector points at that header so its content starts beneath it.
-// - Data: useCollection(path) stores documents in the claude.ai Artifact database (the `db`
+// - Data: useDocuments(path) stores documents in the claude.ai Artifact database (the `db`
 //   capability) and falls back to browser storage outside claude.ai (for example `npm run dev`).
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { HashRouter, Routes, Route, matchPath, useLocation, useNavigate, useNavigationType, useParams } from 'react-router-dom'
@@ -218,7 +218,7 @@ function browserCollection(path) {
 
 // Live list of the documents in one collection, plus add/update/remove. Each document is a plain
 // JSON object; `id` and `createdAt` are managed here. Call it once per collection per page.
-function useCollection(path) {
+function useDocuments(path) {
   const [state, setState] = useState({ items: [], loading: true, error: null, backend: null })
   const store = useRef(null)
 
@@ -449,7 +449,7 @@ function Shell() {
   const location = useLocation()
   const navigate = useNavigate()
   const follow = useFollow()
-  const items = useCollection('items')
+  const items = useDocuments('items')
   const breadcrumbs = useBreadcrumbs(items)
   const [notifications, setNotifications] = useState([])
   const [navigationOpen, setNavigationOpen] = useState(true)

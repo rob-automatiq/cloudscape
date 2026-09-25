@@ -6,6 +6,8 @@
 //   window.location or a plain <a href="/...">.
 // - Hash URL bar: HashUrlBar sits at the very top, in the same sticky header as TopNavigation.
 //   AppLayout's headerSelector points at that header so its content starts beneath it.
+// - Navigation: TopNavigation's utilities are the root sections (SECTIONS). The side navigation
+//   shows only the current section: its name as the header and that section's links.
 // - Data: useDocuments(path) stores documents in the claude.ai Artifact database (the `db`
 //   capability) and falls back to browser storage outside claude.ai (for example `npm run dev`).
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
@@ -769,6 +771,26 @@ function NotFoundPage() {
   )
 }
 
+// ── Navigation structure ─────────────────────────────────────────────────────
+// TopNavigation is the root navigation: each section is one of its utility buttons. The side navigation
+// is scoped to the current section: its header names the section and its links are that section's
+// pages. Cloudscape allows at most four utility controls, so keep to four sections.
+const SECTIONS = [
+  { text: 'Home', href: '#/', path: '/', links: [] },
+  { text: 'Tasks', href: '#/tasks', path: '/tasks/*', links: [{ type: 'link', text: 'List', href: '#/tasks' }] },
+]
+
+// The section a route belongs to. Routes outside every section (such as unknown routes) fall under the first.
+const currentSection = pathname => SECTIONS.find(section => matchPath(section.path, pathname)) ?? SECTIONS[0]
+
+// The side navigation link to highlight: the most specific link whose route contains the current one,
+// so a details page like #/tasks/3 keeps its list link active.
+const flattenLinks = links => links.flatMap(link => (link.items ? flattenLinks(link.items) : link.href ? [link] : []))
+function activeLinkHref(section, pathname) {
+  const containing = flattenLinks(section.links).filter(link => matchPath(`${link.href.slice(1).replace(/\/$/, '')}/*`, pathname))
+  return containing.sort((a, b) => b.href.length - a.href.length)[0]?.href
+}
+
 // ── Shell ────────────────────────────────────────────────────────────────────
 
 function useBreadcrumbs(tasks) {
@@ -799,9 +821,7 @@ function Shell() {
     setNotifications([{ id, type, content, dismissible: true, onDismiss: dismiss }])
   }, [])
 
-  // TopNavigation's identity and utilities route through the guard like every other in-app link.
-  const go = path => event => { event.preventDefault(); navigate(path) }
-  const section = matchPath('/tasks/*', location.pathname) ? '#/tasks' : `#${location.pathname}`
+  const section = currentSection(location.pathname)
 
   return (
     <NotificationsContext.Provider value={notify}>
@@ -809,12 +829,8 @@ function Shell() {
         <HashUrlBar />
         {/* identity.onFollow carries no href in its event detail, so it navigates directly. */}
         <TopNavigation
-          identity={{ title: APP_NAME, href: '#/', onFollow: go('/') }}
-          utilities={[
-            { type: 'button', variant: 'link', text: 'Home', href: '#/', onFollow: go('/') },
-            { type: 'button', variant: 'link', text: 'Tasks', href: '#/tasks', onFollow: go('/tasks') },
-          ]}
-          i18nStrings={{ overflowMenuTriggerText: 'More', overflowMenuTitleText: 'All' }}
+          identity={{ title: APP_NAME, href: '#/', onFollow: event => { event.preventDefault(); navigate('/') } }}
+          utilities={SECTIONS.map(({ text, href }) => ({ type: 'button', variant: 'link', text, href, onFollow: follow }))}
         />
       </div>
       <AppLayout
@@ -824,10 +840,10 @@ function Shell() {
         onNavigationChange={({ detail }) => setNavigationOpen(detail.open)}
         navigation={
           <SideNavigation
-            header={{ text: APP_NAME, href: '#/' }}
-            activeHref={section}
+            header={{ text: section.text, href: section.href }}
+            activeHref={activeLinkHref(section, location.pathname)}
             onFollow={follow}
-            items={[{ type: 'link', text: 'Tasks', href: '#/tasks' }]}
+            items={section.links}
           />
         }
         breadcrumbs={<BreadcrumbGroup items={breadcrumbs} onFollow={follow} />}

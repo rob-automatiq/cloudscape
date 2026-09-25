@@ -17,6 +17,7 @@ Unless the user says otherwise, every Cloudscape app you build has this shape. `
   - Cloudscape links keep `href="#/..."` and route through `onFollow` (the template's `useFollow()`).
   - Never use `BrowserRouter`, another router, `window.location`, or a plain `<a href="/path">`.
 - **Header: the hash URL bar, then TopNavigation.** Both are in one sticky `#app-header` element, and AppLayout's `headerSelector` points at it. The bar is the hash-url-bar skill's component, copied verbatim, and its behavior rules are in `references/app-architecture.md`.
+- **Navigation: TopNavigation is the root, and the side navigation is scoped to it.** Each root section (Home, and one per major area such as Customers) is a TopNavigation utility button. The side navigation shows only the current section: the section's name as its header, and that section's pages as its links, such as "List". Home's side navigation has the header "Home". All of it comes from the `SECTIONS` list in `App.jsx`. This is the user's house rule and is deliberate, so don't "fix" it back to Cloudscape's default (see `references/app-architecture.md`).
 - **Data: the Artifact database by default, through `useDocuments(collection)`.** It works for any entity type the app needs, with one collection each (`customers`, `orders`, …) and links stored as ID fields. It uses the claude.ai Artifact `db` store in the viewer and falls back to browser storage elsewhere. Use another database only if the user names one, and put it behind the same interface. `references/app-architecture.md` covers modeling entities and the steps for adding one.
 - **Output: one self-contained `dist/index.html`.** It's published with the `Artifact` tool: the first publish declares `capabilities: {"db": {}}`, and later ones republish the same file.
 
@@ -26,7 +27,7 @@ To start a new app, copy `assets/app-template/` into an empty project and run `n
 
 | Path | What it holds | Read it when |
 |---|---|---|
-| `app-architecture.md` | The default app shape: files, HashRouter rules, the header and hash URL bar, the `useDocuments` data layer, modeling and adding entities, and build and publish steps | Starting an app, adding pages or data, or publishing |
+| `app-architecture.md` | The default app shape: files, HashRouter rules, the header and hash URL bar, section navigation, the `useDocuments` data layer, modeling and adding entities, and build and publish steps | Starting an app, adding pages or data, or publishing |
 | `catalog.md` | Every component grouped by purpose, with a "use it for" line | The request describes behavior instead of naming a component |
 | `components/<folder>/guidelines.md` | The component's documentation page: when to use, dos and don'ts, features, states, writing and accessibility guidelines, unit/integration testing APIs | Always, for each component you use or review |
 | `components/<folder>/examples.md` | The page's named playground examples (for example `with-disabled-reason-for-weekends`), as props plus the shared setup and wrapper | You're building the component. Start from the closest example. |
@@ -50,7 +51,7 @@ Links inside these files are rewritten to point at the local copies, so follow t
    - `examples.md` for the closest named example. If the user refers to a playground example, use it exactly.
    - `api.md` for exact prop names and types. Cloudscape's names are specific (`disabledReason`, `dateDisabledReason`, `constraintText`, `errorText`, `invalid`, `expandToViewport`, `i18nStrings`). Types like `CalendarProps.X` are defined in that component's own `api.md`.
 4. **Check `snippets/index.md`** for an implementation of the pattern. Snippets import from the package root (`import { Button } from '@cloudscape-design/components'`). Convert those to per-component imports when you reuse them.
-5. **Build it** in `src/App.jsx`, following the default app architecture and the conventions below. New pages get a `<Route>`, a side navigation entry if they're top-level, and breadcrumbs. Records are stored with `useDocuments`.
+5. **Build it** in `src/App.jsx`, following the default app architecture and the conventions below. New pages get a `<Route>` and breadcrumbs. A new root area becomes a `SECTIONS` entry, which adds a TopNavigation button; a new page within an area becomes a link in that section's side navigation. Records are stored with `useDocuments`.
 6. **Review your result, and anything the user asked for, against the guidelines** using the checklist below. Then give feedback as described in "Giving feedback".
 7. **Verify** with `npm run build`. If you can, open the built page in a browser, click through the changed flow, and check the console for errors. Then republish `dist/index.html` (see `references/app-architecture.md`).
 

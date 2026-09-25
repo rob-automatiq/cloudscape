@@ -59,6 +59,30 @@ The page header is one sticky element holding the hash URL bar and then Cloudsca
 - **No extra chrome:** no traffic lights, no lock icon, and no controls that don't do anything.
 - **Neutral styling:** plain inline styles (dark `#1c1c1e` bar and a white Go button), not Cloudscape styling, because it represents the host's address bar rather than the app. Fonts start with `system-ui` and `ui-monospace`, so it doesn't look tied to one operating system.
 
+## Navigation: root sections and a scoped side navigation
+
+The user's house rule for every app: TopNavigation is the root navigation, and the side navigation is scoped to the section chosen there. One list in `App.jsx` drives both:
+
+```jsx
+const SECTIONS = [
+  { text: 'Home', href: '#/', path: '/', links: [] },
+  { text: 'Customers', href: '#/customers', path: '/customers/*', links: [
+    { type: 'link', text: 'List', href: '#/customers' },
+  ] },
+]
+```
+
+- **TopNavigation:** each section is one utility, `{ type: 'button', variant: 'link', text, href, onFollow: follow }`, in `SECTIONS` order. Home comes first and goes to `#/`. The identity title also goes to `#/`.
+- **Side navigation:** shows only the current section. Its `header` is the section itself (`{ text: 'Customers', href: '#/customers' }`), not the app name, and its `items` are the section's `links`. Home's side navigation has the header "Home" and no links unless Home gets pages of its own.
+- **Current section:** the first section whose `path` matches the route (`currentSection()`). Routes outside every section, such as unknown routes, fall under the first section, Home.
+- **Active link:** `activeLinkHref()` picks the most specific link whose route contains the current one, so `#/customers/abc` and `#/customers/abc/edit` keep "List" active, as Cloudscape's side navigation pattern asks.
+- **Link names:** keep them short and matching the breadcrumbs. An entity's list page is "List". Add more links for other pages in the section, like "Create" or "Reports", only when they're real destinations; a details or edit page never gets its own link.
+
+**How this differs from Cloudscape.** Cloudscape's service-navigation pattern puts structural navigation in the side navigation, keeps TopNavigation for global utilities (notifications, settings, profile), and uses the app's name as the side navigation's header. This project deliberately does it the other way, so build it this way without re-litigating. Two of Cloudscape's rules still apply and matter here:
+
+- **At most four TopNavigation controls.** With more than four sections, group the extra ones in a `menu-dropdown` utility, or ask the user which areas really are root sections.
+- **Utilities have no selected state.** TopNavigation doesn't highlight the current section, so the side navigation's header is what tells the user where they are. Always show it.
+
 ## Data: the Artifact database by default
 
 Use the claude.ai Artifact `db` store unless the user names another database. It holds any kind of record the app needs, with one collection per entity type. The template's data layer wraps it with one generic hook:
@@ -92,7 +116,7 @@ await customers.remove(id)
 
 1. **Data:** in `Shell`, add `const orders = useDocuments('orders')` and pass it to that entity's pages. Pass related collections too, such as `customers` for showing customer names.
 2. **Routes:** `#/orders` (list), `#/orders/:id` (details), and `#/orders/create` or `#/orders/:id/edit` when the create or edit patterns call for full pages. Declare them inside `<Routes>` before the `*` route.
-3. **Navigation:** add a side-navigation link, and extend `useBreadcrumbs` and the side navigation's `activeHref` logic, so the entity's pages highlight its section.
+3. **Navigation:** a new root area gets a `SECTIONS` entry with `path: '/orders/*'` and a "List" link, which adds its TopNavigation button and its scoped side navigation. An entity that belongs to an existing area gets a link in that section's `links` instead, with its routes under the section's path. Extend `useBreadcrumbs` for the new pages.
 4. **Pages:** follow the resource-management patterns:
    - **List:** `patterns/resource-management/view/table-view.md`.
    - **Details:** `details/details-page.md`.

@@ -1,16 +1,32 @@
 ---
 name: cloudscape
-description: Expert guidance for designing and building UI with the Cloudscape Design System (AWS's React design system, @cloudscape-design/components), bundled with the full cloudscape.design docs. Includes every component's usage, writing and accessibility guidelines, named playground examples, and exact API, plus all UX patterns (create, edit, delete, tables, validation, empty states, navigation, dashboards, generative-AI chat) and the visual foundation. Use it whenever the user mentions Cloudscape, names a Cloudscape component (DatePicker, Table, FormField, AppLayout, Header, Modal, Wizard, Flashbar…), builds or reviews UI in a project using @cloudscape-design/*, or asks how to design a page, form, or flow the Cloudscape way, for example "use a date picker, disable weekends with the reason 'You can only select a weekday.'", "add a table with filtering", or "should this be a modal or a page?" Use it even when the user only describes the behavior, and give design feedback when there's a better Cloudscape way.
+description: Builds Cloudscape Design System apps (AWS's React design system, @cloudscape-design/components) the expert way, bundled with the full cloudscape.design docs (component guidelines, playground examples and API, all UX patterns, the visual foundation) and a tested app template. By default every app is one src/App.jsx using react-router-dom's HashRouter with a hash URL bar, stored in the claude.ai Artifact database, and published as a single-file Artifact for the Claude Code browser. Use it whenever the user mentions Cloudscape, names a Cloudscape component (DatePicker, Table, FormField, AppLayout, Modal, Wizard…), builds or reviews UI in a project using @cloudscape-design/*, asks for a Cloudscape app or page, or asks how to design something the Cloudscape way, for example "use a date picker, disable weekends with the reason 'You can only select a weekday.'" or "add a tasks table I can edit". Use it even when the user only describes the behavior, and give design feedback when there's a better Cloudscape way.
 ---
 
 # Cloudscape design system
 
 This skill makes you a Cloudscape expert in two ways. You build what the user asks the way the cloudscape.design documentation does it. You also tell them when the guidelines point to a better way to reach their goal.
 
+## Default app architecture
+
+Unless the user says otherwise, every Cloudscape app you build has this shape. `assets/app-template/` is a working, tested copy of it, and `references/app-architecture.md` has the details.
+
+- **One file: `src/App.jsx`.** All application code lives there: pages, components, data access, routes, and CSS fixes. `package.json`, `vite.config.js`, `index.html` and `src/main.jsx` are fixed scaffolding.
+- **Routing: `<HashRouter>` from `react-router-dom`, always.**
+  - Every route lives after `#`, as in `#/tasks/abc`.
+  - Cloudscape links keep `href="#/..."` and route through `onFollow` (the template's `useFollow()`).
+  - Never use `BrowserRouter`, another router, `window.location`, or a plain `<a href="/path">`.
+- **Header: the hash URL bar, then TopNavigation.** Both are in one sticky `#app-header` element, and AppLayout's `headerSelector` points at it. The bar is the hash-url-bar skill's component, copied verbatim, and its behavior rules are in `references/app-architecture.md`.
+- **Data: the Artifact database by default, through `useCollection(path)`.** It uses the claude.ai Artifact `db` store in the viewer and falls back to browser storage elsewhere. Use another database only if the user names one, and put it behind the same interface.
+- **Output: one self-contained `dist/index.html`.** It's published with the `Artifact` tool: the first publish declares `capabilities: {"db": {}}`, and later ones republish the same file.
+
+To start a new app, copy `assets/app-template/` into an empty project and run `npm install`, then rename `APP_NAME` and replace the example Items pages. For an existing project with a different structure, ask before restructuring it. Explain that this architecture is what makes routing, data and publishing work reliably in the Claude Code browser.
+
 ## What's in `references/`
 
 | Path | What it holds | Read it when |
 |---|---|---|
+| `app-architecture.md` | The default app shape: files, HashRouter rules, the header and hash URL bar, the `useCollection` data layer, and build and publish steps | Starting an app, adding pages or data, or publishing |
 | `catalog.md` | Every component grouped by purpose, with a "use it for" line | The request describes behavior instead of naming a component |
 | `components/<folder>/guidelines.md` | The component's documentation page: when to use, dos and don'ts, features, states, writing and accessibility guidelines, unit/integration testing APIs | Always, for each component you use or review |
 | `components/<folder>/examples.md` | The page's named playground examples (for example `with-disabled-reason-for-weekends`), as props plus the shared setup and wrapper | You're building the component. Start from the closest example. |
@@ -34,9 +50,9 @@ Links inside these files are rewritten to point at the local copies, so follow t
    - `examples.md` for the closest named example. If the user refers to a playground example, use it exactly.
    - `api.md` for exact prop names and types. Cloudscape's names are specific (`disabledReason`, `dateDisabledReason`, `constraintText`, `errorText`, `invalid`, `expandToViewport`, `i18nStrings`). Types like `CalendarProps.X` are defined in that component's own `api.md`.
 4. **Check `snippets/index.md`** for an implementation of the pattern. Snippets import from the package root (`import { Button } from '@cloudscape-design/components'`). Convert those to per-component imports when you reuse them.
-5. **Build it** following the conventions below.
+5. **Build it** in `src/App.jsx`, following the default app architecture and the conventions below. New pages get a `<Route>`, a side navigation entry if they're top-level, and breadcrumbs. Records are stored with `useCollection`.
 6. **Review your result, and anything the user asked for, against the guidelines** using the checklist below. Then give feedback as described in "Giving feedback".
-7. **Verify** with the project's typecheck or build. If you can, look at it in a browser.
+7. **Verify** with `npm run build`. If you can, open the built page in a browser, click through the changed flow, and check the console for errors. Then republish `dist/index.html` (see `references/app-architecture.md`).
 
 ## Giving feedback
 
@@ -101,7 +117,7 @@ The most common issues, each with the file that covers it. Read the file when a 
 
 ## Code conventions
 
-- **Setup.** Install `@cloudscape-design/components` and `@cloudscape-design/global-styles`, and import `@cloudscape-design/global-styles/index.css` once. Import each component from its own path (`import Button from '@cloudscape-design/components/button'`), which the docs recommend over root imports to keep bundles small (`get-started/for-developers/using-cloudscape-components.md`).
+- **Setup.** The app template already installs `@cloudscape-design/components`, `global-styles`, `collection-hooks` and `react-router-dom`, and `App.jsx` imports `@cloudscape-design/global-styles/index.css` once. Import each component from its own path (`import Button from '@cloudscape-design/components/button'`), which the docs recommend over root imports to keep bundles small (`get-started/for-developers/using-cloudscape-components.md`).
 - **Built-in strings (`@i18n`).** Props tagged `@i18n` in `api.md` have no default on their own. Without a provider they're missing, which mostly hurts screen-reader users. Wrap the app once:
 
   ```tsx
@@ -111,11 +127,12 @@ The most common issues, each with the file that covers it. Read the file when a 
   <I18nProvider locale="en" messages={[messages]}>{/* app */}</I18nProvider>
   ```
 
-  Props you pass always override the provider (`get-started/for-developers/internationalization.md`). If the project has no provider, either pass the `@i18n` props the component needs or recommend adding it.
+  The template's `App.jsx` already wraps the app this way. Props you pass always override the provider (`get-started/for-developers/internationalization.md`). In a project without a provider, either pass the `@i18n` props the component needs or recommend adding it.
 - **State.** Cloudscape components are controlled: pass `value`, `checked`, or `selectedOption(s)` from state and update it in `onChange`. A few are *controllable* (for example `Tabs`, `activeTabId`): they manage themselves until you pass the value (`get-started/dev-guides/state-management.md`).
-- **Events are `CustomEvent`s.** Destructure `({ detail })`. `Cancelable` handlers can call `event.preventDefault()`. For in-app navigation, keep `href` and, in `onFollow`, call `event.preventDefault()` and then your router's `navigate(href)` (Link, SideNavigation, BreadcrumbGroup, TopNavigation utilities, ButtonDropdown).
+- **Events are `CustomEvent`s.** Destructure `({ detail })`. `Cancelable` handlers can call `event.preventDefault()`. For in-app navigation, keep a hash `href` (`#/tasks`) and route in `onFollow` with the template's `useFollow()`, which calls `event.preventDefault()` and then `navigate()`. This works for Link, SideNavigation, BreadcrumbGroup, TopNavigation utilities and ButtonDropdown items. TopNavigation's `identity.onFollow` has no `href` in its event, so it navigates directly.
 - **Layout and spacing.** Use `SpaceBetween`, `ColumnLayout`, `Grid`, `Box`, and component slots (`header`, `footer`, `actions`) instead of custom CSS. For "next to" or "beside", use `<SpaceBetween direction="horizontal" size="xs">`, with `alignItems="end"` to line a button up with a labeled field. Custom CSS should use design tokens (`foundation/visual-foundation/design-tokens.md`). Styling component internals through `className` isn't supported.
 - **Scope of an example.** For a single-control request, a `FormField` wrapper is enough. Add a `Container` + `Header` for page sections. When adding to an existing app, put it where the user says, or ask.
+- **Pages and data.** Give each page its own `ContentLayout` with an `h1` header. For a list page, use a full-page `Table` with a sticky `awsui-h1-sticky` header, and set `contentType="table"` on AppLayout. Keep records in `useCollection`, called once in the shell and passed down, so they survive route changes. Show `saveErrorMessage(error)` through `useNotify()` when a write fails.
 
 ## Worked example
 

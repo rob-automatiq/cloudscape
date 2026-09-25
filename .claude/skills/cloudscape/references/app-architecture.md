@@ -23,10 +23,18 @@ All application code lives in `src/App.jsx`: pages, components, data access, rou
   - **Other navigation:** `navigate('/path')` in code, or react-router's `<Link to>` for non-Cloudscape elements. Never `window.location` or a plain `<a href="/path">`.
 - **Route IDs:** use the document IDs from the data layer, as in `#/items/:id`.
 - **Unknown routes:** always keep a `*` route that shows a not-found page.
-- **Unsaved changes:** `HashRouter` can't block navigation. React Router's `useBlocker` only works with its data routers, which this architecture doesn't use. So for Cloudscape's unsaved-changes pattern (`patterns/general/unsaved-changes.md`):
-  - Confirm with a modal from the app's own exits: Cancel, breadcrumb, side-navigation and top-navigation `onFollow` handlers.
-  - Add a `beforeunload` listener for closing or reloading the tab.
-  - The URL bar and the browser's back button can't be intercepted. That's an accepted gap; mention it to the user when it matters.
+- **Unsaved changes:** `HashRouter` can't block navigation, because React Router's `useBlocker` only works with its data routers. The template's `NavigationGuard` handles Cloudscape's unsaved-changes pattern (`patterns/general/unsaved-changes.md`) instead. In a form page:
+
+  ```jsx
+  const navigate = useGuardedNavigate()
+  useUnsavedChanges(name !== original.name || due !== original.due)  // true while there are unsaved edits
+  // Cancel button: navigate(`/orders/${id}`) asks first when there are unsaved edits
+  // after a successful save: navigate(`/orders/${id}`, { force: true })
+  ```
+
+  - **What prompts:** every `useFollow()` link (side navigation, breadcrumbs, in-app links) and the TopNavigation title go through the guard. Leaving while edits are unsaved shows the pattern's "Leave page" modal, and closing or reloading the tab shows the browser's own warning.
+  - **What doesn't:** the hash URL bar and the browser's back button bypass the guard. That's an accepted gap; mention it to the user when it matters.
+- **Navigating from effects:** react-router's `useNavigate()` returns a new function on every route change. Don't list it in `useEffect` dependencies. Use `useGuardedNavigate()`, which is stable, or keep `navigate` in a ref.
 
 ## Header: hash URL bar and TopNavigation
 

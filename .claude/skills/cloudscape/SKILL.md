@@ -75,7 +75,7 @@ The most common issues, each with the file that covers it. Read the file when a 
 - Use modals mainly to confirm or cancel a choice. Keep them short, with no tabs, expandable sections, or scrolling (`components/modal/guidelines.md`).
 
 **Actions**
-- Only one primary button per page (`components/button/guidelines.md`).
+- Only one primary button per page, counting everything on it, including tables and containers inside a details page (`components/button/guidelines.md`). The details-page pattern splits actions into page-wide header actions and in-context container actions (`patterns/resource-management/details/details-page.md`). Where no single action is the page's main task, leave them all as normal buttons.
 - Actions on one or many selected items (including bulk actions) go in the page or collection header. Frequent single-item actions can also appear in context, such as per row (`patterns/general/actions.md`).
 - Delete friction matches severity: one-click delete, simple confirmation, or additional typed confirmation (`patterns/resource-management/delete.md`).
 - Leaving with unsaved changes shows a confirmation modal, but only when something actually changed (`patterns/general/unsaved-changes.md`).
@@ -132,7 +132,7 @@ The most common issues, each with the file that covers it. Read the file when a 
 - **Events are `CustomEvent`s.** Destructure `({ detail })`. `Cancelable` handlers can call `event.preventDefault()`. For in-app navigation, keep a hash `href` (`#/orders`) and route in `onFollow` with the template's `useFollow()`, which calls `event.preventDefault()` and then `navigate()`. This works for Link, SideNavigation, BreadcrumbGroup, TopNavigation utilities and ButtonDropdown items. TopNavigation's `identity.onFollow` has no `href` in its event, so it navigates directly.
 - **Layout and spacing.** Use `SpaceBetween`, `ColumnLayout`, `Grid`, `Box`, and component slots (`header`, `footer`, `actions`) instead of custom CSS. For "next to" or "beside", use `<SpaceBetween direction="horizontal" size="xs">`, with `alignItems="end"` to line a button up with a labeled field. Custom CSS should use design tokens (`foundation/visual-foundation/design-tokens.md`). Styling component internals through `className` isn't supported.
 - **Scope of an example.** For a single-control request, a `FormField` wrapper is enough. Add a `Container` + `Header` for page sections. When adding to an existing app, put it where the user says, or ask.
-- **Pages and data.** Give each page its own `ContentLayout` with an `h1` header. For a list page, use a full-page `Table` with a sticky `awsui-h1-sticky` header, and set `contentType="table"` on AppLayout. Keep records in `useDocuments`, called once in the shell and passed down, so they survive route changes. Show `saveErrorMessage(error)` through `useNotify()` when a write fails.
+- **Pages and data.** Give each page its own `ContentLayout` with an `h1` header. For a list page, use a full-page `Table` with a sticky `awsui-h1-sticky` header, and set `contentType="table"` on AppLayout. Keep records in `useDocuments`, called once in the shell and passed down, so they survive route changes. Show `saveErrorMessage(error)` through `useNotify()` when a write fails. Form pages call `useUnsavedChanges(isDirty)` and navigate with `useGuardedNavigate()`, passing `{ force: true }` after saving.
 
 ## Worked example
 

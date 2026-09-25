@@ -8,11 +8,12 @@
 //   AppLayout's headerSelector points at that header so its content starts beneath it.
 // - Data: useDocuments(path) stores documents in the claude.ai Artifact database (the `db`
 //   capability) and falls back to browser storage outside claude.ai (for example `npm run dev`).
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { HashRouter, Routes, Route, matchPath, useLocation, useNavigate, useNavigationType, useParams } from 'react-router-dom'
 import '@cloudscape-design/global-styles/index.css'
 import I18nProvider from '@cloudscape-design/components/i18n'
 import messages from '@cloudscape-design/components/i18n/messages/all.en'
+import Alert from '@cloudscape-design/components/alert'
 import AppLayout from '@cloudscape-design/components/app-layout'
 import BreadcrumbGroup from '@cloudscape-design/components/breadcrumb-group'
 import Box from '@cloudscape-design/components/box'
@@ -261,11 +262,81 @@ function saveErrorMessage(error) {
 const NotificationsContext = createContext(() => {})
 const useNotify = () => useContext(NotificationsContext)
 
-// ── Navigation helpers ──────────────────────────────────────────────────────
+// ── Navigation and unsaved changes ──────────────────────────────────────────
 
-// Cloudscape links use href="#/..." so "open in new tab" works; onFollow keeps navigation in the router.
-function useFollow() {
+// HashRouter can't block navigation (react-router's useBlocker needs a data router), so in-app
+// navigation goes through this guard instead: it asks before leaving a page with unsaved changes.
+// The hash URL bar and the browser's back button bypass it; that gap is accepted.
+const NavigationGuardContext = createContext(null)
+
+// navigate(to) asks first when a form on the page has unsaved changes; navigate(to, { force: true })
+// skips the check, for example right after a successful save.
+const useGuardedNavigate = () => useContext(NavigationGuardContext).navigate
+
+// Call in any form page: useUnsavedChanges(nameChanged || dueChanged)
+function useUnsavedChanges(isDirty) {
+  const { setDirty } = useContext(NavigationGuardContext)
+  useEffect(() => {
+    setDirty(isDirty)
+    return () => setDirty(false)
+  }, [isDirty, setDirty])
+  useEffect(() => {
+    if (!isDirty) return
+    const warn = event => { event.preventDefault(); event.returnValue = '' }
+    window.addEventListener('beforeunload', warn)
+    return () => window.removeEventListener('beforeunload', warn)
+  }, [isDirty])
+}
+
+function NavigationGuard({ children }) {
   const navigate = useNavigate()
+  // useNavigate returns a new function on every route change; a ref keeps the guard stable.
+  const navigateRef = useRef(navigate)
+  navigateRef.current = navigate
+  const dirty = useRef(false)
+  const [leaveTo, setLeaveTo] = useState(null)
+
+  const guard = useMemo(() => ({
+    setDirty: value => { dirty.current = value },
+    navigate: (to, { force = false } = {}) => {
+      if (dirty.current && !force) setLeaveTo(to)
+      else navigateRef.current(to)
+    },
+  }), [])
+
+  const leave = () => {
+    dirty.current = false
+    navigateRef.current(leaveTo)
+    setLeaveTo(null)
+  }
+
+  return (
+    <NavigationGuardContext.Provider value={guard}>
+      {children}
+      <Modal
+        visible={leaveTo !== null}
+        onDismiss={() => setLeaveTo(null)}
+        header="Leave page"
+        footer={
+          <Box float="right">
+            <SpaceBetween direction="horizontal" size="xs">
+              <Button variant="link" onClick={() => setLeaveTo(null)}>Cancel</Button>
+              <Button variant="primary" onClick={leave}>Leave</Button>
+            </SpaceBetween>
+          </Box>
+        }
+      >
+        <Alert type="warning">
+          Are you sure that you want to leave the current page? The changes that you made won't be saved.
+        </Alert>
+      </Modal>
+    </NavigationGuardContext.Provider>
+  )
+}
+
+// Cloudscape links use href="#/..." so "open in new tab" works; onFollow routes through the guard.
+function useFollow() {
+  const navigate = useGuardedNavigate()
   return event => {
     event.preventDefault()
     navigate(event.detail.href.replace(/^#/, '') || '/')
@@ -450,7 +521,7 @@ function useBreadcrumbs(items) {
 
 function Shell() {
   const location = useLocation()
-  const navigate = useNavigate()
+  const navigate = useGuardedNavigate()
   const follow = useFollow()
   const items = useDocuments('items')
   const breadcrumbs = useBreadcrumbs(items)
@@ -506,7 +577,9 @@ export default function App() {
     <I18nProvider locale="en" messages={[messages]}>
       <style>{GLOBAL_CSS}</style>
       <HashRouter>
-        <Shell />
+        <NavigationGuard>
+          <Shell />
+        </NavigationGuard>
       </HashRouter>
     </I18nProvider>
   )
